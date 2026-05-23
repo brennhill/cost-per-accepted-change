@@ -117,6 +117,102 @@ const ogImageSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
   <text x="600" y="590" text-anchor="middle" font-family="Helvetica" font-size="12" letter-spacing="2.5" fill="${COLORS.inkMuted}">DEFINED IN THE DELIVERY GAP · BRENN HILL · 2026</text>
 </svg>`;
 
+// ----- Post images (for LinkedIn / X / Bluesky / etc.) -----------------
+
+/**
+ * Reusable formula-stamp fragment. Positions the bordered card with
+ * the numerator, division bar, denominator, and parenthetical inside
+ * a (cx, cy)-centered box of given width and height.
+ */
+function formulaStampFragment({ cx, cy, width, height }) {
+  const x = cx - width / 2;
+  const y = cy - height / 2;
+  const numeratorY = y + height * 0.35;
+  const barY = y + height * 0.48;
+  const denominatorY = y + height * 0.66;
+  const subY = y + height * 0.82;
+  return `
+  <rect x="${x}" y="${y}" width="${width}" height="${height}" fill="none" stroke="${COLORS.accent}" stroke-width="1.4" rx="3"/>
+  <rect x="${x + 8}" y="${y + 8}" width="${width - 16}" height="${height - 16}" fill="none" stroke="${COLORS.accent}" stroke-width="0.6" opacity="0.4" rx="2"/>
+  <text x="${cx}" y="${numeratorY}" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">model · infrastructure · engineering · review · rework</text>
+  <line x1="${x + 40}" y1="${barY}" x2="${x + width - 40}" y2="${barY}" stroke="${COLORS.accent}" stroke-width="2.4"/>
+  <text x="${cx}" y="${denominatorY}" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">accepted change units</text>
+  <text x="${cx}" y="${subY}" text-anchor="middle" font-family="Helvetica" font-size="13" fill="${COLORS.accent}" opacity="0.6">( reached production and stayed there )</text>`;
+}
+
+/**
+ * Provocative post image — square 1200x1200, universal social size.
+ * Lead hook: "AI made code generation faster. Not delivery."
+ */
+const postHookSquareSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  <rect width="1200" height="1200" fill="${COLORS.paper}"/>
+
+  <!-- Outer hairline frame -->
+  <rect x="40" y="40" width="1120" height="1120" fill="none" stroke="${COLORS.accent}" stroke-width="1" opacity="0.3" rx="4"/>
+
+  <!-- Eyebrow -->
+  <text x="600" y="150" text-anchor="middle" font-family="Helvetica" font-size="22" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">THE DELIVERY GAP</text>
+
+  <!-- Headline (two lines) -->
+  <text x="600" y="320" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="92" font-weight="600" fill="${COLORS.ink}">AI made code</text>
+  <text x="600" y="425" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="92" font-weight="600" fill="${COLORS.ink}">generation faster.</text>
+
+  <!-- Counter line -->
+  <text x="600" y="540" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="68" font-style="italic" font-weight="600" fill="${COLORS.accent}">Not delivery.</text>
+
+  <!-- Decorative rule -->
+  <line x1="540" y1="600" x2="660" y2="600" stroke="${COLORS.accent}" stroke-width="1.2" opacity="0.55"/>
+
+  <!-- Body -->
+  <text x="600" y="660" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">Cost per accepted change. The bottom-line metric</text>
+  <text x="600" y="703" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">for AI-augmented software delivery.</text>
+
+  <!-- Formula stamp -->
+  ${formulaStampFragment({ cx: 600, cy: 880, width: 880, height: 220 })}
+
+  <!-- Domain -->
+  <text x="600" y="1080" text-anchor="middle" font-family="Helvetica" font-size="26" font-weight="700" letter-spacing="5" fill="${COLORS.ink}">COSTPERACCEPTEDCHANGE.ORG</text>
+
+  <!-- Byline -->
+  <text x="600" y="1120" text-anchor="middle" font-family="Helvetica" font-size="14" letter-spacing="3" fill="${COLORS.inkMuted}">DEFINED IN THE DELIVERY GAP · BRENN HILL · 2026</text>
+</svg>`;
+
+/**
+ * LinkedIn-optimal portrait, 1080x1350 (4:5 aspect). Same hook, repositioned.
+ */
+const postHookPortraitSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350" width="1080" height="1350">
+  <rect width="1080" height="1350" fill="${COLORS.paper}"/>
+
+  <!-- Outer hairline frame -->
+  <rect x="36" y="36" width="1008" height="1278" fill="none" stroke="${COLORS.accent}" stroke-width="1" opacity="0.3" rx="4"/>
+
+  <!-- Eyebrow -->
+  <text x="540" y="160" text-anchor="middle" font-family="Helvetica" font-size="22" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">THE DELIVERY GAP</text>
+
+  <!-- Headline (two lines) -->
+  <text x="540" y="340" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="88" font-weight="600" fill="${COLORS.ink}">AI made code</text>
+  <text x="540" y="445" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="88" font-weight="600" fill="${COLORS.ink}">generation faster.</text>
+
+  <!-- Counter -->
+  <text x="540" y="570" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="68" font-style="italic" font-weight="600" fill="${COLORS.accent}">Not delivery.</text>
+
+  <!-- Decorative rule -->
+  <line x1="480" y1="630" x2="600" y2="630" stroke="${COLORS.accent}" stroke-width="1.2" opacity="0.55"/>
+
+  <!-- Body -->
+  <text x="540" y="700" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">Cost per accepted change. The bottom-line metric</text>
+  <text x="540" y="743" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">for AI-augmented software delivery.</text>
+
+  <!-- Formula stamp -->
+  ${formulaStampFragment({ cx: 540, cy: 945, width: 820, height: 220 })}
+
+  <!-- Domain -->
+  <text x="540" y="1210" text-anchor="middle" font-family="Helvetica" font-size="26" font-weight="700" letter-spacing="5" fill="${COLORS.ink}">COSTPERACCEPTEDCHANGE.ORG</text>
+
+  <!-- Byline -->
+  <text x="540" y="1250" text-anchor="middle" font-family="Helvetica" font-size="14" letter-spacing="3" fill="${COLORS.inkMuted}">DEFINED IN THE DELIVERY GAP · BRENN HILL · 2026</text>
+</svg>`;
+
 // ----- Render helpers --------------------------------------------------
 
 function writeSvg(path, content) {
@@ -159,6 +255,16 @@ function build() {
   const og = ogImageSvg();
   writeSvg(join(ASSETS_DIR, 'og-image.svg'), og);
   renderPng(og, join(PUBLIC_DIR, 'og-image.png'), 1200);
+
+  // Social post image — square (universal: X, Bluesky, LinkedIn, Mastodon)
+  const postSquare = postHookSquareSvg();
+  writeSvg(join(ASSETS_DIR, 'post-hook-square.svg'), postSquare);
+  renderPng(postSquare, join(ASSETS_DIR, 'post-hook-square.png'), 1200);
+
+  // Social post image — portrait (LinkedIn-optimal 4:5)
+  const postPortrait = postHookPortraitSvg();
+  writeSvg(join(ASSETS_DIR, 'post-hook-portrait.svg'), postPortrait);
+  renderPng(postPortrait, join(ASSETS_DIR, 'post-hook-portrait.png'), 1080);
 }
 
 build();

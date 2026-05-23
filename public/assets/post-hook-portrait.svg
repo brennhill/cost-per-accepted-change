@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350" width="1080" height="1350">
+  <rect width="1080" height="1350" fill="#fbfaf6"/>
+
+  <!-- Outer hairline frame -->
+  <rect x="36" y="36" width="1008" height="1278" fill="none" stroke="#7a1d1d" stroke-width="1" opacity="0.3" rx="4"/>
+
+  <!-- Eyebrow -->
+  <text x="540" y="160" text-anchor="middle" font-family="Helvetica" font-size="22" font-weight="700" letter-spacing="6" fill="#7a1d1d" opacity="0.8">THE DELIVERY GAP</text>
+
+  <!-- Headline (two lines) -->
+  <text x="540" y="340" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="88" font-weight="600" fill="#1a1a1a">AI made code</text>
+  <text x="540" y="445" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="88" font-weight="600" fill="#1a1a1a">generation faster.</text>
+
+  <!-- Counter -->
+  <text x="540" y="570" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="68" font-style="italic" font-weight="600" fill="#7a1d1d">Not delivery.</text>
+
+  <!-- Decorative rule -->
+  <line x1="480" y1="630" x2="600" y2="630" stroke="#7a1d1d" stroke-width="1.2" opacity="0.55"/>
+
+  <!-- Body -->
+  <text x="540" y="700" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="#5a5a5a">Cost per accepted change. The bottom-line metric</text>
+  <text x="540" y="743" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="#5a5a5a">for AI-augmented software delivery.</text>
+
+  <!-- Formula stamp -->
+  
+  <rect x="130" y="835" width="820" height="220" fill="none" stroke="#7a1d1d" stroke-width="1.4" rx="3"/>
+  <rect x="138" y="843" width="804" height="204" fill="none" stroke="#7a1d1d" stroke-width="0.6" opacity="0.4" rx="2"/>
+  <text x="540" y="912" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="#7a1d1d">model · infrastructure · engineering · review · rework</text>
+  <line x1="170" y1="940.6" x2="910" y2="940.6" stroke="#7a1d1d" stroke-width="2.4"/>
+  <text x="540" y="980.2" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="#7a1d1d">accepted change units</text>
+  <text x="540" y="1015.4" text-anchor="middle" font-family="Helvetica" font-size="13" fill="#7a1d1d" opacity="0.6">( reached production and stayed there )</text>
+
+  <!-- Domain -->
+  <text x="540" y="1210" text-anchor="middle" font-family="Helvetica" font-size="26" font-weight="700" letter-spacing="5" fill="#1a1a1a">COSTPERACCEPTEDCHANGE.ORG</text>
+
+  <!-- Byline -->
+  <text x="540" y="1250" text-anchor="middle" font-family="Helvetica" font-size="14" letter-spacing="3" fill="#5a5a5a">DEFINED IN THE DELIVERY GAP · BRENN HILL · 2026</text>
+</svg>
