@@ -1,0 +1,161 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="How to use it"
+  description="How to use cost per accepted change correctly — as an aggregate steering metric for tracking trends in delivery economics, not as a benchmark for individual changes or engineers."
+  path="/use"
+>
+  <article class="page">
+    <p class="eyebrow">A guide</p>
+    <h1>How to use cost per accepted change</h1>
+    <p class="lede">
+      Cost per accepted change is a <strong>steering metric for tracking trends in delivery economics at the team or organization level</strong>. It is not a benchmark for individual changes, individual engineers, or single-window snapshots. Used at the right altitude, it is one of the clearest signals you can put in front of a CFO. Used at the wrong altitude, it is noise dressed as insight.
+    </p>
+
+    <aside class="sidebar">
+      <span class="label">In one sentence</span>
+      <p style="margin: 0;">
+        Use cost per accepted change in <strong>aggregate</strong>, over <strong>time</strong>, to ask <em>"is our delivery system getting more or less efficient?"</em> — never to ask <em>"which change cost more?"</em> or <em>"which engineer is more productive?"</em>
+      </p>
+    </aside>
+
+    <h2 class="no-rule">What it is for</h2>
+
+    <h3>Tracking trends</h3>
+    <p>
+      The point of cost per accepted change is the <strong>direction</strong> of the line, not the absolute value at any one moment. Quarter-over-quarter movement tells you whether your delivery system is getting more efficient. A single quarter's number, in isolation, tells you very little.
+    </p>
+
+    <h3>Steering at the group level</h3>
+    <p>
+      Use it to ask group-level questions: "Did the AI tooling investment we made last quarter pay back?" "Has rework cost grown faster than model cost as we expanded agent use?" "Are we delivering more accepted work per dollar this year than last?" These are the questions a board, a CFO, or an engineering leadership team is actually asking.
+    </p>
+
+    <h3>Catching efficiency regressions early</h3>
+    <p>
+      If cost per accepted change drifts up two quarters in a row, something is degrading — review queues, rework cost, or the cost mix between human and machine work. The metric is a smoke alarm, not a thermostat. Its job is to tell you to look, not to tell you what to do.
+    </p>
+
+    <h3>Anchoring board and CFO conversations</h3>
+    <p>
+      Most executive conversations about AI spend stall on incompatible vocabulary: token cost on one side, productivity surveys on the other, neither rolling up to anything actionable. Cost per accepted change is a single unit number with a defensible formula. It is a conversation anchor.
+    </p>
+
+    <h2>What it is <em>not</em> for</h2>
+
+    <h3>Comparing individual changes</h3>
+    <p>
+      The cost of any single accepted change varies wildly — by orders of magnitude. A trivial fix might cost $30. A subtle refactor might cost $30,000. Both are legitimate accepted work. Looking at one change's "CPAC" is meaningless; the metric is only defined over a population.
+    </p>
+
+    <h3>Ranking individual engineers</h3>
+    <p>
+      Do not attempt to attribute cost per accepted change to specific people. Different engineers work on different kinds of changes; cost varies with intent, domain, and luck. Ranking engineers by this metric will reliably punish the engineers doing the hardest work, and reward the ones picking the easiest tasks. Use it at the team or organization level only.
+    </p>
+
+    <h3>Comparing teams doing different work</h3>
+    <p>
+      Cost per accepted change for a frontend team is not comparable to cost per accepted change for an ML-platform team. Apples-to-apples comparison requires similar work mix. Comparing your team to its own past is sound; comparing two unrelated teams against each other is not.
+    </p>
+
+    <h3>Single-window snapshots</h3>
+    <p>
+      One window's number is noisy — especially when N is small. The most common misuse is reporting a single quarter's cost per accepted change as if it were a benchmark. It is not. The metric earns its value through a time series, not a snapshot.
+    </p>
+
+    <h2>The variance problem</h2>
+    <p>
+      The cost of producing any single accepted change varies wildly with the nature of the work. Some changes take an hour; some take a week. Some are research-heavy; some are routine. The cost-per-change distribution is heavily skewed: a handful of large, expensive changes can dominate the numerator in any short window.
+    </p>
+    <p>
+      <strong>This variance is the reason cost per accepted change is an aggregate metric.</strong> At low N, it is dominated by outliers. As the number of accepted change units in the window grows, the metric stabilizes around the true delivery economics of your system.
+    </p>
+    <p>
+      A practical heuristic:
+    </p>
+    <ul>
+      <li><strong>Below ~25 accepted change units per window:</strong> too noisy. Use a longer window.</li>
+      <li><strong>25–100 units per window:</strong> usable for trend detection, not for absolute reporting.</li>
+      <li><strong>100+ units per window:</strong> stable enough to report a single-window value alongside the trend.</li>
+    </ul>
+    <p>
+      Smaller teams should use longer windows. A 5-engineer team should report quarterly, not monthly. A 50-engineer organization can report monthly without the noise overwhelming the signal.
+    </p>
+
+    <h2>The right unit of analysis</h2>
+    <p>
+      Cost per accepted change is defined at the level of <strong>a delivery system over a measurement window</strong> — a team, an organization, a product line. It is not defined at the level of an individual, a single change, or an instant.
+    </p>
+    <ul>
+      <li><strong>Group, not individual.</strong> Apply at the team or organization level. Never per engineer.</li>
+      <li><strong>Time series, not point.</strong> The shape over multiple windows is the signal; any single window is noise.</li>
+      <li><strong>Self-comparison, not cross-team.</strong> The most defensible comparison is your team to its own past, using the same definitions.</li>
+      <li><strong>Consistent accounting.</strong> Hourly rates, attribution rules, exclusions, and window lengths must hold steady across the series. Changing accounting mid-stream invalidates the trend.</li>
+    </ul>
+
+    <h2>Reading the trend</h2>
+    <table>
+      <thead>
+        <tr><th>What you see</th><th>What it suggests</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Trend down over 2+ windows</td>
+          <td>Delivery system is getting more efficient. Each dollar of full-stack production cost is producing more accepted work. Confirm with leading indicators (DORA stability, acceptance rate, DevEx scores).</td>
+        </tr>
+        <tr>
+          <td>Trend up over 2+ windows</td>
+          <td>Delivery system is getting less efficient. Investigate which numerator component grew — model, review, or rework — before drawing conclusions.</td>
+        </tr>
+        <tr>
+          <td>Flat after a major AI investment</td>
+          <td>The investment has not paid back yet. Either it is too early, or verification overhead is eating the gains. Worth a deep look at review and rework cost.</td>
+        </tr>
+        <tr>
+          <td>Volatile window-to-window</td>
+          <td>Your N is too small, your accounting changed, or one large change dominated. Lengthen the window or hold the comparison.</td>
+        </tr>
+        <tr>
+          <td>Looks great for one window, then snaps back</td>
+          <td>Almost always a measurement artifact — a window with low rework cost that surfaced later, or an unusually large normalized change unit. Do not celebrate single windows.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>A reporting cadence that works</h2>
+    <ul>
+      <li><strong>Weekly:</strong> too noisy for most teams. Useful only as a diagnostic during incident response.</li>
+      <li><strong>Monthly:</strong> signal-rich for medium-to-large engineering organizations. The right cadence for engineering leadership review.</li>
+      <li><strong>Quarterly:</strong> the right cadence for executive and board review. Stable, defensible, harder to misread.</li>
+      <li><strong>Annual:</strong> too lagging to act on. Useful only as a historical anchor.</li>
+    </ul>
+    <p>
+      Whatever cadence you pick, always report cost per accepted change alongside at least one leading indicator (acceptance rate, change failure rate, DORA lead time, DevEx pulse). The leading indicator tells you <em>why</em> the bottom line moved.
+    </p>
+
+    <h2>Common misuses to avoid</h2>
+    <ul>
+      <li><strong>"Our team's number is $500 and yours is $800, so we win."</strong> Different teams do different work. The comparison is meaningless without controls.</li>
+      <li><strong>"Engineer X has the lowest cost per accepted change."</strong> The metric is not defined at the individual level. Pretending it is will distort behavior in destructive ways.</li>
+      <li><strong>"Let's set a cost-per-accepted-change target."</strong> Targets invite gaming. Track the trend; investigate when it moves; do not legislate the number.</li>
+      <li><strong>"This single low-CPAC quarter proves our AI investment worked."</strong> One window is noise. Wait for the second.</li>
+      <li><strong>"We can ignore the underlying components since we have one bottom-line number."</strong> Cost per accepted change is a summary. The components — model, infra, engineering, review, rework — are where you actually intervene.</li>
+    </ul>
+
+    <h2>When the number moves, what to do</h2>
+    <ol>
+      <li><strong>Confirm the move is real.</strong> Two consecutive windows in the same direction, with stable accounting, is the minimum bar.</li>
+      <li><strong>Decompose the numerator.</strong> Look at the share of each cost component. A rise in rework cost is a very different problem than a rise in model cost.</li>
+      <li><strong>Check leading indicators.</strong> Acceptance rate, change failure rate, DORA stability, DevEx scores. If they confirm, you have a real signal.</li>
+      <li><strong>Form a hypothesis, not a verdict.</strong> The metric tells you to look; it does not tell you what is wrong.</li>
+      <li><strong>Intervene at the component level.</strong> Cost per accepted change does not change by being managed; it changes when the work that produces it changes.</li>
+    </ol>
+
+    <hr />
+
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      The short version: aggregate, time-series, group-level, paired with leading indicators. Get those four right and the metric earns its keep. Get any one wrong and you will mislead yourself.
+    </p>
+  </article>
+</BaseLayout>
