@@ -202,6 +202,45 @@ dist/**           linguist-generated
       For teams without per-change attribution, a reasonable starting approach is to allocate the period's total model spend proportionally to AI-touched changes (as identified by your tooling or a survey of authors). Document the allocation method when you publish a number.
     </p>
 
+    <h2>Why not measure tokens or cost-per-token instead of dollars?</h2>
+    <p>
+      The numerator's model-cost component is in <strong>dollars</strong>, not tokens. This is deliberate: token-based metrics are unreliable as a comparator across any timeframe longer than a single API call.
+    </p>
+
+    <h3>Tokens are not comparable between models or vendors</h3>
+    <p>
+      Each model family uses its own tokenization scheme — BPE variants, SentencePiece, vendor-specific encoders. The same English sentence requires dramatically different token counts on Claude vs GPT vs Gemini vs open-weight models. "Tokens per change" is meaningful within one model on one day; it is nearly meaningless across any other comparison.
+    </p>
+
+    <h3>Tokenization changes within a vendor's own model family</h3>
+    <p>
+      A "minor" model bump can shift token usage 20–30% even when the model is doing the same job. Claude Opus 4.7's tokenization, for example, was reported to consume substantially more tokens per operation than 4.6 on identical workloads — a team tracking "tokens per change" through the upgrade would have seen a phantom regression that had nothing to do with their delivery system. Vendors do not coordinate tokenization changes with measurement frameworks.
+    </p>
+
+    <h3>Identical tasks vary wildly in token count</h3>
+    <p>The same logical change can consume very different token counts depending on:</p>
+    <ul>
+      <li>Current context length — a 50,000-token codebase context vs a 5,000-token one for the same edit.</li>
+      <li>System prompts, which the vendor or your tooling may change without notice.</li>
+      <li>Attached MCP servers, tools, or function definitions that pad every request.</li>
+      <li>Whether prompt caching hit or missed (cache hits are roughly 10× cheaper for the same input).</li>
+      <li>Whether the model used reasoning / thinking tokens (often billed, often invisible to the user).</li>
+      <li>Multi-turn agent loops vs single-shot completions — an agent can make 50 model calls for what one completion does once.</li>
+    </ul>
+
+    <h3>Input and output tokens are priced very differently</h3>
+    <p>
+      Output tokens are typically 3–5× more expensive than input tokens. A "token count" that does not split the two is not even an internally consistent cost signal. Two operations with identical total token counts can cost wildly different amounts depending on the input/output split.
+    </p>
+
+    <h3>Dollars are the unit of business reality</h3>
+    <p>
+      Your CFO does not negotiate with a token budget; they negotiate with a dollar one. By denominating in dollars, cost per accepted change tracks what you actually spend — and absorbs all the upstream changes (model version bumps, pricing updates, cache hit rates, multi-step strategies) without breaking the metric.
+    </p>
+    <p>
+      The token economy is an implementation detail vendors change unilaterally. Cost per accepted change measures the layer above it: the dollar cost of producing software your team actually kept.
+    </p>
+
     <h2>How do I value engineering and review time?</h2>
     <p>
       Use a fully-loaded hourly rate — salary, benefits, tooling allocation, overhead. Most organizations already have this number for capacity planning. If you do not, $150/hour is a reasonable starting estimate for senior engineers in high-cost markets; adjust to your context.
