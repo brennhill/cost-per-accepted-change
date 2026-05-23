@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 220" width="240" height="220">
+  <line x1="120" y1="34" x2="34" y2="180" stroke="#1a1a1a" stroke-width="1.4" opacity="0.55"/>
+  <line x1="120" y1="34" x2="206" y2="180" stroke="#1a1a1a" stroke-width="1.4" opacity="0.55"/>
+  <line x1="34" y1="180" x2="206" y2="180" stroke="#1a1a1a" stroke-width="1.4" opacity="0.55"/>
+  <circle cx="120" cy="34" r="5" fill="transparent" stroke="#1a1a1a" stroke-width="1.6"/>
+  <text x="120" y="20" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="#1a1a1a">Intent clarity</text>
+  <circle cx="34" cy="180" r="5" fill="transparent" stroke="#1a1a1a" stroke-width="1.6"/>
+  <text x="34" y="204" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="#1a1a1a">Eval quality</text>
+  <circle cx="206" cy="180" r="10" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="1.6"/>
+  <text x="206" y="204" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="#1a1a1a">Cost</text>
+  <text x="120" y="118" text-anchor="middle" font-family="Helvetica" font-size="9" font-weight="600" letter-spacing="2" fill="#1a1a1a" opacity="0.55">THE VERIFICATION</text>
+  <text x="120" y="132" text-anchor="middle" font-family="Helvetica" font-size="9" font-weight="600" letter-spacing="2" fill="#1a1a1a" opacity="0.55">TRIANGLE</text>
+</svg>

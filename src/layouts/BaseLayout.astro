@@ -19,6 +19,8 @@ const fullTitle = title === 'Cost per accepted change'
   : `${title} — Cost per accepted change`;
 
 const canonical = `https://costperacceptedchange.org${path === '/' ? '' : path}`;
+const ogImage = 'https://costperacceptedchange.org/og-image.png';
+const ogImageAlt = 'Cost per accepted change — the fully-loaded cost of producing software that stayed in production, divided by the number of changes that did.';
 
 const nav = [
   { href: '/', label: 'Definition' },
@@ -29,6 +31,7 @@ const nav = [
   { href: '/measurement', label: 'Measurement' },
   { href: '/faq', label: 'FAQ' },
   { href: '/cite', label: 'Cite' },
+  { href: '/press', label: 'Press' },
 ];
 ---
 <!doctype html>
@@ -43,7 +46,16 @@ const nav = [
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:site_name" content="Cost Per Accepted Change" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
     <title>{fullTitle}</title>
   </head>
   <body>

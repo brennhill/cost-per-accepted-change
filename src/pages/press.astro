@@ -1,0 +1,131 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Press kit"
+  description="Press kit for cost per accepted change — quick facts, quotable summaries, downloadable graphics, and citation formats for journalists, analysts, and researchers."
+  path="/press"
+>
+  <article class="page">
+    <p class="eyebrow">Press kit</p>
+    <h1>Press kit</h1>
+    <p class="lede">
+      Cost per accepted change is a free, citable measurement standard for AI-augmented software delivery. This page collects the materials journalists, analysts, and researchers need to cover it.
+    </p>
+
+    <h2 class="no-rule">Quick facts</h2>
+    <table>
+      <tbody>
+        <tr><th>What it is</th><td>A measurement standard for the cost of producing software that reaches production and stays there.</td></tr>
+        <tr><th>Formula</th><td>(model cost + infrastructure + engineering time + review + rework) ÷ accepted change units</td></tr>
+        <tr><th>Defined in</th><td><a href="https://www.amazon.com/Delivery-Gap-Adoption-Engineering-Leaders-ebook/dp/B0GWRY2XH1/"><em>The Delivery Gap</em></a> (Brenn Hill, 2026), as the cost vertex of the Verification Triangle</td></tr>
+        <tr><th>Canonical reference</th><td><a href="https://costperacceptedchange.org">costperacceptedchange.org</a></td></tr>
+        <tr><th>Source</th><td><a href="https://github.com/brennhill/cost-per-accepted-change">github.com/brennhill/cost-per-accepted-change</a> · MIT-licensed</td></tr>
+        <tr><th>Calculator</th><td><a href="/calculator">costperacceptedchange.org/calculator</a> — client-side; shareable via URL</td></tr>
+        <tr><th>Tracker template</th><td><a href="/templates/cpac-tracker.xlsx" download>XLSX</a> for Google Sheets / Excel / LibreOffice / Numbers</td></tr>
+        <tr><th>Author</th><td>Brenn Hill — <a href="https://www.linkedin.com/in/brennhill/">LinkedIn</a> · <a href="https://brennhill.substack.com">Substack</a></td></tr>
+        <tr><th>Launched</th><td>May 2026</td></tr>
+      </tbody>
+    </table>
+
+    <h2>One-paragraph summary</h2>
+    <p>
+      For direct quotation:
+    </p>
+    <blockquote>
+      Cost per accepted change is the fully-loaded cost of producing software that reached production and stayed there, divided by the number of accepted change units that did. It pairs FinOps cost-to-serve discipline with a development-side denominator. Where vanity metrics like "AI code share" or PRs-merged inflate as teams adopt AI tooling, cost per accepted change moves with actual delivery economics — making it the bottom-line number engineering leaders can put in front of a CFO.
+    </blockquote>
+
+    <h2>Shorter quotable summaries</h2>
+    <blockquote>
+      "Most AI productivity metrics measure activity, not outcomes. Cost per accepted change measures the cost of work that actually shipped and stayed in production."
+    </blockquote>
+    <blockquote>
+      "It is FinOps cost-to-serve, moved one layer upstream — measuring the cost of <em>producing</em> trusted software, not the cost of running it."
+    </blockquote>
+    <blockquote>
+      "The metric that catches the perception-reality gap independent studies have documented in AI-assisted development — including <a href="https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/">METR's 2025 finding</a> that experienced developers self-reported a 20% speedup while measurably slowing by 19%."
+    </blockquote>
+
+    <h2>Why it matters now</h2>
+    <p>
+      In 2026, enterprises are deploying AI dev tooling at scale but cannot reliably measure whether the investment is paying off. MIT-reported figures suggest <strong>95% of AI pilots show no measurable P&L impact</strong>; <strong>only ~29% of executives say they can confidently measure AI ROI</strong>. The gap is not a math problem — it is a definitional one. There has been no canonical, vendor-neutral metric for the cost of AI-augmented software delivery. Cost per accepted change is one.
+    </p>
+
+    <h2>Downloadable graphics</h2>
+    <p>All graphics are released for editorial and educational use without attribution requirement. Attribution to <code>costperacceptedchange.org</code> is appreciated where space allows.</p>
+
+    <div class="template-grid">
+      <div class="template-card">
+        <p class="meta">Social card · 1200 × 630</p>
+        <h3>Open Graph image</h3>
+        <p>The default share preview. Suitable for article inline use.</p>
+        <p>
+          <a class="btn" href="/og-image.png" download>PNG (1200×630)</a>
+          <a class="btn" href="/assets/og-image.svg" download style="margin-left: 0.4rem;">SVG</a>
+        </p>
+      </div>
+
+      <div class="template-card">
+        <p class="meta">Hero diagram · 1200 × 504</p>
+        <h3>CPAC formula graphic</h3>
+        <p>The bordered "stamp" rendering of the formula. Suitable for slide decks, article headers, embeds.</p>
+        <p>
+          <a class="btn" href="/assets/cpac-graphic.png" download>PNG (1200×504)</a>
+          <a class="btn" href="/assets/cpac-graphic.svg" download style="margin-left: 0.4rem;">SVG</a>
+        </p>
+      </div>
+
+      <div class="template-card">
+        <p class="meta">Framework diagram · 720 × 660</p>
+        <h3>Verification Triangle</h3>
+        <p>The three-vertex framework (Intent clarity, Eval quality, Cost) from <em>The Delivery Gap</em>. Cost vertex highlighted.</p>
+        <p>
+          <a class="btn" href="/assets/verification-triangle.png" download>PNG (720×660)</a>
+          <a class="btn" href="/assets/verification-triangle.svg" download style="margin-left: 0.4rem;">SVG</a>
+        </p>
+      </div>
+
+      <div class="template-card">
+        <p class="meta">Mark · 512 × 512</p>
+        <h3>$/AC fraction mark</h3>
+        <p>The site's identity mark. Suitable for inline use, favicons, attribution.</p>
+        <p>
+          <a class="btn" href="/assets/mark.png" download>PNG (512×512)</a>
+          <a class="btn" href="/assets/mark.svg" download style="margin-left: 0.4rem;">SVG</a>
+        </p>
+      </div>
+    </div>
+
+    <h2>About the author</h2>
+    <p>
+      Cost per accepted change was defined by Brenn Hill in <a href="https://www.amazon.com/Delivery-Gap-Adoption-Engineering-Leaders-ebook/dp/B0GWRY2XH1/"><em>The Delivery Gap: AI Adoption for Engineering Leaders</em></a> (2026), where it appears as the cost vertex of the Verification Triangle framework. The book argues that AI did not make software delivery faster — it made code generation faster, and the distance between the two is the delivery gap that most organizations are measuring poorly or not at all.
+    </p>
+    <p>
+      Connect: <a href="https://www.linkedin.com/in/brennhill/">LinkedIn</a> · <a href="https://brennhill.substack.com">Substack</a> · <a href="https://github.com/brennhill">GitHub</a>
+    </p>
+
+    <h2>Citation</h2>
+    <p>
+      BibTeX, plain text, and inline-mention formats are on the <a href="/cite">cite page</a>. For working journalists, the simplest reference is:
+    </p>
+    <blockquote>
+      Hill, B. (2026). <em>The Delivery Gap.</em> See <a href="https://costperacceptedchange.org">costperacceptedchange.org</a> for the canonical definition.
+    </blockquote>
+
+    <h2>Contact</h2>
+    <p>
+      Corrections, clarifications, or interview requests:
+    </p>
+    <ul>
+      <li>Public corrections and suggestions: <a href="https://github.com/brennhill/cost-per-accepted-change/issues">github.com/brennhill/cost-per-accepted-change/issues</a></li>
+      <li>Direct contact: via <a href="https://www.linkedin.com/in/brennhill/">LinkedIn</a> or reply to any post on <a href="https://brennhill.substack.com">brennhill.substack.com</a></li>
+    </ul>
+
+    <hr />
+
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      Need a specific asset size, language version, or interview? Open an issue at <a href="https://github.com/brennhill/cost-per-accepted-change/issues">the repo</a>.
+    </p>
+  </article>
+</BaseLayout>
