@@ -41,7 +41,7 @@ Deployed via **Cloudflare Pages** to `costperacceptedchange.org`.
 
 - **Build command:** `npm run build`
 - **Build output:** `dist`
-- **Node version:** `20` (set `NODE_VERSION=20` in Pages env vars)
+- **Node version:** `24` (set `NODE_VERSION=24` in Pages env vars)
 - **Headers:** declared in `public/_headers` — copied to the build output by Astro and consumed by Cloudflare Pages.
 
 To deploy from a local checkout (one-off):
