@@ -1,0 +1,241 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Instrumentation guide"
+  description="How to actually instrument your stack to measure cost per accepted change — LLM proxies, git mining for reverts, ticket linkage, time attribution, and a minimum-viable monthly pipeline."
+  path="/instrument"
+>
+  <article class="page">
+    <p class="eyebrow">For the engineer doing the setup</p>
+    <h1>Instrumentation guide</h1>
+    <p class="lede">
+      How to actually wire your stack to produce cost per accepted change every window without rebuilding observability from scratch. Organized by numerator component, with a minimum-viable pipeline at the end.
+    </p>
+
+    <aside class="sidebar">
+      <span class="label">The two paths</span>
+      <p style="margin: 0;">
+        <strong>Minimum viable</strong> setup uses spreadsheets, billing dashboards, and a handful of <code>gh</code> CLI scripts. You can have a defensible first measurement in a day. <strong>Production</strong> setup adds an LLM proxy, conventional-commits enforcement, ticket linkage, and a scheduled pipeline. Aim for minimum viable for the pilot; promote to production once the metric is part of recurring leadership review.
+      </p>
+    </aside>
+
+    <h2 class="no-rule">1. Model cost</h2>
+    <p>
+      The single most leveraged instrumentation choice. Without per-team or per-commit attribution, you can only allocate aggregate model spend by head-count or guess.
+    </p>
+
+    <h3>Minimum viable</h3>
+    <ul>
+      <li><strong>One API key per team.</strong> Most providers (Anthropic, OpenAI, Google) let you create multiple keys per workspace; bills are itemized per key. This single change gets you per-team model cost with zero proxy infrastructure.</li>
+      <li><strong>Pull billing monthly</strong> from the provider's billing dashboard or API. Anthropic exposes usage via the Console API; OpenAI via the Usage API; Google via Cloud Billing.</li>
+      <li><strong>Allocate to teams</strong> by key. Done.</li>
+    </ul>
+
+    <h3>Production</h3>
+    <p>Run an LLM proxy in front of every provider call. The proxy adds: per-request logging, custom tags, retries, budgets, and cache analytics — the data you need to debug a moving model-cost component.</p>
+    <ul>
+      <li><strong><a href="https://github.com/BerriAI/litellm">LiteLLM</a></strong> — most popular open-source option. Routes to 100+ providers, supports per-key budgets, ships with a usage dashboard, runs as a Python/Docker service.</li>
+      <li><strong><a href="https://helicone.ai">Helicone</a></strong> — managed proxy + observability. Generous free tier, clean UI for cost attribution and tagging. Lowest-effort option.</li>
+      <li><strong><a href="https://github.com/traceloop/openllmetry">OpenLLMetry</a></strong> — OpenTelemetry instrumentation. Lower-level; pipes to your existing observability stack (Datadog, Honeycomb, Grafana) without a new dashboard.</li>
+      <li><strong><a href="https://portkey.ai">Portkey</a></strong> — managed gateway with prompt management, caching, and usage tracking.</li>
+    </ul>
+
+    <p>Whichever you pick, ensure each request carries tags for: <code>team</code>, <code>project</code> or <code>repo</code>, <code>actor</code> (user or agent), and <code>purpose</code> (e.g., <code>code-gen</code>, <code>review</code>, <code>chat</code>). Without tags, the proxy gives you nicer aggregate data but the same attribution problem.</p>
+
+    <h3>Per-commit attribution</h3>
+    <p>
+      If you want model cost attributed to specific accepted changes, you need to know which commits an LLM touched. <a href="https://github.com/git-ai-project/git-ai">git-ai</a> is the maturing tool here — it links AI-written lines to the agent, model, and transcripts that generated them via a git extension. Combined with provider pricing, this lets you compute the model cost <em>per accepted change unit</em> rather than spread total spend evenly.
+    </p>
+
+    <h2>2. Infrastructure cost</h2>
+    <p>The compute, storage, observability, CI/CD, and agent-runner overhead attributable to producing changes.</p>
+
+    <h3>Minimum viable</h3>
+    <ul>
+      <li>Take your monthly cloud bill, identify the line items that exist to support the dev/CI/agent loop (CI minutes, agent runner VMs, code-search infrastructure, observability for AI-touched services).</li>
+      <li>Allocate to teams by head-count or by team's share of CI minutes. Document the allocation method.</li>
+    </ul>
+
+    <h3>Production</h3>
+    <ul>
+      <li><strong>Cloud cost tagging.</strong> AWS Cost Allocation Tags, GCP Billing Labels, Azure Cost Management tags. Tag every resource with <code>team</code>, <code>project</code>, <code>purpose</code>. Without tags, attribution is guesswork.</li>
+      <li><strong><a href="https://www.finops.org/">FinOps Foundation</a> tooling.</strong> CloudHealth, Vantage, Apptio Cloudability — built for exactly this allocation problem. Most have free tiers for small orgs.</li>
+      <li><strong>CI-specific:</strong> GitHub Actions usage reports (per-repo minute usage), CircleCI insights, Buildkite analytics.</li>
+    </ul>
+
+    <h2>3. Engineering time</h2>
+    <p>The time team members spend specifying, prompting, integrating, and steering AI work, converted to currency at a loaded hourly rate.</p>
+
+    <h3>Minimum viable</h3>
+    <p>Use a <strong>blended fully-loaded rate × planned capacity</strong>. Most organizations already have these numbers for capacity planning:</p>
+    <ul>
+      <li>Loaded hourly rate from finance (salary + benefits + tooling + overhead, divided by working hours)</li>
+      <li>Planned capacity hours per window (e.g., 10 engineers × 4 weeks × 32 hours/week = 1,280 hours)</li>
+      <li>Multiply</li>
+    </ul>
+    <p>This overestimates active delivery time slightly, which is the right direction — it absorbs meetings, interruptions, and the real cost of context-switching.</p>
+
+    <h3>Production</h3>
+    <ul>
+      <li><strong>Time tracking:</strong> Toggl, Harvest, Jira Tempo. High accuracy, high friction; most teams reject this. Use only if your culture already supports it.</li>
+      <li><strong>Calendar-based estimation:</strong> Export team calendars, subtract meetings and PTO from capacity. Better signal than blended capacity; less invasive than time tracking.</li>
+      <li><strong>Issue tracker hours:</strong> If your team estimates issues in hours or story points and tracks completion, you can derive a delivery-hours total per window.</li>
+    </ul>
+
+    <h2>4. Review cost</h2>
+    <p>Time spent reviewing and gating AI-generated work, converted to currency.</p>
+
+    <h3>Minimum viable</h3>
+    <p><strong>Sample a representative week.</strong> Ask reviewers to track time spent on PR reviews for one week. Multiply by 4 (or however many weeks in your window). Adjust for known seasonality. Use the team's blended hourly rate.</p>
+
+    <h3>Production</h3>
+    <ul>
+      <li><strong>GitHub Review timing:</strong> the GitHub Events API and GraphQL API expose PR review timestamps. With a small script, you can compute "time elapsed between PR opened and first review" and "time elapsed during active review." It's not perfect — reviewers don't spend the whole elapsed time actively reviewing — but it's a defensible proxy.</li>
+      <li><strong><a href="https://www.codescene.com/">CodeScene</a>, <a href="https://www.swarmia.com/">Swarmia</a>, <a href="https://linearb.io/">LinearB</a>:</strong> engineering analytics platforms that compute review cycle time as a built-in metric. Useful if you already use one for DORA tracking.</li>
+      <li><strong>Conventional commit type:</strong> if your <code>type:</code> on PRs includes a reviewer-load category, you can weight differently — security or migration PRs cost more reviewer time than a small fix.</li>
+    </ul>
+
+    <h2>5. Rework cost</h2>
+    <p>The trickiest component to instrument, and the one most teams ignore — which is exactly why catching it matters.</p>
+
+    <h3>Mining reverts from git</h3>
+    <p>Three signals to capture, ordered from most reliable to most subjective:</p>
+
+    <p><strong>(a) Explicit <code>git revert</code> commits.</strong> Built-in syntax; commit messages are prefixed <code>Revert "..."</code>.</p>
+<pre><code># All revert commits in a window
+git log --grep='^Revert "' \
+  --since=2026-04-01 --until=2026-04-30 \
+  --pretty=format:'%h %s'
+
+# Or via gh, including the original PR
+gh pr list --state merged \
+  --search 'merged:2026-04-01..2026-04-30 "reverts #" in:body' \
+  --json number,title,body,additions,deletions
+</code></pre>
+
+    <p><strong>(b) PRs labeled as fixes or hotfixes.</strong> Requires team discipline on labels, but very cheap once in place:</p>
+<pre><code>gh pr list --state merged \
+  --search 'merged:2026-04-01..2026-04-30 label:fix,hotfix,bug' \
+  --json number,title,additions,deletions
+</code></pre>
+
+    <p><strong>(c) Conventional Commits.</strong> If your team uses <a href="https://www.conventionalcommits.org/">Conventional Commits</a>, you get free typing of every commit (<code>fix:</code>, <code>revert:</code>, <code>feat:</code>). Parse the merged commit messages:</p>
+<pre><code>git log --since=2026-04-01 --until=2026-04-30 --merges \
+  --pretty=format:'%s' | grep -E '^(fix|revert)(\(.+\))?: '
+</code></pre>
+
+    <p>For each identified revert / fix, capture the hours spent. The cheapest approach is a manual hour estimate per ticket reviewed in the window's quarterly review. The most rigorous is to attach a <code>time-spent</code> field to each fix ticket and roll up automatically.</p>
+
+    <h3>Mining fix tickets from your issue tracker</h3>
+    <p>If your team uses Jira, Linear, or GitHub Issues, fix tickets are usually well-typed:</p>
+    <ul>
+      <li><strong>Jira:</strong> filter by <code>issuetype = Bug</code> and <code>resolved &gt;= 2026-04-01 AND resolved &lt;= 2026-04-30</code>. Pull time-spent via the Tempo or Jira Time Tracking API.</li>
+      <li><strong>Linear:</strong> filter by <code>label IN ('bug', 'fix')</code> and <code>completedAt</code> in the window. Linear's GraphQL API returns time estimates if your team enters them.</li>
+      <li><strong>GitHub Issues:</strong> filter by <code>label:bug</code> closed in window via <code>gh issue list</code>. Estimates are typically not native; require a custom field.</li>
+    </ul>
+
+    <h3>Tying fixes back to the original change</h3>
+    <p>For rigorous attribution, link each fix back to the PR or commit that introduced the defect:</p>
+    <ul>
+      <li><strong>PR template field:</strong> require "Fixes:" or "Reverts:" reference in PR body.</li>
+      <li><strong>Branch naming:</strong> <code>fix/CPAC-123-eng-time-rounding</code> where <code>CPAC-123</code> is the ticket referencing the original change.</li>
+      <li><strong>Conventional commits:</strong> <code>fix(commit-sha-prefix): ...</code>.</li>
+    </ul>
+    <p>Tied fixes let you compute the more rigorous "stayed there" check: each merged PR is examined N days later; if a tied fix was merged within the window, the original is excluded from the denominator and the fix's cost lands in the numerator.</p>
+
+    <h3>The minimum-viable approach</h3>
+    <p>
+      If you have nothing today, start by pulling the revert commits and the bug-labeled PRs in the window, eyeballing each, and assigning a rough hour estimate per fix. A team of 10–30 engineers typically has 5–25 such items in a four-week window; an hour of triage produces a defensible rework-cost number.
+    </p>
+
+    <h2>6. The denominator — accepted change units</h2>
+    <p>The other half of the metric. Pull merged PRs, apply the 500-LOC normalization, filter by the survival window.</p>
+
+    <h3>The recipe</h3>
+<pre><code># Step 1: list merged PRs in the window
+gh pr list --state merged \
+  --search 'merged:2026-04-01..2026-04-30' \
+  --json number,additions,deletions,mergedAt,title --limit 1000 \
+  > merges.json
+
+# Step 2: for each PR, check it hasn't been reverted or fix-followed
+#   within the 30-day survival window. Filter merges.json to surviving PRs.
+
+# Step 3: normalize via the 500-LOC rule
+jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | add' merges.json
+</code></pre>
+
+    <p>The full recipe lives in the <a href="/faq">FAQ</a>; the calculator library exports <a href="https://github.com/brennhill/cost-per-accepted-change/blob/main/src/lib/calculator.ts"><code>normalizeChanges()</code></a> for the LOC step.</p>
+
+    <h2>Putting it together: the monthly pipeline</h2>
+    <p>A minimum-viable monthly script. Cron it for the first of the month, fetching the prior month's data:</p>
+<pre><code>#!/usr/bin/env bash
+# Run on the 1st of every month, computing the prior month's CPAC.
+# Adjust dates and team key for your setup.
+
+WINDOW_START="2026-04-01"
+WINDOW_END="2026-04-30"
+TEAM_KEY="my-team"
+HOURLY_RATE=150
+
+# 1. Model cost — pull from your provider's billing API for $TEAM_KEY
+MODEL_COST=$(curl -s ".../usage?key=$TEAM_KEY&start=$WINDOW_START&end=$WINDOW_END" | jq '.cost_usd')
+
+# 2. Infra cost — pull from cloud billing tagged with team=$TEAM_KEY
+INFRA_COST=$(aws ce get-cost-and-usage ... | jq '.ResultsByTime[0].Total.AmortizedCost.Amount')
+
+# 3. Engineering time — blended rate × planned capacity
+ENG_HOURS=1280   # 10 engineers × 4 weeks × 32h
+ENG_COST=$((ENG_HOURS * HOURLY_RATE))
+
+# 4. Review cost — sample week × 4
+REVIEW_HOURS=40   # from sampled week
+REVIEW_COST=$((REVIEW_HOURS * HOURLY_RATE))
+
+# 5. Rework cost — fix and revert PRs × rough estimate
+REWORK_HOURS=$(gh pr list --search "merged:$WINDOW_START..$WINDOW_END label:fix,hotfix,revert" \
+  --json number | jq 'length * 2')   # rough: 2h per fix on average
+REWORK_COST=$((REWORK_HOURS * HOURLY_RATE))
+
+# 6. Accepted change units — gh + jq + ceil
+UNITS=$(gh pr list --state merged --search "merged:$WINDOW_START..$WINDOW_END" \
+  --json additions,deletions --limit 1000 \
+  | jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | add')
+
+# 7. Compute and report
+TOTAL=$((MODEL_COST + INFRA_COST + ENG_COST + REVIEW_COST + REWORK_COST))
+echo "Window: $WINDOW_START to $WINDOW_END"
+echo "Model:    \$$MODEL_COST"
+echo "Infra:    \$$INFRA_COST"
+echo "Eng:      \$$ENG_COST"
+echo "Review:   \$$REVIEW_COST"
+echo "Rework:   \$$REWORK_COST"
+echo "Total:    \$$TOTAL"
+echo "Units:    $UNITS"
+echo "CPAC:     \$$((TOTAL / UNITS))"
+</code></pre>
+
+    <p>
+      Append the output as a row in the <a href="/templates/cpac-tracker.xlsx" download>tracker spreadsheet</a> and you have a defensible monthly time series. Refine each step over time as the metric proves its value.
+    </p>
+
+    <h2>Honest caveats</h2>
+    <ul>
+      <li><strong>Survival-window logic adds reporting lag.</strong> With a 30-day window, you cannot fully compute April until at least May 31, because the last April merges need to season. Plan the pipeline accordingly.</li>
+      <li><strong>Rework attribution is the weakest link.</strong> No automation will catch silent reworks done by branching off the original and quietly fixing without a referenced ticket. Pair instrumentation with a quarterly retrospective that asks the team "what didn't we capture?"</li>
+      <li><strong>Hourly rates are political.</strong> Get finance to bless the rate on day one. Disputes about the rate kill more measurement programs than any technical limitation.</li>
+      <li><strong>Cache-hit rates can swing model cost dramatically.</strong> If you're trending model cost over time, also track cache hit rate as a leading indicator — a quiet cache config change can move the cost component without any change in delivery system behavior.</li>
+    </ul>
+
+    <p>
+      For the broader operational guidance (who runs the measurement, how often, what to report), see the <a href="/start">quick-start playbook</a>. For where to push back on common critiques of the metric, see the <a href="/measurement">measurement comparison page</a>.
+    </p>
+
+    <hr />
+
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      Found a better tool or a sharper script for any of these components? Open an issue at <a href="https://github.com/brennhill/cost-per-accepted-change/issues">the repo</a>. The most useful updates to this page come from teams sharing what they built.
+    </p>
+  </article>
+</BaseLayout>
