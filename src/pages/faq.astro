@@ -53,6 +53,60 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       The unit is less important than the consistency. Whatever you pick, document it and stick with it. Switching units mid-window inflates or deflates the result.
     </p>
 
+    <h2>How do I count lines changed from git?</h2>
+    <p>
+      Git's built-in tools handle this directly. Nothing third-party has displaced them for this specific job.
+    </p>
+
+    <h3>The aggregate, between two refs</h3>
+<pre><code>git diff --shortstat A..B
+# 47 files changed, 1832 insertions(+), 614 deletions(-)
+
+git diff --numstat A..B
+# &lt;additions&gt; &lt;deletions&gt; &lt;path&gt;     (machine-readable, one row per file)
+</code></pre>
+
+    <h3>Per-commit, across a date window</h3>
+<pre><code>git log --since=2026-04-01 --until=2026-04-30 \
+  --pretty=tformat: --numstat \
+  | awk '&#123;add+=$1; del+=$2&#125; END &#123;print add+del&#125;'
+</code></pre>
+
+    <h3>Per-PR via the GitHub CLI (recommended for normalization)</h3>
+    <p>
+      The PR is the right unit for the 500-LOC normalization rule. The GitHub CLI returns one number per PR, which is exactly what the calculator library's <a href="https://github.com/brennhill/cost-per-accepted-change/blob/main/src/lib/calculator.ts"><code>normalizeChanges()</code></a> helper expects:
+    </p>
+<pre><code>gh pr list --state merged \
+  --search 'merged:2026-04-01..2026-04-30' \
+  --json number,additions,deletions --limit 1000
+</code></pre>
+
+    <p>One-liner that produces the normalized accepted-change unit count for the window:</p>
+<pre><code>gh pr list --state merged --search 'merged:2026-04-01..2026-04-30' \
+  --json additions,deletions --limit 1000 \
+  | jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | add'
+</code></pre>
+
+    <h3>Excluding vendored, generated, lockfiles</h3>
+    <p>Required for any defensible CPAC submission. Two approaches:</p>
+<pre><code># Pathspec exclusions on the diff itself
+git diff --numstat A..B -- \
+  ':!vendor/**' ':!**/*.lock' ':!**/dist/**' ':!**/*.generated.*'
+
+# Or mark in .gitattributes — GitHub's API honors these for PR stats
+vendor/**         linguist-vendored
+dist/**           linguist-generated
+**/*.generated.*  linguist-generated
+</code></pre>
+
+    <h3>Other tools worth knowing about</h3>
+    <p>
+      <strong>cloc</strong>, <strong>scc</strong>, and <strong>tokei</strong> are excellent for total LOC snapshots by language but are not range-aware in the way diff calculations need. <strong>cloc</strong> does have a <code>--diff</code> mode for comparing two refs that excludes comments and whitespace, which can be useful if you want a stricter denominator than raw added+deleted. <strong>git-quick-stats</strong> and <strong>gitfame</strong> answer related but different questions (per-author dashboards, authorship attribution) and are not the right tools for computing CPAC inputs.
+    </p>
+    <p>
+      For repositories not hosted on GitHub, use <code>git log --numstat</code> with a per-commit aggregator and pipe the per-PR (or per-merge) line counts through the <code>normalizeChanges()</code> helper.
+    </p>
+
     <h2>What does "stayed there" mean?</h2>
     <p>
       A change has stayed in production if, by the end of the measurement window, it has not been:
