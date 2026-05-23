@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="How teams measure AI cost"
+  description="A survey of the metrics teams use to measure AI in software delivery — what each captures, what each misses, and where cost per accepted change fits."
+  path="/measurement"
+>
+  <article class="page">
+    <p class="eyebrow">A survey</p>
+    <h1>How teams measure AI cost</h1>
+    <p class="lede">
+      Every team trying to measure AI in their delivery pipeline ends up choosing among a handful of approaches. Most are partial. This page walks the landscape, what each option captures, what each misses, and where cost per accepted change fits.
+    </p>
+
+    <aside class="sidebar">
+      <span class="label">In short</span>
+      <p style="margin: 0;">
+        No single existing metric captures the fully-loaded cost of producing trusted software with AI. Token cost ignores review. Volume metrics ignore rework. DORA describes behavior, not cost. Self-reported productivity surveys are unreliable — especially for senior engineers. <strong>Cost per accepted change is the bottom-line outcome metric;</strong> the others are leading indicators that explain it.
+      </p>
+    </aside>
+
+    <h2 class="no-rule">The eight approaches in current use</h2>
+
+    <h3>1. Token / API cost</h3>
+    <p>
+      The most direct cost signal: how much you spend on the LLM provider per period. Promoted by <a href="https://www.finops.org/">the FinOps Foundation</a> as the entry-level AI cost metric, and surfaced by every major model vendor.
+    </p>
+    <p>
+      <strong>What it catches:</strong> raw model spend; runaway agents; per-feature unit economics.<br>
+      <strong>What it misses:</strong> the labor cost of producing and reviewing the work the model generates; the cost of rework when it ships defects. Token cost is a real input to delivery cost, but never the whole picture.
+    </p>
+
+    <h3>2. Volume metrics: lines of code, PRs merged, commits</h3>
+    <p>
+      The default in many engineering analytics products. "AI code share" — the percentage of merged code attributed to AI suggestions — is a 2024–2026 variant.
+    </p>
+    <p>
+      <strong>What it catches:</strong> activity. Easy to compute, easy to chart.<br>
+      <strong>What it misses:</strong> everything that matters. PR count rises with AI even when delivered value does not; "AI code share" can rise while quality and stability fall. These are vanity metrics. They are also the metrics most commonly cited in vendor marketing.
+    </p>
+
+    <h3>3. Acceptance rate</h3>
+    <p>
+      The fraction of AI suggestions that a developer accepts. Tracked by Copilot, Cursor, and most other coding assistants. Often reported alongside "characters inserted from AI."
+    </p>
+    <p>
+      <strong>What it catches:</strong> short-term developer agreement with the model. A useful product-engineering signal for vendors.<br>
+      <strong>What it misses:</strong> whether the accepted suggestion survived review, whether it shipped, whether it caused a defect three days later. Acceptance is a leading indicator; it is not an outcome.
+    </p>
+
+    <h3>4. DORA Four Keys</h3>
+    <p>
+      Deployment frequency, lead time for changes, change failure rate, and time to restore. Defined by <a href="https://dora.dev/">DORA</a>; popularized by <em>Accelerate</em> (Forsgren, Humble, Kim, 2018) and the annual State of DevOps reports.
+    </p>
+    <p>
+      <strong>What it catches:</strong> how a delivery system <em>behaves</em>. Industry-standard, well-defended, mature instrumentation.<br>
+      <strong>What it misses:</strong> what that behavior <em>costs</em>. A team can have excellent DORA numbers and a terrible cost picture if velocity is bought with disproportionate review and rework — exactly the AI-augmented failure mode. DORA and CPAC are complementary.
+    </p>
+
+    <h3>5. SPACE framework</h3>
+    <p>
+      Satisfaction, Performance, Activity, Communication, Efficiency. A multi-dimensional developer-productivity framework from Microsoft Research and GitHub (Forsgren, Storey, Maddila, Zimmermann, Houck, Butler, 2021).
+    </p>
+    <p>
+      <strong>What it catches:</strong> a balanced view of productivity that resists single-metric gaming.<br>
+      <strong>What it misses:</strong> a unit-cost number a CFO can act on. SPACE is the right framing for developer experience research; it is not a finance-facing metric.
+    </p>
+
+    <h3>6. DevEx scores</h3>
+    <p>
+      Developer Experience surveys — pulse scores on flow, feedback loops, and cognitive load. Promoted by <a href="https://getdx.com/">DX</a>, <a href="https://www.faros.ai/">Faros</a>, and others; aligned with the SPACE tradition.
+    </p>
+    <p>
+      <strong>What it catches:</strong> friction and toil. Strong leading indicator of attrition and burnout. Useful for diagnosing where AI tooling is helping or hurting team experience.<br>
+      <strong>What it misses:</strong> dollars. DevEx data tells you where to invest; it does not tell you what your AI program costs per unit of delivered value.
+    </p>
+
+    <h3>7. Self-reported productivity surveys</h3>
+    <p>
+      "How much faster are you with AI?" — surveyed by BCG, McKinsey, GitHub Octoverse, Stack Overflow's annual developer survey, and others. Headline numbers in this category are commonly in the 20–55% range.
+    </p>
+    <p>
+      <strong>What it catches:</strong> sentiment, perception, what teams will <em>say</em> about AI.<br>
+      <strong>What it misses:</strong> reality. Independent studies have found that experienced developers <em>self-report</em> a ~20% speedup from AI tools while <em>actually being</em> ~19% slower (METR, 2025) — a perception-reality gap large enough to invert the conclusion. Self-report is not a measurement; it is a hypothesis.
+    </p>
+
+    <h3>8. FinOps cost-to-serve</h3>
+    <p>
+      The unit cost of <em>running</em> software — cost per request, per active user, per transaction. The mature, board-defensible discipline of cloud cost management. See <a href="https://www.finops.org/">the FinOps Foundation</a>.
+    </p>
+    <p>
+      <strong>What it catches:</strong> operational unit economics, well-instrumented and well-understood.<br>
+      <strong>What it misses:</strong> the cost of <em>producing</em> the software. FinOps measures the right side of the deployment boundary; cost per accepted change measures the left.
+    </p>
+
+    <h2>Where cost per accepted change fits</h2>
+    <p>
+      Cost per accepted change does not replace any of the metrics above. It sits one layer above them:
+    </p>
+
+    <ul>
+      <li><strong>Token cost</strong> is a numerator input.</li>
+      <li><strong>Volume metrics</strong> are the misleading shadow CPAC is designed to correct.</li>
+      <li><strong>Acceptance rate</strong> is a leading indicator that should correlate with CPAC over time.</li>
+      <li><strong>DORA</strong> tells you whether your delivery system is fast and stable; CPAC tells you what that costs.</li>
+      <li><strong>SPACE and DevEx</strong> are diagnostic; CPAC is the bottom line.</li>
+      <li><strong>Productivity surveys</strong> are aspirational; CPAC is observable.</li>
+      <li><strong>FinOps cost-to-serve</strong> is its downstream sibling. CPAC is the same discipline, applied one layer upstream.</li>
+    </ul>
+
+    <p>
+      The right operating posture is to <strong>report cost per accepted change as the headline number</strong> and pair it with two or three of these leading indicators for diagnosis. Without CPAC, the indicators do not roll up to anything a CFO can act on. Without the indicators, CPAC moves without explaining why.
+    </p>
+
+    <h2>Defending the choices behind the formula</h2>
+
+    <h3>Why "accepted" rather than "merged"</h3>
+    <p>
+      A merged pull request is not a unit of value if it gets reverted next week. "Merged" describes the moment the diff landed; "accepted" requires that the diff stayed in production through the measurement window. The denominator should reflect the work that <em>kept</em>, not the work that <em>was attempted</em>.
+    </p>
+
+    <h3>Why "and stayed there"</h3>
+    <p>
+      Without this clause, CPAC could be gamed by shipping recklessly and counting every merge. With it, the metric self-corrects: silent escapes that get quietly fixed are excluded from the denominator <em>and</em> their fix cost is added to the numerator. This is the rework defense, built into the metric instead of bolted on.
+    </p>
+
+    <h3>Why all five cost components, not just model cost</h3>
+    <p>
+      Model cost is a small fraction of total delivery cost in most organizations. Engineering and review time dominate the numerator. A "cost per change" metric that only counts model spend would understate the true cost by an order of magnitude — and would let teams optimize for the wrong thing.
+    </p>
+
+    <h3>Why "per change" and not "per developer-hour"</h3>
+    <p>
+      Developer-hours are an input. Accepted changes are an output. Cost-per-output is the right shape for a metric that asks "is this investment paying off?" Cost-per-input answers a different, more inward-facing question and is more easily gamed by changing how time is counted.
+    </p>
+
+    <h3>Why not a productivity index that combines several signals</h3>
+    <p>
+      Composite indices look defensible and rarely are: every weighting choice is contested, every component drifts, and the index is hard to explain. CPAC is one number with a known formula. It is easy to recompute, easy to compare, and easy to challenge — three properties an index does not have.
+    </p>
+
+    <h2>Common critiques, addressed</h2>
+
+    <h3>"Acceptance is not correctness."</h3>
+    <p>
+      True. CPAC's defense is the <strong>"stayed there" window</strong>: lengthening the window catches more silent escapes; counting fix-up cost in the numerator catches the rest. CPAC is a defensible proxy for correctness, not a claim of perfect correctness. See the <a href="/faq">FAQ</a> for window selection guidance.
+    </p>
+
+    <h3>"This punishes ambitious teams."</h3>
+    <p>
+      It does the opposite. A team that ships ambitious work that survives in production gets a lower CPAC than a team that ships timid work that gets reverted. The metric rewards <em>kept</em> ambition.
+    </p>
+
+    <h3>"What about value, not just cost?"</h3>
+    <p>
+      Value is captured upstream of CPAC, by what teams choose to work on, and downstream of CPAC, by FinOps cost-to-serve and revenue analytics. CPAC is the production-cost layer in between. It does not claim to be the only number on the dashboard.
+    </p>
+
+    <h3>"This is just <em>X</em> renamed."</h3>
+    <p>
+      It is not. None of the eight approaches above carries all five cost components in the numerator, the "stayed there" clause in the denominator, and the unit-output shape that maps directly to FinOps. If it were already named, the cost-management conversation around AI would look very different than it does in 2026.
+    </p>
+
+    <hr />
+
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      Disagree with anything on this page? Open an issue at <a href="https://github.com/brennhill/cost-per-accepted-change/issues">github.com/brennhill/cost-per-accepted-change/issues</a>. Refinements, alternative framings, and additional approaches to survey are all welcome.
+    </p>
+  </article>
+</BaseLayout>

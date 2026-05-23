@@ -318,6 +318,51 @@ footer.site a:hover {
   margin-bottom: 0.4em;
 }
 
+/* === Sidebar / aside === */
+
+.sidebar {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 1.1em 1.3em 1.2em;
+  margin: 2em 0;
+  border-radius: 2px;
+  font-size: 0.95rem;
+}
+
+.sidebar .label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 0.8em;
+}
+
+.sidebar h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.8em;
+  font-weight: 600;
+}
+
+.sidebar ul {
+  padding-left: 1.1em;
+  margin: 0;
+}
+
+.sidebar li {
+  margin: 0.45em 0;
+  line-height: 1.5;
+}
+
+.sidebar .footnote {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  margin: 0.9em 0 0;
+}
+
 /* === Calculator form === */
 
 .calc-form {
