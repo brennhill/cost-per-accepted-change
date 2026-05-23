@@ -135,6 +135,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       Developer-hours are an input. Accepted changes are an output. Cost-per-output is the right shape for a metric that asks "is this investment paying off?" Cost-per-input answers a different, more inward-facing question and is more easily gamed by changing how time is counted.
     </p>
 
+    <h3>Why a 500-line normalization on "change"</h3>
+    <p>
+      Without size-normalization, the denominator could be gamed in either direction. A team shipping one massive 5,000-line merge as a single "accepted change" would be credited the same denominator as a team shipping a 100-line bug fix — even though the former is an order of magnitude more accepted work. Conversely, a team could inflate its denominator by splitting trivial changes into ever-smaller PRs.
+    </p>
+    <p>
+      The 500-line threshold cuts both knots and is grounded in <strong>what humans can actually verify</strong>: reviewer comprehension, defect-detection, and the willingness to leave substantive comments all drop sharply past about 400 lines in a single PR. 500 lines is a clean round number that sits just past that cliff, providing a sane buffer while remaining recognizably "one substantial change" in most engineering cultures.
+    </p>
+    <p>
+      A PR of 1–500 lines counts as 1 unit; a larger PR of <em>N</em> lines counts as ⌈ N / 500 ⌉ units. The rule applies uniformly to AI-assisted and non-AI work so comparisons remain meaningful. See the <a href="/faq">FAQ</a> for examples.
+    </p>
+
     <h3>Why not a productivity index that combines several signals</h3>
     <p>
       Composite indices look defensible and rarely are: every weighting choice is contested, every component drifts, and the index is hard to explain. CPAC is one number with a known formula. It is easy to recompute, easy to compare, and easy to challenge — three properties an index does not have.

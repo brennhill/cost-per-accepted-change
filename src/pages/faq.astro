@@ -12,7 +12,42 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <h2 class="no-rule">What counts as a change?</h2>
     <p>
-      The default unit is a <strong>merged commit to the production branch</strong>. Teams can substitute another unit — accepted pull request, deployed increment, or shipped feature flag — as long as it is applied consistently across the measurement window and across the baseline.
+      The default unit is a <strong>merged commit to the production branch</strong>, normalized by size so that one accepted change unit represents a comparable amount of substantive accepted work.
+    </p>
+
+    <p>The size-normalization rule:</p>
+    <ul>
+      <li>A merged PR or commit of <strong>1–500 lines changed</strong> counts as <strong>1 unit</strong>.</li>
+      <li>A larger merge of <em>N</em> lines changed counts as <strong>⌈ N / 500 ⌉ units</strong>.</li>
+    </ul>
+
+    <p>Examples:</p>
+    <table>
+      <thead>
+        <tr><th>Lines changed</th><th>Accepted change units</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>120</td><td>1</td></tr>
+        <tr><td>500</td><td>1</td></tr>
+        <tr><td>800</td><td>2</td></tr>
+        <tr><td>1,800</td><td>4</td></tr>
+        <tr><td>5,000</td><td>10</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      "Lines changed" is the sum of additions and deletions, <strong>excluding vendored code, generated code, lockfiles, and bulk imports</strong>. Document any further exclusions when you publish or submit a number.
+    </p>
+
+    <p>Why the 500-line threshold:</p>
+    <ul>
+      <li><strong>It tracks human verification capacity.</strong> Reviewer comprehension, defect-detection, and the willingness to leave substantive comments all drop sharply past about 400 lines in a single PR. 500 lines is a clean round number that sits just past that cliff, providing a small buffer while remaining recognizably "one substantial change" in most engineering cultures.</li>
+      <li><strong>It catches the mega-merge.</strong> Without normalization, a team shipping one 5,000-line merge as a single "accepted change" gets the same denominator credit as a team shipping one 100-line bug fix — even though the former is an order of magnitude more accepted work.</li>
+      <li><strong>It blocks the over-split gaming.</strong> Without a minimum unit size, teams could inflate the denominator by chopping trivial work into ever-smaller PRs. Below 500 lines, splitting buys no extra credit.</li>
+    </ul>
+
+    <p>
+      Teams may substitute another unit — accepted PR, deployed increment, shipped feature flag — as long as the size-normalization principle is preserved and applied consistently across the measurement window and across the baseline.
     </p>
     <p>
       The unit is less important than the consistency. Whatever you pick, document it and stick with it. Switching units mid-window inflates or deflates the result.
@@ -45,6 +80,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </p>
     <p>
       Report CPAC for the same window length consistently. Quarter-over-quarter comparisons are sound; quarter-versus-sprint comparisons are not.
+    </p>
+
+    <h2>How do I track model cost per change?</h2>
+    <p>
+      The numerator's model-cost component is straightforward at the aggregate level — your LLM provider's billing dashboard gives you a monthly total. The harder part is <strong>attributing that spend to specific accepted changes</strong>, which is what lets you compare AI-assisted and non-AI work fairly.
+    </p>
+    <p>
+      One useful tool here is <a href="https://github.com/git-ai-project/git-ai">git-ai</a> — a Git extension that automatically links every AI-written line to the agent, model, and transcripts that generated it. Combined with provider pricing, that lets you derive model spend per merged change rather than spreading total spend evenly across the team's output.
+    </p>
+    <p>
+      For teams without per-change attribution, a reasonable starting approach is to allocate the period's total model spend proportionally to AI-touched changes (as identified by your tooling or a survey of authors). Document the allocation method when you publish a number.
     </p>
 
     <h2>How do I value engineering and review time?</h2>

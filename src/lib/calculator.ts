@@ -107,3 +107,46 @@ export function formatCurrency(value: number, currency = 'USD', locale = 'en-US'
     maximumFractionDigits: 2,
   }).format(value);
 }
+
+/**
+ * A single merged change to be counted toward the denominator.
+ * `linesChanged` is additions + deletions, excluding vendored / generated / lockfiles.
+ */
+export interface ChangeRecord {
+  linesChanged: number;
+}
+
+/**
+ * Default chunking threshold for size-normalization.
+ * A merged change of 1–CHANGE_UNIT_LINES lines counts as 1 unit;
+ * a larger change of N lines counts as ceil(N / CHANGE_UNIT_LINES) units.
+ */
+export const CHANGE_UNIT_LINES = 500;
+
+/**
+ * Normalize a list of accepted changes into accepted-change units.
+ *
+ * Each change contributes max(1, ceil(linesChanged / threshold)) units.
+ * Non-positive or non-finite line counts are skipped.
+ *
+ * @example
+ *   normalizeChanges([{linesChanged: 250}, {linesChanged: 1800}])
+ *   // => 5  (250→1 unit, 1800→4 units)
+ */
+export function normalizeChanges(
+  changes: readonly ChangeRecord[],
+  threshold: number = CHANGE_UNIT_LINES,
+): number {
+  if (!Number.isFinite(threshold) || threshold <= 0) {
+    throw new InvalidCPACInputError(
+      `threshold must be a positive number; received ${threshold}`,
+    );
+  }
+  let units = 0;
+  for (const change of changes) {
+    const loc = change.linesChanged;
+    if (!Number.isFinite(loc) || loc <= 0) continue;
+    units += Math.max(1, Math.ceil(loc / threshold));
+  }
+  return units;
+}

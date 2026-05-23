@@ -65,7 +65,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </tbody>
     </table>
 
-    <p>The denominator is the count of changes that reached production <strong>and stayed there</strong> during the same window.</p>
+    <p>The denominator is the count of <strong>accepted change units</strong>: changes that reached production and stayed there during the same window, size-normalized so one unit represents a comparable amount of substantive work. A PR of 1–500 lines counts as 1 unit; a larger PR of <em>N</em> lines counts as ⌈ N / 500 ⌉ units. See the <a href="/faq">FAQ</a> for the rule in detail.</p>
 
     <h2>A worked example</h2>
     <p>A 10-engineer team measures a four-week window. Loaded engineering time is $150/hour.</p>
@@ -78,13 +78,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <tr><td>Review cost (40 hours × $150)</td><td>$6,000</td></tr>
         <tr><td>Rework cost (16 hours × $150)</td><td>$2,400</td></tr>
         <tr><th>Total cost</th><th>$28,000</th></tr>
-        <tr><td>Accepted changes (merged + stayed in production)</td><td>42</td></tr>
+        <tr><td>Merged PRs that stayed in production</td><td>38</td></tr>
+        <tr><td>After 500-LOC normalization (one PR was 1,800 lines = 4 units; three were 600–1,000 lines = 2 units each)</td><td><strong>42 accepted change units</strong></td></tr>
         <tr><th>Cost per accepted change</th><th>$666.67</th></tr>
       </tbody>
     </table>
 
     <p>
-      That number, reported alongside the volume of activity, is what reveals whether AI is paying for itself. A team shipping 200 PRs but accepting only 42 has a very different CPAC than a team shipping 50 PRs and accepting 42 — and the difference is invisible to traditional velocity metrics.
+      That number, reported alongside the volume of activity, is what reveals whether AI is paying for itself. A team shipping 200 PRs but accepting only 42 units has a very different result than a team shipping 50 PRs and accepting 42 units — and the difference is invisible to traditional velocity metrics.
     </p>
 
     <p style="margin-top: 2em;">
