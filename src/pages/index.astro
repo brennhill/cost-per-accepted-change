@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CPACGraphic from '../components/CPACGraphic.astro';
+import VerificationTriangle from '../components/VerificationTriangle.astro';
 ---
 <BaseLayout
   title="Cost per accepted change"
@@ -13,11 +15,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       The fully-loaded cost of producing software that reaches production and stays there, divided by the number of changes that do.
     </p>
 
-    <div class="formula" aria-label="Cost per accepted change formula">
-      <span class="num">(model cost + infrastructure cost + engineering time + review cost + rework cost)</span>
-      <span class="bar"></span>
-      <span class="den">accepted changes</span>
-      <span class="label">Cost per accepted change</span>
+    <div class="cpac-graphic-wrap">
+      <CPACGraphic width={600} />
     </div>
 
     <div class="callout">
@@ -109,8 +108,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </ul>
 
     <h2>Origin</h2>
+    <div class="triangle-wrap">
+      <VerificationTriangle highlight="cost" size={260} />
+      <p class="caption">
+        Cost is the third vertex of the Verification Triangle. Intent clarity and eval quality describe whether the team is building the right thing well; cost describes what it took to get there.
+      </p>
+    </div>
     <p>
-      Cost per accepted change was defined in <a href="https://www.amazon.com/Delivery-Gap-Adoption-Engineering-Leaders-ebook/dp/B0GWRY2XH1/"><em>The Delivery Gap</em></a> (Brenn Hill, 2026) as the cost vertex of the Verification Triangle. See <a href="/cite">how to cite</a>, or read more at <a href="https://aiaugmenteddevelopment.com">aiaugmenteddevelopment.com</a>.
+      Cost per accepted change was defined in <a href="https://www.amazon.com/Delivery-Gap-Adoption-Engineering-Leaders-ebook/dp/B0GWRY2XH1/"><em>The Delivery Gap</em></a> (Brenn Hill, 2026) as the cost vertex of that framework. See <a href="/cite">how to cite</a>, or subscribe at <a href="https://brennhill.substack.com">brennhill.substack.com</a>.
     </p>
 
     <hr />

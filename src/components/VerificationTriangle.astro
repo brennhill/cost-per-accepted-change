@@ -1,0 +1,110 @@
+---
+interface Props {
+  highlight?: 'intent' | 'eval' | 'cost';
+  size?: number;
+  class?: string;
+}
+
+const { highlight = 'cost', size = 240, class: className } = Astro.props;
+const titleMap = {
+  intent: 'Verification Triangle — intent clarity highlighted',
+  eval: 'Verification Triangle — eval quality highlighted',
+  cost: 'Verification Triangle — cost vertex highlighted',
+};
+---
+<svg
+  width={size}
+  height={Math.round(size * 0.92)}
+  viewBox="0 0 240 220"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={titleMap[highlight]}
+  class={className}
+>
+  <title>{titleMap[highlight]}</title>
+  <!-- Triangle edges (drawn as three separate lines so we can style them) -->
+  <line x1="120" y1="34" x2="34" y2="180" stroke="currentColor" stroke-width="1.4" opacity="0.55" />
+  <line x1="120" y1="34" x2="206" y2="180" stroke="currentColor" stroke-width="1.4" opacity="0.55" />
+  <line x1="34" y1="180" x2="206" y2="180" stroke="currentColor" stroke-width="1.4" opacity="0.55" />
+
+  <!-- Intent vertex (top) -->
+  <circle
+    cx="120"
+    cy="34"
+    r={highlight === 'intent' ? 10 : 5}
+    fill={highlight === 'intent' ? 'currentColor' : 'transparent'}
+    stroke="currentColor"
+    stroke-width="1.6"
+  />
+  <text
+    x="120"
+    y="20"
+    text-anchor="middle"
+    font-family="Iowan Old Style, Charter, Georgia, serif"
+    font-size="13"
+    font-weight="600"
+    fill="currentColor"
+  >Intent clarity</text>
+
+  <!-- Eval vertex (bottom-left) -->
+  <circle
+    cx="34"
+    cy="180"
+    r={highlight === 'eval' ? 10 : 5}
+    fill={highlight === 'eval' ? 'currentColor' : 'transparent'}
+    stroke="currentColor"
+    stroke-width="1.6"
+  />
+  <text
+    x="34"
+    y="204"
+    text-anchor="middle"
+    font-family="Iowan Old Style, Charter, Georgia, serif"
+    font-size="13"
+    font-weight="600"
+    fill="currentColor"
+  >Eval quality</text>
+
+  <!-- Cost vertex (bottom-right) -->
+  <circle
+    cx="206"
+    cy="180"
+    r={highlight === 'cost' ? 10 : 5}
+    fill={highlight === 'cost' ? 'currentColor' : 'transparent'}
+    stroke="currentColor"
+    stroke-width="1.6"
+  />
+  <text
+    x="206"
+    y="204"
+    text-anchor="middle"
+    font-family="Iowan Old Style, Charter, Georgia, serif"
+    font-size="13"
+    font-weight="600"
+    fill="currentColor"
+  >Cost</text>
+
+  <!-- Centered framework label -->
+  <text
+    x="120"
+    y="118"
+    text-anchor="middle"
+    font-family="Helvetica, sans-serif"
+    font-size="9"
+    font-weight="600"
+    letter-spacing="2"
+    fill="currentColor"
+    opacity="0.55"
+  >THE VERIFICATION</text>
+  <text
+    x="120"
+    y="132"
+    text-anchor="middle"
+    font-family="Helvetica, sans-serif"
+    font-size="9"
+    font-weight="600"
+    letter-spacing="2"
+    fill="currentColor"
+    opacity="0.55"
+  >TRIANGLE</text>
+</svg>

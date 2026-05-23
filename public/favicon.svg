@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#fbfaf6"/>
-  <line x1="6" y1="16" x2="26" y2="16" stroke="#7a1d1d" stroke-width="2" stroke-linecap="round"/>
-  <text x="16" y="13" text-anchor="middle" font-family="Georgia, serif" font-size="9" font-weight="600" fill="#1a1a1a">$</text>
-  <text x="16" y="26" text-anchor="middle" font-family="Georgia, serif" font-size="9" font-weight="600" fill="#1a1a1a">AC</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#fbfaf6"/>
+  <text x="32" y="27" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-weight="600" fill="#7a1d1d">$</text>
+  <line x1="12" y1="33" x2="52" y2="33" stroke="#7a1d1d" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="32" y="53" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="18" font-weight="600" fill="#7a1d1d">AC</text>
 </svg>

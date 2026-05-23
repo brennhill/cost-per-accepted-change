@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Mark from '../components/Mark.astro';
 
 interface Props {
   title: string;
@@ -48,7 +49,10 @@ const nav = [
   <body>
     <header class="site">
       <div class="inner">
-        <a href="/" class="brand">Cost Per Accepted Change</a>
+        <a href="/" class="brand" aria-label="Cost Per Accepted Change — home">
+          <Mark size={30} class="brand-mark" />
+          <span class="brand-text">Cost Per Accepted Change</span>
+        </a>
         <nav>
           {nav.map((item) => (
             <a
@@ -72,7 +76,7 @@ const nav = [
             <a href="https://www.amazon.com/Delivery-Gap-Adoption-Engineering-Leaders-ebook/dp/B0GWRY2XH1/"><em>The Delivery Gap</em></a>.
           </span>
           <span class="footer-meta">
-            More writing at <a href="https://aiaugmenteddevelopment.com">aiaugmenteddevelopment.com</a>.
+            Subscribe at <a href="https://brennhill.substack.com">brennhill.substack.com</a>.
           </span>
         </div>
         <div class="col col-right">

@@ -173,6 +173,24 @@ header.site .brand {
   color: var(--ink);
   text-decoration: none;
   letter-spacing: -0.005em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  line-height: 1;
+}
+
+header.site .brand-mark {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+header.site .brand:hover .brand-mark {
+  color: var(--ink);
+  transition: color 0.15s ease;
+}
+
+header.site .brand-text {
+  white-space: nowrap;
 }
 
 header.site nav {
@@ -258,6 +276,47 @@ footer.site a {
 
 footer.site a:hover {
   color: var(--link-hover);
+}
+
+/* === CPAC hero graphic === */
+
+.cpac-graphic {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 2em auto;
+  color: var(--accent);
+}
+
+.cpac-graphic-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 2em 0;
+}
+
+/* === Verification Triangle === */
+
+.verification-triangle {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  color: var(--accent);
+}
+
+.triangle-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.6em 0 2.4em;
+}
+
+.triangle-wrap .caption {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  margin-top: 0.4em;
+  text-align: center;
+  max-width: 30rem;
 }
 
 /* === Formula block === */
