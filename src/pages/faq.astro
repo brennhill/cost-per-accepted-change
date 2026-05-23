@@ -241,6 +241,54 @@ dist/**           linguist-generated
       The token economy is an implementation detail vendors change unilaterally. Cost per accepted change measures the layer above it: the dollar cost of producing software your team actually kept.
     </p>
 
+    <h2>Why track each cost component separately?</h2>
+    <p>
+      The headline cost per accepted change is what you report to the CFO. It is not what you investigate with. You also need to track each of the five numerator components — model, infrastructure, engineering time, review, rework — as its own time series, with absolute values, percent share of total, and Δ vs prior window.
+    </p>
+    <p>
+      The reason is diagnostic: a moving headline tells you something changed; it tells you nothing about <em>what</em>.
+    </p>
+
+    <h3>Worked example: the Claude 4.6 → 4.7 bump</h3>
+    <p>
+      Claude Opus 4.7 launched at the same dollar price per token as 4.6. But 4.7's tokenization consumed roughly <strong>30% more tokens per operation</strong> on identical workloads. For teams that adopted 4.7, the model-cost component in dollars rose ~30% without any change in their own delivery system.
+    </p>
+
+    <p>A team watching only the headline cost per accepted change would have seen one of two equally bad outcomes:</p>
+    <ul>
+      <li><strong>The headline climbs ~30%.</strong> The team faces an unanswerable question — did we get less productive, did the model get more expensive, or did something else degrade? Wasted investigation, missed root cause.</li>
+      <li><strong>The headline stays flat or drops.</strong> 4.7's per-task capability gains were sometimes enough to offset the extra tokens — fewer iterations per accepted change, so net spend stayed flat. The team congratulates itself on AI productivity, never knowing that vendor cost rose 30% and only luck masked it. A signal procurement and leadership needed to hear, missed.</li>
+    </ul>
+
+    <p>
+      With <strong>component-level tracking</strong>, the same scenario reads instantly: model cost up ~30%, all other components flat. The conclusion is immediate — this is an upstream vendor change, not a delivery-system change. Talk to procurement; if you are getting offsetting capability gains, document them; if not, evaluate alternatives.
+    </p>
+
+    <h3>What each component catches that the headline doesn't</h3>
+    <ul>
+      <li><strong>Model cost moving</strong> — vendor pricing change, tokenization shift, model bump, cache hit/miss change, agent strategy change.</li>
+      <li><strong>Infrastructure moving</strong> — observability investment, runner consolidation, CI/CD change.</li>
+      <li><strong>Engineering time moving</strong> — hiring, attrition, role-mix shift, capacity change.</li>
+      <li><strong>Review cost moving</strong> — review-process intervention, PR-sizing change, reviewer experience shift.</li>
+      <li><strong>Rework moving</strong> — quality regression, test-coverage change, gating-policy change, AI scope expanding into riskier code.</li>
+    </ul>
+    <p>
+      A team watching only the headline can see something moved; it cannot tell which lever to pull. A team watching the components can.
+    </p>
+
+    <h3>What to record each window</h3>
+    <p>The XLSX <a href="/templates/cpac-tracker.xlsx" download>tracker template</a> does this automatically. If you build your own dashboard, the minimum row per window is:</p>
+    <ul>
+      <li>Headline cost per accepted change</li>
+      <li>Each of the five cost components, in absolute dollars</li>
+      <li>Each component as a percent of total cost</li>
+      <li>Δ vs prior window for the headline and each component</li>
+      <li>Accepted change unit count</li>
+    </ul>
+    <p>
+      The percent shares are particularly load-bearing: a team where rework has crept from 8% to 18% of total has a very different problem than one where it crept from 8% to 9%, even if the headline moved by the same amount in both cases.
+    </p>
+
     <h2>How do I value engineering and review time?</h2>
     <p>
       Use a fully-loaded hourly rate — salary, benefits, tooling allocation, overhead. Most organizations already have this number for capacity planning. If you do not, $150/hour is a reasonable starting estimate for senior engineers in high-cost markets; adjust to your context.
@@ -269,9 +317,15 @@ dist/**           linguist-generated
       CPAC is FinOps cost-to-serve, moved one layer upstream. FinOps measures the unit cost of <em>running</em> software. CPAC measures the unit cost of <em>producing</em> trusted software. Organizations with mature FinOps practices already have most of the inputs; CPAC just rearranges them around the accepted-change denominator.
     </p>
 
-    <h2>Can I gaze at CPAC alone?</h2>
+    <h2>Can I use cost per accepted change alone?</h2>
     <p>
-      No. CPAC is the bottom-line cost metric. Pair it with <strong>change failure rate</strong>, <strong>lead time to accepted change</strong>, and <strong>machine catch rate</strong> to see the full picture of the Verification Triangle. CPAC alone tells you what the system costs; the others tell you why.
+      No, for two reasons.
+    </p>
+    <p>
+      <strong>First, the headline is a summary — track the components.</strong> Each of the five cost components (model, infrastructure, engineering, review, rework) needs its own time series so you can diagnose what's actually moving when the headline shifts. See the entry on <em>why track each cost component separately</em> above.
+    </p>
+    <p>
+      <strong>Second, pair the headline with at least one leading indicator.</strong> Change failure rate, lead time to accepted change, machine catch rate, or DevEx pulse. The headline tells you the system's cost; the components tell you the source; the leading indicators tell you why.
     </p>
 
     <h2>Where does the metric come from?</h2>
