@@ -289,6 +289,92 @@ dist/**           linguist-generated
       The percent shares are particularly load-bearing: a team where rework has crept from 8% to 18% of total has a very different problem than one where it crept from 8% to 9%, even if the headline moved by the same amount in both cases.
     </p>
 
+    <h2>How do other AI metrics (tokens/sec, cost-per-request, latency) relate to cost per accepted change?</h2>
+    <p>
+      Most low-level AI metrics teams already track are diagnostic signals that <strong>feed into one of the five CPAC components</strong>. They are useful — just not as the bottom-line cost metric. The mapping:
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>Low-level metric</th><th>What it measures</th><th>CPAC component it surfaces in</th><th>When to watch it</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tokens per second (throughput)</td>
+          <td>Inference speed</td>
+          <td>Engineering time — slow inference is developers waiting</td>
+          <td>Developer-flow complaints; agent loops feel sluggish</td>
+        </tr>
+        <tr>
+          <td>Time to first token (TTFT)</td>
+          <td>Initial response latency</td>
+          <td>Engineering time; can drag per-suggestion acceptance rate</td>
+          <td>After model bumps, region changes, or provider switches</td>
+        </tr>
+        <tr>
+          <td>Cost per request</td>
+          <td>Per-API-call spend</td>
+          <td>Model cost</td>
+          <td>Capacity planning, vendor comparison (with caveat below)</td>
+        </tr>
+        <tr>
+          <td>Tokens per request</td>
+          <td>Input + output token usage</td>
+          <td>Model cost</td>
+          <td>After a model version bump, prompt change, or tool addition</td>
+        </tr>
+        <tr>
+          <td>Cache hit rate</td>
+          <td>Share of requests served from prompt cache</td>
+          <td>Model cost (cache hits are roughly 10× cheaper)</td>
+          <td>After tooling changes that affect prompt structure</td>
+        </tr>
+        <tr>
+          <td>Request volume</td>
+          <td>Total API calls per window</td>
+          <td>Model cost; infrastructure cost</td>
+          <td>Capacity planning; anomaly detection</td>
+        </tr>
+        <tr>
+          <td>Error / retry rate</td>
+          <td>Failed or retried requests</td>
+          <td>Model cost (failed requests still bill); engineering time (debug + retry)</td>
+          <td>After model bumps, agent-strategy changes, or new tools</td>
+        </tr>
+        <tr>
+          <td>Tool-call / agent-loop depth</td>
+          <td>Model calls per logical task</td>
+          <td>Model cost; sometimes engineering time</td>
+          <td>After agent architecture changes; when costs jump but task count doesn't</td>
+        </tr>
+        <tr>
+          <td>Per-suggestion acceptance rate</td>
+          <td>% of AI suggestions accepted by developers</td>
+          <td><em>Leading indicator</em> for accepted change units — not a substitute</td>
+          <td>Always — pair with CPAC for trend explanation</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      The pattern: low-level metrics <strong>explain why a CPAC component moved</strong>. They are not substitutes for the metric itself, because no single low-level metric captures the fully-loaded production cost of trusted software.
+    </p>
+
+    <h3>Three operating modes</h3>
+    <p>
+      <strong>Day-to-day:</strong> monitor the low-level metrics that affect your <em>dominant</em> cost components. If model cost is 70% of the numerator, watch cache hit rate and tokens-per-request closely. If engineering time dominates, watch PR cycle time and TTFT.
+    </p>
+    <p>
+      <strong>Investigation:</strong> when cost per accepted change moves, decompose into components, then drill into the low-level metrics that feed the moving component. Headline → component → diagnostic.
+    </p>
+    <p>
+      <strong>Vendor comparison:</strong> cost-per-request and tokens-per-request are the right metrics for vendor benchmarking — <em>but only alongside</em> a measurement of how many requests or tokens each vendor uses to produce an accepted change. The naive comparison ("Vendor A is $0.10/request, Vendor B is $0.15/request") is the trap; the meaningful comparison is "Vendor A produces an accepted change for $X, Vendor B for $Y." A 50%-cheaper-per-request vendor that takes 3× the iterations is more expensive in CPAC terms.
+    </p>
+
+    <p>
+      The architecture: <strong>cost per accepted change at the top</strong> for executive conversations and trend tracking; <strong>cost components in the middle</strong> for engineering reviews; <strong>low-level metrics at the bottom</strong> for incident response, optimization, and capacity planning.
+    </p>
+
     <h2>How do I value engineering and review time?</h2>
     <p>
       Use a fully-loaded hourly rate — salary, benefits, tooling allocation, overhead. Most organizations already have this number for capacity planning. If you do not, $150/hour is a reasonable starting estimate for senior engineers in high-cost markets; adjust to your context.
