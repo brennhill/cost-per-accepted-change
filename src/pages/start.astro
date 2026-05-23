@@ -1,0 +1,239 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Quick start for leaders"
+  description="A 90-day playbook for engineering and finance leaders to baseline, measure, and start steering with cost per accepted change."
+  path="/start"
+>
+  <article class="page">
+    <p class="eyebrow">For leaders</p>
+    <h1>Quick start: deploying cost per accepted change in 90 days</h1>
+    <p class="lede">
+      A sequenced playbook for engineering and finance leaders. Pilot on one team, ship a defensible number to your CFO in 90 days, and have a real trend line by quarter two. The order matters more than the perfection of any single step.
+    </p>
+
+    <aside class="sidebar">
+      <span class="label">The 90-day arc</span>
+      <ul>
+        <li><strong>Week 1:</strong> Pick a team, an owner, and a window. Get finance in the room.</li>
+        <li><strong>Weeks 2–3:</strong> Capture the baseline. Imperfect is fine; consistent is mandatory.</li>
+        <li><strong>Week 4:</strong> Compute the first number. Present it to the sponsor. Commit to cadence.</li>
+        <li><strong>Months 2–3:</strong> Repeat. The trend is the point, not the snapshot.</li>
+        <li><strong>End of quarter:</strong> First defensible reading. Board-ready conversation.</li>
+      </ul>
+    </aside>
+
+    <h2 class="no-rule">Before you start</h2>
+    <p>Three things make or break this pilot. None of them are about the formula.</p>
+    <ul>
+      <li><strong>Pick one team, not the whole org.</strong> A 5–15 engineer team you can instrument quickly. Resist the "let's roll this out everywhere" urge — it will sink the pilot in accounting debates.</li>
+      <li><strong>Get a finance partner.</strong> One person who can value engineering time and reconcile model spend. Without them, the numerator will be hand-waved and the result will not survive a CFO conversation.</li>
+      <li><strong>Name a single owner.</strong> One person responsible for the measurement. Distributing the work distributes the failure.</li>
+    </ul>
+
+    <h2>Week 1 — Decide</h2>
+
+    <h3>Pick the team</h3>
+    <p>
+      Choose a team that (a) has been using AI tooling for at least one full quarter, (b) ships to production regularly, and (c) has a manager who will champion the measurement. The first pilot is as much a political case study as a numerical one — a team with friction will produce a measurement no one trusts.
+    </p>
+
+    <h3>Pick the window</h3>
+    <table>
+      <thead>
+        <tr><th>Team size</th><th>Recommended window</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>3–10 engineers</td><td>Quarterly</td></tr>
+        <tr><td>10–30 engineers</td><td>Monthly</td></tr>
+        <tr><td>30+ engineers</td><td>Monthly, with quarterly executive review</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The constraint is statistical: cost per accepted change stabilizes around 25–100 accepted change units. Smaller teams need longer windows to hit that count. See the <a href="/use">guide on how to use the metric</a> for the variance reasoning.
+    </p>
+
+    <h3>Name the owner and the sponsor</h3>
+    <p>
+      Owner: an engineering manager, platform lead, or DevEx engineer who will gather the inputs each window. Sponsor: a VP or director whose budget conversations will be reshaped by the result. Without a sponsor, the number gets computed and ignored.
+    </p>
+
+    <h3>Decide what "accepted change" means in your repo</h3>
+    <p>
+      The default is <strong>a merged commit to your production branch, size-normalized via the 500-LOC rule</strong>. If you use a different convention (e.g., shipped feature flag, deployed increment), pick it now and document it. The rule must be the same every window; switching mid-pilot invalidates the trend.
+    </p>
+
+    <h2>Weeks 2–3 — Capture the baseline</h2>
+    <p>
+      Aim for one or two completed windows of historical data. You do not need perfect numbers; you need a defensible accounting that you can repeat without changes.
+    </p>
+
+    <h3>The five numerator inputs, with where to get them</h3>
+    <table>
+      <thead>
+        <tr><th>Input</th><th>Source</th><th>Stumbling block</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Model cost</td>
+          <td>LLM provider billing dashboard, segmented by team if possible. <a href="https://github.com/git-ai-project/git-ai">git-ai</a> can attribute spend to specific commits.</td>
+          <td>Aggregate billing is easy; per-team attribution often requires a one-time tagging effort.</td>
+        </tr>
+        <tr>
+          <td>Infrastructure cost</td>
+          <td>Cloud bill — observability, CI/CD, agent runners. Allocate by team's share of compute.</td>
+          <td>Avoid over-precision. A rough allocation is fine; a debated allocation kills momentum.</td>
+        </tr>
+        <tr>
+          <td>Engineering time</td>
+          <td>Use loaded hourly rates from finance × hours allocated to delivery work in the window.</td>
+          <td>Time tracking is rare. Use a fully-loaded blended rate × planned capacity hours as the starting estimate.</td>
+        </tr>
+        <tr>
+          <td>Review cost</td>
+          <td>Review hours (estimated or sampled) × reviewer hourly rate.</td>
+          <td>Often missed entirely. If you cannot measure, sample a representative week and extrapolate.</td>
+        </tr>
+        <tr>
+          <td>Rework cost</td>
+          <td>Hours spent reverting, fixing, or repairing accepted changes that did not stay in production × hourly rate.</td>
+          <td>Often invisible. Pull the revert commits and follow-up fixes from your VCS history and assign a rough hour estimate.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>The denominator: count accepted change units</h3>
+    <p>
+      List merged PRs to production in the window, filter to those that stayed (no revert or repair within the window), apply the 500-LOC normalization (a PR of 1–500 lines = 1 unit; larger = ⌈ N / 500 ⌉). See the <a href="/faq">FAQ recipe</a> for the exact git and <code>gh</code> commands.
+    </p>
+
+    <h3>Document everything</h3>
+    <p>
+      Write down: the window dates, hourly rates used, attribution rules, exclusions (vendored, generated, lockfiles), and the size-normalization choice. This documentation <em>is</em> the measurement. Anyone challenging the number will challenge the accounting first.
+    </p>
+
+    <h2>Week 4 — Compute and present</h2>
+
+    <h3>Run the calculation</h3>
+    <p>
+      Open the <a href="/calculator">calculator</a>, enter the five cost inputs and the unit count, and copy the shareable URL. That is your first reading.
+    </p>
+
+    <h3>Hold the first sponsor meeting</h3>
+    <p>Bring three things:</p>
+    <ul>
+      <li>The baseline cost per accepted change number, with the formula and the inputs.</li>
+      <li>The reporting cadence proposal (monthly or quarterly).</li>
+      <li>The next-window measurement plan, so the cadence starts the next day.</li>
+    </ul>
+    <p>
+      Do not try to interpret the number in this meeting. One window is not a trend. The point of the meeting is to get the cadence agreed and the next measurement scheduled.
+    </p>
+
+    <h2>Months 2–3 — Establish the cadence</h2>
+
+    <h3>Repeat the measurement</h3>
+    <p>
+      Compute again using the same accounting. The second number, paired with the first, is your first trend signal — still noisy, but real.
+    </p>
+
+    <h3>Pair with a leading indicator</h3>
+    <p>
+      Pick one leading indicator and report it alongside cost per accepted change every window:
+    </p>
+    <ul>
+      <li><strong>Change failure rate</strong> (DORA) — tells you whether the "stayed there" denominator is holding up.</li>
+      <li><strong>Acceptance rate</strong> from your AI tooling — tells you whether developers are still finding the tool useful.</li>
+      <li><strong>DevEx pulse</strong> — tells you whether the verification load is degrading the team.</li>
+    </ul>
+    <p>
+      Without a leading indicator, you will see the bottom-line number move with no way to explain why.
+    </p>
+
+    <h3>Set a measurement ritual</h3>
+    <p>
+      Block 60 minutes on the owner's calendar at the same time each window. Same agenda each time: pull inputs, run calc, write a one-line summary, update the time series, send to sponsor. The ritual matters more than the elegance.
+    </p>
+
+    <h2>End of quarter — First defensible reading</h2>
+    <p>
+      You now have 1–3 windows of data and a documented accounting. Run the first <a href="/templates/quarterly-review">quarterly review</a> with leadership. Present:
+    </p>
+    <ul>
+      <li>The number, the trend direction, and the magnitude of the change.</li>
+      <li>Which numerator component drove the move, if any.</li>
+      <li>The leading indicator(s) and what they say.</li>
+      <li>A hypothesis (not a verdict) and a concrete next-quarter focus.</li>
+    </ul>
+    <p>
+      If sponsors ask for an absolute target, decline. Targets invite gaming; trends invite investigation. The right ask is: "Let's hold the accounting steady for two more quarters and see what the trend says."
+    </p>
+
+    <h2>Common stumbling blocks</h2>
+
+    <h3>"Engineering time is too hard to estimate"</h3>
+    <p>
+      Use a blended fully-loaded rate × planned capacity. Refine over time. The rate's absolute value matters less than its consistency across windows.
+    </p>
+
+    <h3>"Our model cost is hard to attribute"</h3>
+    <p>
+      Start with aggregate model spend allocated by team head-count or by AI-touched PR count. Tools like <a href="https://github.com/git-ai-project/git-ai">git-ai</a> get you to per-commit attribution over time. Do not block the first measurement on perfect attribution.
+    </p>
+
+    <h3>"We don't know how to count rework"</h3>
+    <p>
+      Pull revert commits and follow-up fixes from the window's git history. Assign each a rough hour estimate. The discipline of this exercise often reveals more about your delivery system than the final number does.
+    </p>
+
+    <h3>"The first number looks bad"</h3>
+    <p>
+      Expected. The point of a baseline is to make the invisible visible, not to look good. Most teams' first cost per accepted change reading is higher than they expected because the rework and review components were not previously priced. That is the discovery; that is the value.
+    </p>
+
+    <h3>"Our window's accepted-change count is too low"</h3>
+    <p>
+      Use a longer window. A 5-engineer team should report quarterly, not monthly. See the variance discussion on the <a href="/use">how-to-use page</a>.
+    </p>
+
+    <h3>"Should I exclude AI-generated rework?"</h3>
+    <p>
+      No. The point of cost per accepted change is to surface the full cost, including the cost of fixing AI-generated mistakes. Excluding rework on the grounds that "the AI did its job" defeats the metric entirely.
+    </p>
+
+    <h2>What 90 days of success looks like</h2>
+    <ul>
+      <li>You have a documented accounting that your finance partner has signed off on.</li>
+      <li>You have at least two windows of cost per accepted change measured the same way.</li>
+      <li>You have one leading indicator reported alongside.</li>
+      <li>You have a recurring sponsor review on the calendar.</li>
+      <li>You have a defensible number to put in front of a CFO without a 20-minute briefing.</li>
+      <li>You have an opinion on which numerator component to focus on next.</li>
+    </ul>
+    <p>
+      You do not need a great number at 90 days. You need an honest one, a repeatable measurement process, and a sponsor who is paying attention. The trend is what matters; the trend takes 2–4 quarters to earn.
+    </p>
+
+    <h2>What comes next</h2>
+    <ul>
+      <li><strong>Quarter 2:</strong> Expand to a second team. Hold the accounting constant.</li>
+      <li><strong>Quarter 3:</strong> Roll up to an org-level number. Begin reporting to the board.</li>
+      <li><strong>Quarter 4:</strong> Begin tying tooling investment decisions to cost-per-accepted-change movement.</li>
+    </ul>
+    <p>
+      By the end of year one, you should be making concrete decisions — tooling renewals, headcount, agent scope — informed by the trend. That is what successful use of this metric looks like.
+    </p>
+
+    <p style="margin-top: 2em;">
+      <a class="btn btn-primary" href="/templates">Get the templates →</a>
+      <a class="btn" href="/calculator" style="margin-left: 0.6rem;">Open the calculator →</a>
+    </p>
+
+    <hr />
+
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      Questions or stuck on a step? Open an issue at <a href="https://github.com/brennhill/cost-per-accepted-change/issues">the repo</a>. The most useful additions to this playbook come from teams sharing what worked and what blocked them.
+    </p>
+  </article>
+</BaseLayout>

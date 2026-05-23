@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Templates"
+  description="Downloadable templates for teams adopting cost per accepted change — spreadsheet tracker, quarterly review template, and more."
+  path="/templates"
+>
+  <article class="page">
+    <p class="eyebrow">For teams</p>
+    <h1>Templates</h1>
+    <p class="lede">
+      Drop-in artifacts to start measuring cost per accepted change without building infrastructure first. Designed for engineering and finance leaders running a pilot.
+    </p>
+
+    <div class="template-grid">
+      <div class="template-card">
+        <p class="meta">Spreadsheet · XLSX · ~12 KB</p>
+        <h3>Quarterly tracker</h3>
+        <p>
+          A multi-window tracker with the formula and conditional formatting baked in. Open in Google Sheets, Excel, LibreOffice, or Numbers — fill in the five cost components and the accepted change unit count, and the bottom line, trend percentage, and color-scaled view of cost per accepted change update automatically. Includes four quarters of example data showing a realistic trajectory and an Instructions tab.
+        </p>
+        <p>
+          <a class="btn btn-primary" href="/templates/cpac-tracker.xlsx" download>Download tracker (XLSX)</a>
+        </p>
+      </div>
+
+      <div class="template-card">
+        <p class="meta">Document · Page · Print to PDF</p>
+        <h3>Quarterly review template</h3>
+        <p>
+          A single-page review template for the recurring leadership conversation: executive summary, the number with prior-period comparisons, component breakdown, what changed, leading indicators, hypothesis and next-quarter focus, and methodology notes. Print-friendly — save to PDF and circulate, or copy the structure into Notion / Confluence / Google Docs.
+        </p>
+        <p>
+          <a class="btn btn-primary" href="/templates/quarterly-review">Open the template →</a>
+        </p>
+      </div>
+    </div>
+
+    <h2>How to use them together</h2>
+    <ol>
+      <li><strong>Download the tracker.</strong> Each measurement window adds one row. Fill it in monthly or quarterly.</li>
+      <li><strong>Run the review every quarter</strong> using the review template, pulling numbers from the tracker.</li>
+      <li><strong>Keep the accounting steady.</strong> Same hourly rates, same exclusions, same definitions across windows.</li>
+      <li><strong>Pair with a leading indicator.</strong> Change failure rate, acceptance rate, or DevEx score.</li>
+    </ol>
+
+    <p>
+      See the <a href="/start">quick-start playbook</a> for the full 90-day sequence and the <a href="/use">how-to-use page</a> for why aggregate, time-series, group-level use is the only defensible reading of this metric.
+    </p>
+
+    <hr />
+
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      More templates coming: vendor evaluation checklist, board-deck slide layout, post-incident attribution worksheet. Open an issue at <a href="https://github.com/brennhill/cost-per-accepted-change/issues">the repo</a> to request or contribute.
+    </p>
+  </article>
+</BaseLayout>

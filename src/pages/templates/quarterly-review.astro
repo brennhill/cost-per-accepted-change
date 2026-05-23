@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Quarterly review template"
+  description="A print-ready template for the quarterly cost per accepted change leadership review."
+  path="/templates/quarterly-review"
+>
+  <article class="page">
+    <p class="eyebrow">Template — print to PDF or copy into your doc tool</p>
+    <h1>Quarterly review: cost per accepted change</h1>
+    <p class="lede">
+      A single-page review structure for the recurring leadership conversation. Replace the bracketed placeholders with your numbers. Print to PDF, or paste the structure into Notion / Confluence / Google Docs.
+    </p>
+
+    <p>
+      <a class="btn btn-primary" href="javascript:window.print()">Print this page</a>
+      <a class="btn" href="/templates/cpac-tracker.xlsx" download style="margin-left: 0.6rem;">Download tracker (XLSX) →</a>
+    </p>
+
+    <hr />
+
+    <!-- ========== PRINT-FRIENDLY TEMPLATE STARTS HERE ========== -->
+
+    <div class="print-only" style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 1em;">
+      Cost per accepted change — quarterly review · costperacceptedchange.org
+    </div>
+
+    <h2 class="no-rule">[Team or organization name] — Quarterly review</h2>
+    <table>
+      <tbody>
+        <tr><td><strong>Quarter</strong></td><td>[Q1 2026]</td></tr>
+        <tr><td><strong>Reporting date</strong></td><td>[YYYY-MM-DD]</td></tr>
+        <tr><td><strong>Owner</strong></td><td>[Name, role]</td></tr>
+        <tr><td><strong>Sponsor</strong></td><td>[Name, role]</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Executive summary</h2>
+    <ul>
+      <li>[One sentence on the headline number and trend direction.]</li>
+      <li>[One sentence on the most important driver of the move.]</li>
+      <li>[One sentence on the proposed next-quarter focus or ask.]</li>
+    </ul>
+
+    <h2>The number</h2>
+    <table>
+      <thead>
+        <tr><th></th><th>This quarter</th><th>Prior quarter</th><th>One year ago</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Cost per accepted change</strong></td>
+          <td>[$XXX]</td>
+          <td>[$XXX]</td>
+          <td>[$XXX]</td>
+        </tr>
+        <tr>
+          <td>Δ vs prior quarter</td>
+          <td>[±X%]</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Δ vs one year ago</td>
+          <td>[±X%]</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-style: italic; color: var(--ink-muted); font-size: 0.92em;">
+      [One sentence interpreting the trend: improving, stable, or degrading. Avoid drawing strong conclusions from a single window.]
+    </p>
+
+    <h2>Component breakdown</h2>
+    <table>
+      <thead>
+        <tr><th>Cost component</th><th>This quarter</th><th>% of total</th><th>Δ vs prior</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Model cost</td><td>[$XXX]</td><td>[XX%]</td><td>[±X%]</td></tr>
+        <tr><td>Infrastructure cost</td><td>[$XXX]</td><td>[XX%]</td><td>[±X%]</td></tr>
+        <tr><td>Engineering time</td><td>[$XXX]</td><td>[XX%]</td><td>[±X%]</td></tr>
+        <tr><td>Review cost</td><td>[$XXX]</td><td>[XX%]</td><td>[±X%]</td></tr>
+        <tr><td>Rework cost</td><td>[$XXX]</td><td>[XX%]</td><td>[±X%]</td></tr>
+        <tr><th>Total cost</th><th>[$XXX]</th><th>100%</th><th>[±X%]</th></tr>
+        <tr><td>Accepted change units</td><td>[NN]</td><td>—</td><td>[±X%]</td></tr>
+      </tbody>
+    </table>
+
+    <h2>What changed</h2>
+    <p>
+      [Identify the one or two cost components that drove the movement in the bottom line. Keep this descriptive, not interpretive. Example phrasing: "Rework cost rose 38% quarter over quarter, driven by reverts on the agent-generated migrations in service X. Model cost rose 12%; all other components were flat."]
+    </p>
+
+    <h2>Leading indicators</h2>
+    <table>
+      <thead>
+        <tr><th>Indicator</th><th>This quarter</th><th>Prior quarter</th><th>What it says</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Change failure rate (DORA)</td>
+          <td>[X%]</td>
+          <td>[X%]</td>
+          <td>[One sentence — is the "stayed there" denominator holding?]</td>
+        </tr>
+        <tr>
+          <td>AI tool acceptance rate</td>
+          <td>[X%]</td>
+          <td>[X%]</td>
+          <td>[One sentence — are developers still finding the tooling useful?]</td>
+        </tr>
+        <tr>
+          <td>DevEx pulse (or equivalent)</td>
+          <td>[score]</td>
+          <td>[score]</td>
+          <td>[One sentence — is verification load degrading the team?]</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Hypothesis and next-quarter focus</h2>
+    <p>
+      <strong>Hypothesis:</strong> [One paragraph describing the most likely explanation for the trend. Be explicit that this is a hypothesis, not a conclusion.]
+    </p>
+    <p>
+      <strong>Proposed focus for next quarter:</strong> [One concrete commitment — an experiment, a tooling change, a review-process intervention, or "hold steady and re-measure." Avoid setting a CPAC target; targets invite gaming.]
+    </p>
+    <p>
+      <strong>What we are <em>not</em> doing:</strong> [One sentence on a tempting intervention you are deliberately deferring, and why.]
+    </p>
+
+    <h2>Methodology notes</h2>
+    <table>
+      <tbody>
+        <tr><td><strong>Window length</strong></td><td>[Quarter — same as all prior windows]</td></tr>
+        <tr><td><strong>Window dates</strong></td><td>[YYYY-MM-DD to YYYY-MM-DD]</td></tr>
+        <tr><td><strong>Hourly rate used (engineering)</strong></td><td>[$XXX/hr, fully loaded]</td></tr>
+        <tr><td><strong>Hourly rate used (review)</strong></td><td>[$XXX/hr, fully loaded]</td></tr>
+        <tr><td><strong>"Change" unit</strong></td><td>Merged PR to production branch, size-normalized via the 500-LOC rule</td></tr>
+        <tr><td><strong>Exclusions</strong></td><td>Vendored code, generated code, lockfiles, [additional team-specific exclusions]</td></tr>
+        <tr><td><strong>Model cost attribution method</strong></td><td>[Aggregate billing / per-team tagging / per-commit attribution via tooling]</td></tr>
+        <tr><td><strong>Rework attribution method</strong></td><td>[Revert commits + follow-up fixes identified in git history]</td></tr>
+        <tr><td><strong>Changes to accounting this quarter</strong></td><td>[None — or note the change and the resulting one-time effect on comparability]</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Appendix: backup data and links</h2>
+    <ul>
+      <li>Tracker spreadsheet: [link]</li>
+      <li>Source data / queries: [link]</li>
+      <li>Prior quarter's review: [link]</li>
+      <li>Definition reference: <a href="https://costperacceptedchange.org">costperacceptedchange.org</a></li>
+    </ul>
+
+    <!-- ========== TEMPLATE ENDS HERE ========== -->
+
+    <hr />
+
+    <h2>How to fill this in</h2>
+    <ol>
+      <li><strong>Pull this quarter's numbers</strong> from your <a href="/templates/cpac-tracker.xlsx">tracker spreadsheet</a>.</li>
+      <li><strong>Compute the prior-quarter and one-year-ago comparisons</strong> from the same tracker.</li>
+      <li><strong>Fill in the component breakdown</strong> with percentages.</li>
+      <li><strong>Describe what changed</strong> in one paragraph. Stay descriptive; save interpretation for the hypothesis section.</li>
+      <li><strong>Pull leading indicators</strong> from your existing instruments (DORA dashboard, AI tool admin panel, DevEx survey).</li>
+      <li><strong>Write the hypothesis and the next-quarter commitment.</strong> One paragraph each. Be specific.</li>
+      <li><strong>Update the methodology notes</strong> only if something actually changed; consistency across quarters is what makes the trend comparable.</li>
+      <li><strong>Print to PDF</strong> or paste the structure into your team's doc tool of choice.</li>
+    </ol>
+
+    <h2>The discipline that matters</h2>
+    <ul>
+      <li><strong>Stay descriptive in the "what changed" section.</strong> Reserve interpretation for the explicit hypothesis section. This keeps the conversation honest.</li>
+      <li><strong>Always include "what we are <em>not</em> doing."</strong> The temptation to react to a single moving number is the most common failure mode of metric-driven leadership.</li>
+      <li><strong>Do not set CPAC targets.</strong> Targets are gamed. Track the trend; investigate when it moves; commit to interventions, not to numbers.</li>
+      <li><strong>Note methodology changes explicitly.</strong> Any change to hourly rates, exclusions, or unit definitions creates a one-time discontinuity. Document it so future readers can interpret the trend correctly.</li>
+    </ul>
+
+    <p>
+      See the <a href="/use">how-to-use page</a> for the full reasoning behind these constraints.
+    </p>
+  </article>
+</BaseLayout>
