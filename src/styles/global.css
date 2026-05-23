@@ -229,12 +229,35 @@ footer.site .inner {
   padding: 0 1.4rem;
   display: flex;
   justify-content: space-between;
-  gap: 1.5rem;
+  align-items: flex-start;
+  gap: 1.5rem 2rem;
   flex-wrap: wrap;
 }
 
-footer.site a {
+footer.site .col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+footer.site .col-right {
+  text-align: right;
+}
+
+footer.site .footer-byline {
+  color: var(--ink);
+}
+
+footer.site .footer-meta {
   color: var(--ink-muted);
+}
+
+footer.site a {
+  color: var(--link);
+}
+
+footer.site a:hover {
+  color: var(--link-hover);
 }
 
 /* === Formula block === */
