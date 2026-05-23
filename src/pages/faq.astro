@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="FAQ"
+  description="Frequently asked questions about cost per accepted change — what counts, what doesn't, and how to measure."
+  path="/faq"
+>
+  <article class="page">
+    <p class="eyebrow">Frequently asked</p>
+    <h1>Questions about cost per accepted change</h1>
+
+    <h2 class="no-rule">What counts as a change?</h2>
+    <p>
+      The default unit is a <strong>merged commit to the production branch</strong>. Teams can substitute another unit — accepted pull request, deployed increment, or shipped feature flag — as long as it is applied consistently across the measurement window and across the baseline.
+    </p>
+    <p>
+      The unit is less important than the consistency. Whatever you pick, document it and stick with it. Switching units mid-window inflates or deflates the result.
+    </p>
+
+    <h2>What does "stayed there" mean?</h2>
+    <p>
+      A change has stayed in production if, by the end of the measurement window, it has not been:
+    </p>
+    <ul>
+      <li>Reverted via a follow-up commit, revert, or rollback,</li>
+      <li>Substantively rewritten by a subsequent change addressing a defect introduced by the original, or</li>
+      <li>Disabled by feature flag to neutralize harm.</li>
+    </ul>
+    <p>
+      Cosmetic follow-ups (formatting, renames, comment edits) do not invalidate acceptance. Defect-driven rewrites do.
+    </p>
+
+    <h2>How is "acceptance" different from "correctness"?</h2>
+    <p>
+      Acceptance is observable. Correctness is aspirational. CPAC measures whether a change survived contact with production for the duration of the window — that is a real, auditable signal. A change can be incorrect in some absolute sense and still "stay there"; CPAC will count it.
+    </p>
+    <p>
+      The defense against this is the <strong>"stayed there" window</strong> and the <strong>rework cost line</strong>. Lengthening the window catches more silent escapes. Counting fix-up cost in the numerator catches the rest. CPAC is a defensible proxy for correctness, not a claim of perfect correctness.
+    </p>
+
+    <h2>What measurement window should I use?</h2>
+    <p>
+      Choose a window long enough that most rework would have surfaced. Two weeks is a minimum; four weeks is the practical default; one quarter is the most defensible.
+    </p>
+    <p>
+      Report CPAC for the same window length consistently. Quarter-over-quarter comparisons are sound; quarter-versus-sprint comparisons are not.
+    </p>
+
+    <h2>How do I value engineering and review time?</h2>
+    <p>
+      Use a fully-loaded hourly rate — salary, benefits, tooling allocation, overhead. Most organizations already have this number for capacity planning. If you do not, $150/hour is a reasonable starting estimate for senior engineers in high-cost markets; adjust to your context.
+    </p>
+    <p>
+      The absolute value matters less than the relative trend. If your assumptions are consistent across windows, CPAC will move in the right direction when your delivery system improves.
+    </p>
+
+    <h2>How do I split costs across teams or features?</h2>
+    <p>
+      Allocate by the most defensible signal available — time tracked, story points completed, branch ownership. Perfect attribution is not required; consistent attribution is.
+    </p>
+
+    <h2>Does CPAC work for non-code work?</h2>
+    <p>
+      The same shape applies wherever AI produces artifacts that must be reviewed before use — drafts, designs, recommendations, plans. The components rename naturally ("accepted recommendations," "accepted designs"). The "stayed there" clause becomes "still in use after N days." The metric generalizes; this site focuses on code because that is where the literature and the measurement infrastructure are best developed.
+    </p>
+
+    <h2>How does CPAC relate to DORA metrics?</h2>
+    <p>
+      DORA metrics describe how a delivery system <em>behaves</em>: how often it ships, how quickly, with what failure rate. CPAC describes what that behavior <em>costs</em>. The two are complementary. A team can have excellent DORA numbers and a terrible CPAC if its velocity is bought with disproportionate review and rework cost — which is exactly the AI-augmented failure mode.
+    </p>
+
+    <h2>How does CPAC relate to FinOps?</h2>
+    <p>
+      CPAC is FinOps cost-to-serve, moved one layer upstream. FinOps measures the unit cost of <em>running</em> software. CPAC measures the unit cost of <em>producing</em> trusted software. Organizations with mature FinOps practices already have most of the inputs; CPAC just rearranges them around the accepted-change denominator.
+    </p>
+
+    <h2>Can I gaze at CPAC alone?</h2>
+    <p>
+      No. CPAC is the bottom-line cost metric. Pair it with <strong>change failure rate</strong>, <strong>lead time to accepted change</strong>, and <strong>machine catch rate</strong> to see the full picture of the Verification Triangle. CPAC alone tells you what the system costs; the others tell you why.
+    </p>
+
+    <h2>Where does the metric come from?</h2>
+    <p>
+      Cost per accepted change was defined in <em>The Delivery Gap</em> (Brenn Hill, 2026) as the cost vertex of the Verification Triangle. See <a href="/cite">how to cite</a>.
+    </p>
+
+    <h2>How do I propose a change to the definition?</h2>
+    <p>
+      Open an issue or a pull request at <a href="https://github.com/brennhill/cost-per-accepted-change">github.com/brennhill/cost-per-accepted-change</a>. The goal is for the definition to remain stable; refinements, worked examples, and translations are welcome.
+    </p>
+  </article>
+</BaseLayout>

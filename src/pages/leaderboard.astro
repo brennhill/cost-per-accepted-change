@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Leaderboard"
+  description="Public reported numbers for cost per accepted change — coming soon."
+  path="/leaderboard"
+>
+  <article class="page">
+    <p class="eyebrow">Coming soon</p>
+    <h1>The public leaderboard</h1>
+    <p class="lede">
+      A growing record of teams and tools reporting their cost per accepted change — so the industry has shared data to compare, not vendor talking points.
+    </p>
+
+    <div class="callout">
+      <span class="label">Why a leaderboard</span>
+      The metric only disciplines the conversation if there are numbers to point to. Until teams and vendors publish their own CPAC, every benchmark is a marketing artifact. The leaderboard is the place to put real numbers — with full disclosure of assumptions, window length, and what was counted.
+    </div>
+
+    <h2 class="no-rule">What will appear here</h2>
+    <ul>
+      <li><strong>Tool benchmarks.</strong> Popular AI coding agents run against a fixed task set, with full cost accounting.</li>
+      <li><strong>Self-reported team numbers.</strong> Engineering organizations publishing their CPAC alongside their assumptions.</li>
+      <li><strong>Trend lines.</strong> Quarter-over-quarter movement for teams that report repeatedly.</li>
+    </ul>
+
+    <h2>How to submit</h2>
+    <p>
+      Open an issue at <a href="https://github.com/brennhill/cost-per-accepted-change/issues">github.com/brennhill/cost-per-accepted-change/issues</a> with the tag <code>leaderboard</code>. Include:
+    </p>
+    <ul>
+      <li>Reporting entity (team, organization, or tool — anonymous submissions accepted with caveats)</li>
+      <li>Measurement window (start date, end date)</li>
+      <li>All six inputs to the formula</li>
+      <li>How "change" was defined for this submission</li>
+      <li>How review and engineering time were valued</li>
+      <li>Any caveats or known biases</li>
+    </ul>
+
+    <h2>Submission criteria</h2>
+    <ul>
+      <li>Numbers must be reproducible from the assumptions disclosed.</li>
+      <li>Window length must be at least two weeks.</li>
+      <li>"Accepted" must mean reached production and stayed there for the full window.</li>
+      <li>Submissions that omit rework cost are flagged as such.</li>
+    </ul>
+
+    <p style="margin-top: 2em; font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      Subscribe at <a href="https://github.com/brennhill/cost-per-accepted-change">the repo</a> to be notified when the first cohort of numbers is published.
+    </p>
+  </article>
+</BaseLayout>

@@ -1,0 +1,183 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Calculator"
+  description="Calculate cost per accepted change. Enter your numbers, get a shareable result."
+  path="/calculator"
+>
+  <article class="page">
+    <p class="eyebrow">Calculator</p>
+    <h1>Compute cost per accepted change</h1>
+    <p class="lede">
+      Enter the costs and counts for one measurement window — a sprint, a month, a quarter. The calculator runs entirely in your browser; nothing is sent to a server.
+    </p>
+
+    <form class="calc-form" id="cpac-form" autocomplete="off">
+      <div class="calc-row">
+        <div>
+          <label for="modelCost">Model cost</label>
+          <span class="hint">LLM / API spend attributable to the changes produced.</span>
+        </div>
+        <input id="modelCost" name="modelCost" type="number" inputmode="decimal" min="0" step="0.01" value="1200" />
+      </div>
+
+      <div class="calc-row">
+        <div>
+          <label for="infraCost">Infrastructure cost</label>
+          <span class="hint">Compute, storage, observability, tooling overhead.</span>
+        </div>
+        <input id="infraCost" name="infraCost" type="number" inputmode="decimal" min="0" step="0.01" value="400" />
+      </div>
+
+      <div class="calc-row">
+        <div>
+          <label for="engineeringTime">Engineering time</label>
+          <span class="hint">Spec / prompt / integrate / steer, converted to currency.</span>
+        </div>
+        <input id="engineeringTime" name="engineeringTime" type="number" inputmode="decimal" min="0" step="0.01" value="18000" />
+      </div>
+
+      <div class="calc-row">
+        <div>
+          <label for="reviewCost">Review cost</label>
+          <span class="hint">Time spent reviewing / gating AI work, converted to currency.</span>
+        </div>
+        <input id="reviewCost" name="reviewCost" type="number" inputmode="decimal" min="0" step="0.01" value="6000" />
+      </div>
+
+      <div class="calc-row">
+        <div>
+          <label for="reworkCost">Rework cost</label>
+          <span class="hint">Cost of fixing or reverting changes that did not stay in production.</span>
+        </div>
+        <input id="reworkCost" name="reworkCost" type="number" inputmode="decimal" min="0" step="0.01" value="2400" />
+      </div>
+
+      <div class="calc-row">
+        <div>
+          <label for="acceptedChanges">Accepted changes</label>
+          <span class="hint">Reached production <strong>and stayed there</strong> during the window.</span>
+        </div>
+        <input id="acceptedChanges" name="acceptedChanges" type="number" inputmode="numeric" min="1" step="1" value="42" />
+      </div>
+    </form>
+
+    <div class="calc-result" id="result" aria-live="polite">
+      <span class="label">Cost per accepted change</span>
+      <span class="value" id="result-value">—</span>
+      <div class="breakdown" id="result-breakdown"></div>
+    </div>
+
+    <div class="calc-actions">
+      <button type="button" class="btn btn-primary" id="copy-link">Copy shareable link</button>
+      <a class="btn" href="https://github.com/brennhill/cost-per-accepted-change/blob/main/src/lib/calculator.ts">View source</a>
+    </div>
+
+    <h2>Use the library</h2>
+    <p>
+      The calculator is a pure TypeScript function. Import it in your own dashboards, FinOps pipelines, or CI jobs:
+    </p>
+<pre><code>import &#123; costPerAcceptedChange &#125; from 'cost-per-accepted-change';
+
+const cpac = costPerAcceptedChange(&#123;
+  modelCost: 1200,
+  infraCost: 400,
+  engineeringTime: 18000,
+  reviewCost: 6000,
+  reworkCost: 2400,
+  acceptedChanges: 42,
+&#125;);
+
+console.log(cpac.value);     // 666.67
+console.log(cpac.breakdown); // share-of-total per component
+</code></pre>
+    <p>
+      Source: <a href="https://github.com/brennhill/cost-per-accepted-change">github.com/brennhill/cost-per-accepted-change</a>. MIT-licensed.
+    </p>
+  </article>
+
+  <script>
+    import { costPerAcceptedChange, formatCurrency, type CPACInputs } from '../lib/calculator';
+
+    const form = document.getElementById('cpac-form') as HTMLFormElement;
+    const valueEl = document.getElementById('result-value') as HTMLElement;
+    const breakdownEl = document.getElementById('result-breakdown') as HTMLElement;
+    const copyBtn = document.getElementById('copy-link') as HTMLButtonElement;
+
+    const fieldNames = [
+      'modelCost',
+      'infraCost',
+      'engineeringTime',
+      'reviewCost',
+      'reworkCost',
+      'acceptedChanges',
+    ] as const;
+
+    function readInputs(): CPACInputs {
+      const data: Record<string, number> = {};
+      for (const name of fieldNames) {
+        const input = form.elements.namedItem(name) as HTMLInputElement;
+        const raw = input.value;
+        data[name] = raw === '' ? 0 : Number(raw);
+      }
+      return data as unknown as CPACInputs;
+    }
+
+    function compute() {
+      try {
+        const inputs = readInputs();
+        const result = costPerAcceptedChange(inputs);
+        valueEl.textContent = formatCurrency(result.value);
+        const pct = (n: number) => (n * 100).toFixed(1) + '%';
+        breakdownEl.innerHTML =
+          `Total cost: ${formatCurrency(result.totalCost)} ÷ ${result.acceptedChanges} accepted changes<br>` +
+          `Model ${pct(result.breakdown.modelCost)} · ` +
+          `Infra ${pct(result.breakdown.infraCost)} · ` +
+          `Eng ${pct(result.breakdown.engineeringTime)} · ` +
+          `Review ${pct(result.breakdown.reviewCost)} · ` +
+          `Rework ${pct(result.breakdown.reworkCost)}`;
+      } catch (err) {
+        valueEl.textContent = '—';
+        breakdownEl.textContent = err instanceof Error ? err.message : 'Enter values to compute.';
+      }
+    }
+
+    function syncFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      for (const name of fieldNames) {
+        if (params.has(name)) {
+          const input = form.elements.namedItem(name) as HTMLInputElement;
+          input.value = params.get(name) ?? '';
+        }
+      }
+    }
+
+    function buildShareUrl() {
+      const inputs = readInputs() as unknown as Record<string, number>;
+      const params = new URLSearchParams();
+      for (const name of fieldNames) {
+        params.set(name, String(inputs[name]));
+      }
+      return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    }
+
+    syncFromUrl();
+    compute();
+    form.addEventListener('input', compute);
+
+    copyBtn.addEventListener('click', async () => {
+      const url = buildShareUrl();
+      try {
+        await navigator.clipboard.writeText(url);
+        const original = copyBtn.textContent;
+        copyBtn.textContent = 'Copied ✓';
+        setTimeout(() => {
+          copyBtn.textContent = original;
+        }, 1600);
+      } catch {
+        window.prompt('Copy this URL:', url);
+      }
+    });
+  </script>
+</BaseLayout>

@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="How to cite"
+  description="Citation formats for cost per accepted change — for papers, dashboards, talks, and reports."
+  path="/cite"
+>
+  <article class="page">
+    <p class="eyebrow">Reference</p>
+    <h1>How to cite</h1>
+    <p class="lede">
+      The metric is free to use, adopt, and reference. The original definition appears in <em>The Delivery Gap</em>; this site is the canonical online definition.
+    </p>
+
+    <h2 class="no-rule">In writing</h2>
+    <p>For papers, posts, and reports, the simplest reference is:</p>
+    <blockquote>
+      Hill, B. (2026). <em>The Delivery Gap.</em> See <a href="https://costperacceptedchange.org">costperacceptedchange.org</a> for the canonical definition.
+    </blockquote>
+
+    <h2>BibTeX</h2>
+<pre><code>@book&#123;hill2026deliverygap,
+  author    = &#123;Hill, Brenn&#125;,
+  title     = &#123;The Delivery Gap&#125;,
+  year      = &#123;2026&#125;,
+&#125;
+
+@misc&#123;cpac2026,
+  author       = &#123;Hill, Brenn&#125;,
+  title        = &#123;Cost per accepted change: canonical definition&#125;,
+  year         = &#123;2026&#125;,
+  howpublished = &#123;\url&#123;https://costperacceptedchange.org&#125;&#125;,
+&#125;
+</code></pre>
+
+    <h2>Plain text</h2>
+<pre><code>Cost per accepted change, defined in Hill (2026), The Delivery Gap.
+Canonical reference: https://costperacceptedchange.org
+</code></pre>
+
+    <h2>Inline first mention</h2>
+    <p>The recommended phrasing for the first mention of the metric in any document is:</p>
+    <blockquote>
+      <strong>cost per accepted change</strong> — the fully-loaded cost of producing software that reaches production and stays there, divided by the number of changes that do (Hill, 2026).
+    </blockquote>
+
+    <h2>In dashboards and tooling</h2>
+    <p>When the metric is exposed in a dashboard, report it alongside the formula and the window length. The minimum recommended label is:</p>
+<pre><code>Cost per accepted change — last 4 weeks
+$ per change that reached production and stayed there
+Source: https://costperacceptedchange.org
+</code></pre>
+
+    <h2>Naming convention</h2>
+    <p>
+      The metric is written as <strong>cost per accepted change</strong> — lowercase, no acronym, no hyphenation. The acronym CPAC is in informal use but conflicts with a major political brand and is discouraged in canonical materials.
+    </p>
+
+    <h2>License</h2>
+    <p>
+      The definition is free to use. The calculator library is MIT-licensed: <a href="https://github.com/brennhill/cost-per-accepted-change">github.com/brennhill/cost-per-accepted-change</a>.
+    </p>
+  </article>
+</BaseLayout>

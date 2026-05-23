@@ -1,0 +1,75 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  path?: string;
+}
+
+const {
+  title,
+  description = "Cost per accepted change: the canonical definition, calculator, and reference for measuring the true cost of producing trusted software.",
+  path = '/',
+} = Astro.props;
+
+const fullTitle = title === 'Cost per accepted change'
+  ? title
+  : `${title} — Cost per accepted change`;
+
+const canonical = `https://costperacceptedchange.org${path === '/' ? '' : path}`;
+
+const nav = [
+  { href: '/', label: 'Definition' },
+  { href: '/calculator', label: 'Calculator' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/cite', label: 'Cite' },
+  { href: '/leaderboard', label: 'Leaderboard' },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <title>{fullTitle}</title>
+  </head>
+  <body>
+    <header class="site">
+      <div class="inner">
+        <a href="/" class="brand">Cost per accepted change</a>
+        <nav>
+          {nav.map((item) => (
+            <a
+              href={item.href}
+              aria-current={path === item.href ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site">
+      <div class="inner">
+        <span>
+          A canonical reference for measuring AI-augmented software delivery.
+        </span>
+        <span>
+          <a href="https://github.com/brennhill/cost-per-accepted-change">Source on GitHub</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

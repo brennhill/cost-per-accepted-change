@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Cost per accepted change"
+  description="The canonical definition of cost per accepted change — a measurement for the true cost of producing trusted software in the AI-augmented era."
+  path="/"
+>
+  <article class="page">
+    <p class="eyebrow">A definition</p>
+    <h1>Cost per accepted change</h1>
+    <p class="lede">
+      The fully-loaded cost of producing software that reaches production and stays there, divided by the number of changes that do.
+    </p>
+
+    <div class="formula" aria-label="Cost per accepted change formula">
+      <span class="num">(model cost + infrastructure cost + engineering time + review cost + rework cost)</span>
+      <span class="bar"></span>
+      <span class="den">accepted changes</span>
+      <span class="label">Cost per accepted change</span>
+    </div>
+
+    <div class="callout">
+      <span class="label">The clause that matters</span>
+      An <em>accepted change</em> is one that reached production <strong>and stayed there</strong>. A change that is rolled back, reverted, or repaired inside the measurement window is not counted in the denominator; the cost incurred to produce it is counted in the numerator.
+    </div>
+
+    <h2 class="no-rule">Why this metric</h2>
+    <p>
+      AI did not make software delivery faster. It made code <em>generation</em> faster. The distance between the two — between what organizations expect from AI and what they actually deliver — is the delivery gap.
+    </p>
+    <p>
+      Token cost, pull-request count, and "AI code share" are activity metrics. They count what was produced, not what was kept. <strong>Cost per accepted change is the outcome metric:</strong> the number to report to the board.
+    </p>
+    <p>
+      It is <a href="https://www.finops.org/">FinOps</a> cost-to-serve moved one layer upstream — the cost to <em>produce</em> delivered software, not the cost to <em>run</em> it.
+    </p>
+
+    <h2>The formula, expanded</h2>
+    <p>The numerator is a fully-loaded production cost over a measurement window (typically a sprint, a month, or a quarter):</p>
+
+    <table>
+      <thead>
+        <tr><th>Component</th><th>What it captures</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Model cost</td><td>LLM, API, and inference spend attributable to the changes produced.</td></tr>
+        <tr><td>Infrastructure cost</td><td>Compute, storage, observability, and tooling overhead for the production loop.</td></tr>
+        <tr><td>Engineering time</td><td>Time spent specifying, prompting, integrating, and steering AI work — converted to currency.</td></tr>
+        <tr><td>Review cost</td><td>Time spent reviewing, validating, and gating AI-generated work — converted to currency.</td></tr>
+        <tr><td>Rework cost</td><td>Cost of fixing, reverting, or repairing changes that failed the "stayed there" test.</td></tr>
+      </tbody>
+    </table>
+
+    <p>The denominator is the count of changes that reached production <strong>and stayed there</strong> during the same window.</p>
+
+    <h2>A worked example</h2>
+    <p>A 10-engineer team measures a four-week window. Loaded engineering time is $150/hour.</p>
+
+    <table>
+      <tbody>
+        <tr><td>Model cost (LLM API spend)</td><td>$1,200</td></tr>
+        <tr><td>Infrastructure cost</td><td>$400</td></tr>
+        <tr><td>Engineering time (120 hours × $150)</td><td>$18,000</td></tr>
+        <tr><td>Review cost (40 hours × $150)</td><td>$6,000</td></tr>
+        <tr><td>Rework cost (16 hours × $150)</td><td>$2,400</td></tr>
+        <tr><th>Total cost</th><th>$28,000</th></tr>
+        <tr><td>Accepted changes (merged + stayed in production)</td><td>42</td></tr>
+        <tr><th>Cost per accepted change</th><th>$666.67</th></tr>
+      </tbody>
+    </table>
+
+    <p>
+      That number, reported alongside the volume of activity, is what reveals whether AI is paying for itself. A team shipping 200 PRs but accepting only 42 has a very different CPAC than a team shipping 50 PRs and accepting 42 — and the difference is invisible to traditional velocity metrics.
+    </p>
+
+    <p style="margin-top: 2em;">
+      <a class="btn btn-primary" href="/calculator">Open the calculator →</a>
+    </p>
+
+    <h2>What this metric is designed to catch</h2>
+    <ul>
+      <li><strong>Reviewer load shifted onto your most expensive engineers.</strong> If senior engineers are absorbing the verification cost of AI generation, cost per accepted change sees it. PR count does not.</li>
+      <li><strong>Silent rework.</strong> A change that is "merged" but quietly fixed three days later does not stay in production. It is excluded from the denominator and the fix is counted in the numerator.</li>
+      <li><strong>Optimization theater.</strong> Cutting model cost while increasing rework cost is not progress. Cost per accepted change is the bottom line that catches the trade-off.</li>
+    </ul>
+
+    <h2>What it is not</h2>
+    <ul>
+      <li><strong>Not a vendor benchmark.</strong> It measures your team's full production cost, not the unit cost of an LLM provider.</li>
+      <li><strong>Not a productivity score for individuals.</strong> It is an organizational outcome metric.</li>
+      <li><strong>Not a substitute for safety, security, or correctness gates.</strong> It pairs with them; it does not replace them.</li>
+    </ul>
+
+    <h2>Origin</h2>
+    <p>
+      Cost per accepted change was defined in <em>The Delivery Gap</em> (Brenn Hill, 2026) as the cost vertex of the Verification Triangle. See <a href="/cite">how to cite</a>.
+    </p>
+
+    <hr />
+
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      This page is the canonical definition. The metric is free to use, adopt, and cite. Refinements and worked examples are welcome via <a href="https://github.com/brennhill/cost-per-accepted-change">GitHub</a>.
+    </p>
+  </article>
+</BaseLayout>
