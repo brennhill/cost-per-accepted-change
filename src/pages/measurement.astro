@@ -124,6 +124,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <p>
       Without this clause, CPAC could be gamed by shipping recklessly and counting every merge. With it, the metric self-corrects: silent escapes that get quietly fixed are excluded from the denominator <em>and</em> their fix cost is added to the numerator. This is the rework defense, built into the metric instead of bolted on.
     </p>
+    <p>
+      The "stayed there" duration defaults to <strong>30 days post-merge</strong>, applied per-change rather than per-reporting-window. This is the same discipline as cohort-based retention measurement: don't evaluate a cohort that hasn't had time to mature. Teams may use 14 days (faster cadence, less lag) or 60–90 days (high-confidence, regulated environments). See the <a href="/faq">FAQ</a> for the full reasoning.
+    </p>
 
     <h3>Why all five cost components, not just model cost</h3>
     <p>

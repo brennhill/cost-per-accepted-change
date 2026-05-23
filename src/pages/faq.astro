@@ -109,15 +109,70 @@ dist/**           linguist-generated
 
     <h2>What does "stayed there" mean?</h2>
     <p>
-      A change has stayed in production if, by the end of the measurement window, it has not been:
+      A change has stayed in production if it survives its <strong>stayed-there window</strong> post-merge <strong>without being reverted or fixed</strong>. The principle: only follow-ups that effectively <em>retract</em> the original change count against it. Building further on top of the change is the signal that it succeeded, not failed.
     </p>
+
+    <p><strong>These invalidate acceptance</strong> (subsequent change retracts or repairs the original):</p>
     <ul>
-      <li>Reverted via a follow-up commit, revert, or rollback,</li>
-      <li>Substantively rewritten by a subsequent change addressing a defect introduced by the original, or</li>
+      <li>Reverted via a follow-up commit, <code>git revert</code>, or operational rollback.</li>
+      <li>Substantively rewritten to address a defect, bug, or correctness issue the original introduced.</li>
       <li>Disabled by feature flag to neutralize harm.</li>
+      <li>Hotfix patching the original to make it work as it should have on merge.</li>
     </ul>
+
+    <p><strong>These do NOT invalidate acceptance</strong> (subsequent change builds on or extends the original):</p>
+    <ul>
+      <li>Incremental improvement — extending the functionality, adding new features on top.</li>
+      <li>Refactoring for readability, structure, or maintainability (without changing observed behavior).</li>
+      <li>Performance optimization (unless fixing a regression the original introduced).</li>
+      <li>Test additions, documentation updates, comment edits.</li>
+      <li>Cosmetic follow-ups: formatting, renames, dependency bumps.</li>
+      <li>Iteration that takes the change further along its intended direction.</li>
+    </ul>
+
     <p>
-      Cosmetic follow-ups (formatting, renames, comment edits) do not invalidate acceptance. Defect-driven rewrites do.
+      <strong>The judgment call</strong>: if a reasonable reviewer would describe the follow-up as "fixing what the original got wrong," it invalidates. If they would describe it as "building on what the original enabled," it does not. When the line is fuzzy, document the call in your methodology notes and apply it consistently across reporting windows.
+    </p>
+
+    <h2>How long is the stayed-there window?</h2>
+    <p>
+      The <strong>recommended default is 30 days</strong> post-merge. A change counts as accepted if, 30 days after it landed in the production branch, it is still in production in substantively its original form.
+    </p>
+
+    <p>Acceptable alternatives:</p>
+    <table>
+      <thead>
+        <tr><th>Window</th><th>Best for</th><th>Tradeoff</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>14 days</strong></td>
+          <td>Fast-moving teams, daily-or-better deploy cadence, low cost of incident response.</td>
+          <td>Catches acute reverts. Misses some second-sprint regressions.</td>
+        </tr>
+        <tr>
+          <td><strong>30 days</strong> (recommended)</td>
+          <td>Most engineering organizations. Aligns with DORA change-failure-rate convention and monthly reporting cycles.</td>
+          <td>Catches the bulk of post-deploy issues. Adds ~1 month reporting lag.</td>
+        </tr>
+        <tr>
+          <td><strong>60–90 days</strong></td>
+          <td>Regulated industries, payment systems, infrastructure with long-tail failure modes.</td>
+          <td>High-confidence acceptance. Significant reporting lag; not suitable for monthly cadence.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      The window is <strong>per-change</strong>: each change is evaluated from its own merge date, not from the reporting window's boundaries. This keeps the test fair — without it, a change merged at the start of the reporting window faces a harder survival test than one merged at the end.
+    </p>
+
+    <p>
+      <strong>Reporting lag is the cost of this discipline.</strong> With a 30-day survival window and a monthly cadence, the current month's cost per accepted change cannot be fully computed until 30 days after the month closes — the most recent merges still need to season. This is the same discipline as cohort retention measurement; it is a feature, not a bug. Teams that want closer-to-real-time signal use 14 days; teams that need higher-confidence acceptance use 60–90.
+    </p>
+
+    <p>
+      Whatever window you pick, <strong>apply it consistently across all reporting periods</strong>. Switching mid-stream invalidates the trend.
     </p>
 
     <h2>How is "acceptance" different from "correctness"?</h2>

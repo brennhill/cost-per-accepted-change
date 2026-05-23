@@ -21,7 +21,7 @@ import VerificationTriangle from '../components/VerificationTriangle.astro';
 
     <div class="callout">
       <span class="label">The clause that matters</span>
-      An <em>accepted change</em> is one that reached production <strong>and stayed there</strong>. A change that is rolled back, reverted, or repaired inside the measurement window is not counted in the denominator; the cost incurred to produce it is counted in the numerator.
+      An <em>accepted change</em> is one that reached production <strong>and stayed there</strong> for a defined survival window — by default, <strong>30 days post-merge</strong>. A change that is reverted, repaired, or feature-flagged off within that window is not counted in the denominator; the cost incurred to produce it is counted in the numerator. (Teams may use 14 days for faster cadence or 60–90 days for higher-confidence acceptance — see the <a href="/faq">FAQ</a>.)
     </div>
 
     <aside class="sidebar">

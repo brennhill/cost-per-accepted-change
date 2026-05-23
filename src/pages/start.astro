@@ -61,7 +61,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <h3>Decide what "accepted change" means in your repo</h3>
     <p>
-      The default is <strong>a merged commit to your production branch, size-normalized via the 500-LOC rule</strong>. If you use a different convention (e.g., shipped feature flag, deployed increment), pick it now and document it. The rule must be the same every window; switching mid-pilot invalidates the trend.
+      The default is <strong>a merged commit to your production branch, size-normalized via the 500-LOC rule, that survives 30 days post-merge</strong>. If you use a different unit (shipped feature flag, deployed increment) or a different survival window (14 or 60–90 days), pick it now and document it. The rule must be the same every window; switching mid-pilot invalidates the trend.
+    </p>
+    <p>
+      The 30-day survival window means there is a <strong>reporting lag</strong>: the current month's cost per accepted change cannot be finalized until 30 days after the month closes. This is intentional — it mirrors cohort-based retention measurement and prevents the most recent merges from skewing the denominator before they have had time to fail. See the <a href="/faq">FAQ</a> for the window-length tradeoffs.
     </p>
 
     <h2>Weeks 2–3 — Capture the baseline</h2>
