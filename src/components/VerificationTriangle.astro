@@ -1,6 +1,6 @@
 ---
 interface Props {
-  highlight?: 'intent' | 'eval' | 'cost';
+  highlight?: 'intent' | 'verification' | 'cost';
   size?: number;
   class?: string;
 }
@@ -8,7 +8,7 @@ interface Props {
 const { highlight = 'cost', size = 240, class: className } = Astro.props;
 const titleMap = {
   intent: 'Verification Triangle — intent clarity highlighted',
-  eval: 'Verification Triangle — eval quality highlighted',
+  verification: 'Verification Triangle — verification quality highlighted',
   cost: 'Verification Triangle — cost vertex highlighted',
 };
 ---
@@ -50,8 +50,8 @@ const titleMap = {
   <circle
     cx="34"
     cy="180"
-    r={highlight === 'eval' ? 10 : 5}
-    fill={highlight === 'eval' ? 'currentColor' : 'transparent'}
+    r={highlight === 'verification' ? 10 : 5}
+    fill={highlight === 'verification' ? 'currentColor' : 'transparent'}
     stroke="currentColor"
     stroke-width="1.6"
   />
@@ -63,7 +63,7 @@ const titleMap = {
     font-size="13"
     font-weight="600"
     fill="currentColor"
-  >Eval quality</text>
+  >Verification quality</text>
 
   <!-- Cost vertex (bottom-right) -->
   <circle

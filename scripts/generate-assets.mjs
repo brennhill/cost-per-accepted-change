@@ -168,8 +168,8 @@ const triangleSvg = (color = COLORS.ink, highlight = 'cost') => {
   <line x1="34" y1="180" x2="206" y2="180" stroke="${color}" stroke-width="1.4" opacity="0.55"/>
   <circle cx="120" cy="34" r="${r('intent')}" fill="${f('intent')}" stroke="${color}" stroke-width="1.6"/>
   <text x="120" y="20" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Intent clarity</text>
-  <circle cx="34" cy="180" r="${r('eval')}" fill="${f('eval')}" stroke="${color}" stroke-width="1.6"/>
-  <text x="34" y="204" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Eval quality</text>
+  <circle cx="34" cy="180" r="${r('verification')}" fill="${f('verification')}" stroke="${color}" stroke-width="1.6"/>
+  <text x="34" y="204" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Verification quality</text>
   <circle cx="206" cy="180" r="${r('cost')}" fill="${f('cost')}" stroke="${color}" stroke-width="1.6"/>
   <text x="206" y="204" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Cost</text>
   <text x="120" y="118" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="9" font-weight="600" letter-spacing="2" fill="${color}" opacity="0.55">THE VERIFICATION</text>
