@@ -175,7 +175,7 @@ jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | ad
 <pre><code>#!/usr/bin/env bash
 set -euo pipefail
 
-# Run on the 1st of every month, computing the prior month's CPAC.
+# Run on the 1st of every month, computing the prior month's cost per accepted change.
 # Requires: gh (authenticated), jq, and access to your provider billing
 # + cloud billing. Adjust dates, repo, team key, and hourly rate.
 
@@ -239,7 +239,7 @@ Review:   $\($review)
 Rework:   $\($rework)
 Total:    $\($total)
 Units:    \($units)
-CPAC:     \($cpac)"
+Cost per accepted change: \($cpac)"
 '
 </code></pre>
 

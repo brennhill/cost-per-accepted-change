@@ -6,12 +6,15 @@ interface Props {
   title: string;
   description?: string;
   path?: string;
+  /** Open Graph type. Default 'article'; pass 'website' for the homepage. */
+  ogType?: 'article' | 'website';
 }
 
 const {
   title,
   description = "Cost per accepted change: the canonical definition, calculator, and reference for measuring the true cost of producing trusted software.",
   path = '/',
+  ogType = 'article',
 } = Astro.props;
 
 const fullTitle = title === 'Cost per accepted change'
@@ -43,7 +46,8 @@ const nav = [
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta property="og:type" content="article" />
+    <meta property="og:type" content={ogType} />
+    <meta name="theme-color" content="#fbfaf6" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -60,13 +64,14 @@ const nav = [
     <title>{fullTitle}</title>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <header class="site">
       <div class="inner">
         <a href="/" class="brand" aria-label="Cost Per Accepted Change — home">
-          <Mark size={30} class="brand-mark" />
+          <Mark size={30} class="brand-mark" ariaHidden={true} />
           <span class="brand-text">Cost Per Accepted Change</span>
         </a>
-        <nav>
+        <nav aria-label="Main">
           {nav.map((item) => (
             <a
               href={item.href}
@@ -78,7 +83,7 @@ const nav = [
         </nav>
       </div>
     </header>
-    <main>
+    <main id="main" tabindex="-1">
       <slot />
     </main>
     <footer class="site">

@@ -9,8 +9,17 @@
  *   - assets/verification-triangle.png   720x660
  *   - assets/mark.svg
  *   - assets/mark.png                    512x512
+ *   - assets/post-hook-square.png        1200x1200 (social post image)
+ *   - assets/post-hook-portrait.png      1080x1350 (LinkedIn-optimal)
  *
  * Run with: node scripts/generate-assets.mjs
+ *
+ * Font note: SVGs reference "Iowan Old Style, Charter, Georgia, serif".
+ * Iowan Old Style ships on macOS; Charter is uncommon on Linux/Windows.
+ * resvg picks the first available — on macOS the PNGs match the on-site
+ * rendering exactly; on Linux/Windows expect Georgia or a system serif
+ * fallback with slightly different metrics. Regenerate on macOS for the
+ * canonical rendering, or commit the PNGs once generated locally.
  */
 
 import { Resvg } from '@resvg/resvg-js';

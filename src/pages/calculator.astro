@@ -13,65 +13,76 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       Enter the costs and counts for one measurement window — a sprint, a month, a quarter. The calculator runs entirely in your browser; nothing is sent to a server.
     </p>
 
+    <noscript>
+      <div class="callout">
+        <span class="label">JavaScript required</span>
+        This calculator runs entirely in your browser, but it does require JavaScript. With JavaScript disabled, compute cost per accepted change manually using the formula on the <a href="/">definition page</a> or the <a href="/faq">git-based recipe in the FAQ</a>.
+      </div>
+    </noscript>
+
     <form class="calc-form" id="cpac-form" autocomplete="off">
-      <div class="calc-row">
-        <div>
-          <label for="modelCost">Model cost</label>
-          <span class="hint">LLM / API spend attributable to the changes produced. Tools like <a href="https://github.com/git-ai-project/git-ai">git-ai</a> can help attribute model spend to specific commits.</span>
-        </div>
-        <input id="modelCost" name="modelCost" type="number" inputmode="decimal" min="0" step="0.01" value="1200" />
-      </div>
+      <fieldset>
+        <legend class="sr-only">Measurement window inputs</legend>
 
-      <div class="calc-row">
-        <div>
-          <label for="infraCost">Infrastructure cost</label>
-          <span class="hint">Compute, storage, observability, tooling overhead.</span>
+        <div class="calc-row">
+          <div>
+            <label for="modelCost">Model cost</label>
+            <span class="hint" id="modelCost-hint">LLM / API spend attributable to the changes produced. Tools like <a href="https://github.com/git-ai-project/git-ai">git-ai</a> can help attribute model spend to specific commits.</span>
+          </div>
+          <input id="modelCost" name="modelCost" type="number" inputmode="decimal" min="0" step="0.01" value="1200" aria-describedby="modelCost-hint" />
         </div>
-        <input id="infraCost" name="infraCost" type="number" inputmode="decimal" min="0" step="0.01" value="400" />
-      </div>
 
-      <div class="calc-row">
-        <div>
-          <label for="engineeringTime">Engineering time</label>
-          <span class="hint">Spec / prompt / integrate / steer, converted to currency.</span>
+        <div class="calc-row">
+          <div>
+            <label for="infraCost">Infrastructure cost</label>
+            <span class="hint" id="infraCost-hint">Compute, storage, observability, tooling overhead.</span>
+          </div>
+          <input id="infraCost" name="infraCost" type="number" inputmode="decimal" min="0" step="0.01" value="400" aria-describedby="infraCost-hint" />
         </div>
-        <input id="engineeringTime" name="engineeringTime" type="number" inputmode="decimal" min="0" step="0.01" value="18000" />
-      </div>
 
-      <div class="calc-row">
-        <div>
-          <label for="reviewCost">Review cost</label>
-          <span class="hint">Time spent reviewing / gating AI work, converted to currency.</span>
+        <div class="calc-row">
+          <div>
+            <label for="engineeringTime">Engineering time</label>
+            <span class="hint" id="engineeringTime-hint">Spec / prompt / integrate / steer, converted to currency.</span>
+          </div>
+          <input id="engineeringTime" name="engineeringTime" type="number" inputmode="decimal" min="0" step="0.01" value="18000" aria-describedby="engineeringTime-hint" />
         </div>
-        <input id="reviewCost" name="reviewCost" type="number" inputmode="decimal" min="0" step="0.01" value="6000" />
-      </div>
 
-      <div class="calc-row">
-        <div>
-          <label for="reworkCost">Rework cost</label>
-          <span class="hint">Cost of fixing or reverting changes that did not stay in production.</span>
+        <div class="calc-row">
+          <div>
+            <label for="reviewCost">Review cost</label>
+            <span class="hint" id="reviewCost-hint">Time spent reviewing / gating AI work, converted to currency.</span>
+          </div>
+          <input id="reviewCost" name="reviewCost" type="number" inputmode="decimal" min="0" step="0.01" value="6000" aria-describedby="reviewCost-hint" />
         </div>
-        <input id="reworkCost" name="reworkCost" type="number" inputmode="decimal" min="0" step="0.01" value="2400" />
-      </div>
 
-      <div class="calc-row">
-        <div>
-          <label for="acceptedChanges">Accepted changes</label>
-          <span class="hint">Reached production <strong>and stayed there</strong> during the window.</span>
+        <div class="calc-row">
+          <div>
+            <label for="reworkCost">Rework cost</label>
+            <span class="hint" id="reworkCost-hint">Cost of fixing or reverting changes that did not stay in production.</span>
+          </div>
+          <input id="reworkCost" name="reworkCost" type="number" inputmode="decimal" min="0" step="0.01" value="2400" aria-describedby="reworkCost-hint" />
         </div>
-        <input id="acceptedChanges" name="acceptedChanges" type="number" inputmode="numeric" min="1" step="1" value="42" />
-      </div>
+
+        <div class="calc-row">
+          <div>
+            <label for="acceptedChanges">Accepted changes</label>
+            <span class="hint" id="acceptedChanges-hint">Whole-number count of changes that reached production <strong>and stayed there</strong> during the window.</span>
+          </div>
+          <input id="acceptedChanges" name="acceptedChanges" type="number" inputmode="numeric" min="1" step="1" value="42" aria-describedby="acceptedChanges-hint" />
+        </div>
+      </fieldset>
     </form>
 
-    <div class="calc-result" id="result" aria-live="polite">
+    <div class="calc-result" id="result">
       <span class="label">Cost per accepted change</span>
-      <span class="value" id="result-value">—</span>
-      <div class="breakdown" id="result-breakdown"></div>
+      <span class="value" id="result-value" aria-live="polite">—</span>
+      <div class="breakdown" id="result-breakdown" aria-hidden="true"></div>
     </div>
 
     <div class="calc-actions">
       <button type="button" class="btn btn-primary" id="copy-link">Copy shareable link</button>
-      <a class="btn" href="https://github.com/brennhill/cost-per-accepted-change/blob/main/src/lib/calculator.ts">View source</a>
+      <a class="btn" href="https://github.com/brennhill/cost-per-accepted-change/blob/main/src/lib/calculator.ts">View source (main branch)</a>
     </div>
 
     <h2>Use the library</h2>
@@ -98,7 +109,12 @@ console.log(cpac.breakdown); // share-of-total per component
   </article>
 
   <script>
-    import { costPerAcceptedChange, formatCurrency, type CPACInputs } from '../lib/calculator';
+    import {
+      costPerAcceptedChange,
+      formatCurrency,
+      formatShare,
+      type CPACInputs,
+    } from '../lib/calculator';
 
     const form = document.getElementById('cpac-form') as HTMLFormElement;
     const valueEl = document.getElementById('result-value') as HTMLElement;
@@ -129,19 +145,29 @@ console.log(cpac.breakdown); // share-of-total per component
         const inputs = readInputs();
         const result = costPerAcceptedChange(inputs);
         valueEl.textContent = formatCurrency(result.value);
-        const pct = (n: number) => (n * 100).toFixed(1) + '%';
-        breakdownEl.innerHTML =
-          `Total cost: ${formatCurrency(result.totalCost)} ÷ ${result.acceptedChanges} accepted changes<br>` +
-          `Model ${pct(result.breakdown.modelCost)} · ` +
-          `Infra ${pct(result.breakdown.infraCost)} · ` +
-          `Eng ${pct(result.breakdown.engineeringTime)} · ` +
-          `Review ${pct(result.breakdown.reviewCost)} · ` +
-          `Rework ${pct(result.breakdown.reworkCost)}`;
+        breakdownEl.textContent =
+          `Total cost: ${formatCurrency(result.totalCost)} ÷ ${result.acceptedChanges} accepted changes. ` +
+          `Model ${formatShare(result.breakdown.modelCost)} · ` +
+          `Infra ${formatShare(result.breakdown.infraCost)} · ` +
+          `Eng ${formatShare(result.breakdown.engineeringTime)} · ` +
+          `Review ${formatShare(result.breakdown.reviewCost)} · ` +
+          `Rework ${formatShare(result.breakdown.reworkCost)}`;
       } catch (err) {
         valueEl.textContent = '—';
         breakdownEl.textContent = err instanceof Error ? err.message : 'Enter values to compute.';
       }
     }
+
+    // Debounce keystroke-driven recomputes so screen readers and the result
+    // region aren't pummeled with intermediate states on every keypress.
+    function debounce<T extends (...args: never[]) => void>(fn: T, ms: number): T {
+      let handle: number | undefined;
+      return ((...args: never[]) => {
+        if (handle !== undefined) window.clearTimeout(handle);
+        handle = window.setTimeout(() => fn(...args), ms);
+      }) as T;
+    }
+    const debouncedCompute = debounce(compute, 300);
 
     function syncFromUrl() {
       const params = new URLSearchParams(window.location.search);
@@ -164,7 +190,7 @@ console.log(cpac.breakdown); // share-of-total per component
 
     syncFromUrl();
     compute();
-    form.addEventListener('input', compute);
+    form.addEventListener('input', debouncedCompute);
 
     copyBtn.addEventListener('click', async () => {
       const url = buildShareUrl();

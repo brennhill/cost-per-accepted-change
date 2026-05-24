@@ -22,6 +22,42 @@
   box-sizing: border-box;
 }
 
+/* Screen-reader only utility for visually-hidden labels. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip-to-content link — invisible until focused. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.6em 1em;
+  z-index: 100;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+}
+
+.skip-link:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+main:focus {
+  outline: none;
+}
+
 html {
   font-size: 17px;
   -webkit-text-size-adjust: 100%;

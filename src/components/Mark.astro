@@ -3,20 +3,33 @@ interface Props {
   size?: number;
   class?: string;
   title?: string;
+  /**
+   * When true, the mark is treated as purely decorative — no role, no title,
+   * no aria-label. Use when the parent element already has an accessible name
+   * (e.g. a brand link with its own aria-label).
+   */
+  ariaHidden?: boolean;
 }
 
-const { size = 32, class: className, title = 'Cost per accepted change' } = Astro.props;
+const {
+  size = 32,
+  class: className,
+  title = 'Cost per accepted change',
+  ariaHidden = false,
+} = Astro.props;
 ---
 <svg
   width={size}
   height={size}
   viewBox="0 0 64 64"
   xmlns="http://www.w3.org/2000/svg"
-  role="img"
-  aria-label={title}
+  role={ariaHidden ? undefined : 'img'}
+  aria-label={ariaHidden ? undefined : title}
+  aria-hidden={ariaHidden ? 'true' : undefined}
+  focusable={ariaHidden ? 'false' : undefined}
   class={className}
 >
-  <title>{title}</title>
+  {!ariaHidden && <title>{title}</title>}
   <text
     x="32"
     y="27"

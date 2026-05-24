@@ -31,7 +31,11 @@ export interface CPACResult {
   totalCost: number;
   /** Echo of the denominator. */
   acceptedChanges: number;
-  /** Per-component contribution as a fraction of total cost (0–1). */
+  /**
+   * Per-component contribution as a **fraction** of total cost.
+   * Each value is in [0, 1] — multiply by 100 (or use `formatShare`) for percent display.
+   * All components are 0 when `totalCost` is 0.
+   */
   breakdown: {
     modelCost: number;
     infraCost: number;
@@ -39,8 +43,6 @@ export interface CPACResult {
     reviewCost: number;
     reworkCost: number;
   };
-  /** ISO-8601 timestamp when this calculation was produced. */
-  computedAt: string;
 }
 
 export class InvalidCPACInputError extends Error {
@@ -65,7 +67,7 @@ export function costPerAcceptedChange(inputs: CPACInputs): CPACResult {
   assertNonNegative('reviewCost', inputs.reviewCost);
   assertNonNegative('reworkCost', inputs.reworkCost);
 
-  if (!Number.isFinite(inputs.acceptedChanges) || inputs.acceptedChanges <= 0) {
+  if (!Number.isInteger(inputs.acceptedChanges) || inputs.acceptedChanges <= 0) {
     throw new InvalidCPACInputError(
       `acceptedChanges must be a positive integer; received ${inputs.acceptedChanges}`,
     );
@@ -95,7 +97,6 @@ export function costPerAcceptedChange(inputs: CPACInputs): CPACResult {
     totalCost,
     acceptedChanges: inputs.acceptedChanges,
     breakdown,
-    computedAt: new Date().toISOString(),
   };
 }
 
@@ -106,6 +107,14 @@ export function formatCurrency(value: number, currency = 'USD', locale = 'en-US'
     currency,
     maximumFractionDigits: 2,
   }).format(value);
+}
+
+/**
+ * Format a [0, 1] fraction as a percent string (default 1 decimal place).
+ * Pure presentation helper for the `breakdown` fields on CPACResult.
+ */
+export function formatShare(fraction: number, decimals = 1): string {
+  return `${(fraction * 100).toFixed(decimals)}%`;
 }
 
 /**

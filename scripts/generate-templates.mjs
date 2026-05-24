@@ -106,31 +106,43 @@ function buildTrackerSheet(wb) {
   ];
 
   const firstDataRow = 3;
+
+  // Apply the same conditional formulas to every row (example + empty).
+  // I (total cost), K (CPAC), and L (Δ vs prior) all return "" when their
+  // inputs are missing or zero, so the sheet stays readable as users delete
+  // example rows or insert blank ones below.
+  const writeFormulas = (r, isFirstRow) => {
+    ws.getCell(`I${r}`).value = {
+      formula: `IF(SUM(D${r}:H${r})=0,"",D${r}+E${r}+F${r}+G${r}+H${r})`,
+    };
+    ws.getCell(`K${r}`).value = {
+      formula: `IF(OR(I${r}="",J${r}="",J${r}=0),"",I${r}/J${r})`,
+    };
+    ws.getCell(`L${r}`).value = isFirstRow
+      ? { formula: `""` }
+      : { formula: `IF(OR(K${r}="",K${r - 1}=""),"",(K${r}-K${r - 1})/K${r - 1})` };
+  };
+
   example.forEach((row, i) => {
     const r = firstDataRow + i;
     ws.getCell(`A${r}`).value = row.label;
-    ws.getCell(`B${r}`).value = row.start;
-    ws.getCell(`C${r}`).value = row.end;
+    // Date columns: pass JavaScript Date objects so Excel/Sheets recognize
+    // them for date-format styling and chart axis detection.
+    ws.getCell(`B${r}`).value = new Date(row.start);
+    ws.getCell(`C${r}`).value = new Date(row.end);
     ws.getCell(`D${r}`).value = row.modelCost;
     ws.getCell(`E${r}`).value = row.infraCost;
     ws.getCell(`F${r}`).value = row.engTime;
     ws.getCell(`G${r}`).value = row.reviewCost;
     ws.getCell(`H${r}`).value = row.reworkCost;
-    ws.getCell(`I${r}`).value = { formula: `D${r}+E${r}+F${r}+G${r}+H${r}` };
     ws.getCell(`J${r}`).value = row.units;
-    ws.getCell(`K${r}`).value = { formula: `IF(J${r}=0,"",I${r}/J${r})` };
-    ws.getCell(`L${r}`).value =
-      i === 0
-        ? { formula: `""` }
-        : { formula: `IF(OR(K${r}="",K${r - 1}=""),"",(K${r}-K${r - 1})/K${r - 1})` };
+    writeFormulas(r, i === 0);
   });
 
   // Add 12 empty rows ready for the team to fill in
   for (let i = example.length; i < example.length + 12; i++) {
     const r = firstDataRow + i;
-    ws.getCell(`I${r}`).value = { formula: `IF(SUM(D${r}:H${r})=0,"",D${r}+E${r}+F${r}+G${r}+H${r})` };
-    ws.getCell(`K${r}`).value = { formula: `IF(OR(I${r}="",J${r}="",J${r}=0),"",I${r}/J${r})` };
-    ws.getCell(`L${r}`).value = { formula: `IF(OR(K${r}="",K${r - 1}=""),"",(K${r}-K${r - 1})/K${r - 1})` };
+    writeFormulas(r, false);
   }
 
   // Style all body rows
@@ -144,15 +156,22 @@ function buildTrackerSheet(wb) {
       cell.border = {
         bottom: { style: 'hair', color: { argb: COLORS.rule } },
       };
-      // Currency columns
+      // Date columns (B, C)
+      if (colNum === 2 || colNum === 3) {
+        cell.numFmt = 'yyyy-mm-dd';
+        cell.alignment = { horizontal: 'left', vertical: 'middle' };
+      }
+      // Currency columns: D-H (inputs), I (total), K (CPAC)
       if ([4, 5, 6, 7, 8, 9, 11].includes(colNum)) {
         cell.numFmt = '"$"#,##0.00';
         cell.alignment = { horizontal: 'right', vertical: 'middle' };
       }
+      // Integer column: J (accepted change units)
       if (colNum === 10) {
         cell.numFmt = '#,##0';
         cell.alignment = { horizontal: 'right', vertical: 'middle' };
       }
+      // Percent-with-sign column: L (Δ vs prior)
       if (colNum === 12) {
         cell.numFmt = '+0.0%;-0.0%;0.0%';
         cell.alignment = { horizontal: 'right', vertical: 'middle' };
@@ -229,7 +248,10 @@ function buildInstructionsSheet(wb) {
     cell.value = text;
     cell.font = FONT_BODY;
     cell.alignment = { wrapText: true, vertical: 'top' };
-    ws.getRow(r).height = Math.max(18, Math.ceil(text.length / 100) * 18);
+    // Generous heuristic: ~80 chars per visible line at this column width,
+    // 22pt per wrapped line. Overshoots slightly rather than clipping text.
+    const visibleLines = Math.max(1, Math.ceil(text.length / 80));
+    ws.getRow(r).height = Math.max(20, visibleLines * 22);
     r++;
   };
   const spacer = () => {
