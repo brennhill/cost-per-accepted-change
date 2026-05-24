@@ -88,6 +88,20 @@ const nav = [
     <main id="main" tabindex="-1">
       <slot />
     </main>
+    <!--
+      Analytics — both cookieless, so no consent banner is required.
+      1. Cloudflare Web Analytics: auto-injected by Cloudflare Pages.
+         CSP allowlist is in public/_headers.
+      2. GoatCounter: script tag below. Replace YOURCODE with your
+         GoatCounter site code (sign up at https://www.goatcounter.com/signup
+         — the suggested code is "costperacceptedchange" or "cpac"). The
+         CSP already allowlists *.goatcounter.com and gc.zgo.at.
+    -->
+    <script
+      data-goatcounter="https://YOURCODE.goatcounter.com/count"
+      async
+      src="https://gc.zgo.at/count.js"
+    ></script>
     <footer class="site">
       <div class="inner">
         <div class="col">

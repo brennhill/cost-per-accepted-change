@@ -3,7 +3,7 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
+  Content-Security-Policy: default-src 'self'; img-src 'self' data: https://*.goatcounter.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://*.goatcounter.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), browsing-topics=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-site
