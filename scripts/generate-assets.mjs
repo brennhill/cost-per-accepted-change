@@ -62,6 +62,47 @@ async function loadFontBuffers() {
   return cachedFontBuffers;
 }
 
+/**
+ * Assert that the bundled Source Serif 4 is actually being used by resvg.
+ *
+ * Background: resvg-js (verified through 2.6.2) silently drops woff/woff2
+ * files passed via fontFiles or fontBuffers — only TTF/OTF are accepted.
+ * Without this check, a regression in font handling (different resvg
+ * version, broken decompression, wrong format) would silently fall back
+ * to a system font and produce subtly wrong PNGs without raising any error.
+ *
+ * The check: render the same SVG twice — once with our bundled fonts, once
+ * with nothing. If the outputs are byte-equal, the font load failed and
+ * the script aborts loudly instead of shipping wrong assets.
+ */
+async function assertFontsLoaded() {
+  const testSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60"><text x="10" y="40" font-family="Source Serif 4" font-size="30" fill="black">test</text></svg>`;
+
+  const fontBuffers = await loadFontBuffers();
+  const withFonts = new Resvg(testSvg, {
+    font: { fontBuffers, loadSystemFonts: false, defaultFontFamily: 'Source Serif 4' },
+  })
+    .render()
+    .asPng();
+  const withoutFonts = new Resvg(testSvg, {
+    font: { loadSystemFonts: false, defaultFontFamily: 'Source Serif 4' },
+  })
+    .render()
+    .asPng();
+
+  if (Buffer.compare(withFonts, withoutFonts) === 0) {
+    throw new Error(
+      'Font assertion failed: Source Serif 4 fontBuffers produced byte-identical output ' +
+        'to a no-fonts render. resvg-js may have silently dropped the buffers. ' +
+        'Check that wawoff2 decompressed to valid TTF (resvg only accepts TTF/OTF, never ' +
+        'woff/woff2). PNGs would have shipped with the wrong font.',
+    );
+  }
+  console.log(
+    `✓ Source Serif 4 confirmed loaded (with-font render: ${withFonts.length} B, no-font: ${withoutFonts.length} B)`,
+  );
+}
+
 const COLORS = {
   ink: '#1a1a1a',
   inkMuted: '#5a5a5a',
@@ -281,6 +322,10 @@ async function renderPng(svgString, outPath, fitWidth) {
 // ----- Build -----------------------------------------------------------
 
 async function build() {
+  // Prove the bundled font is actually rendering before producing any
+  // user-facing PNG. Aborts loudly if resvg silently dropped the buffers.
+  await assertFontsLoaded();
+
   // Mark
   const markStandalone = markSvg(COLORS.accent, COLORS.paper);
   writeSvg(join(ASSETS_DIR, 'mark.svg'), markStandalone);
