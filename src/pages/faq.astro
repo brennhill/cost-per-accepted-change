@@ -12,7 +12,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <h2 class="no-rule">What counts as a change?</h2>
     <p>
-      The default unit is a <strong>merged commit to the production branch</strong>, normalized by size so that one accepted change unit represents a comparable amount of substantive accepted work.
+      The default unit is a <strong>merged pull request to the production branch</strong>, normalized by size so that one accepted change unit represents a comparable amount of substantive accepted work. (Teams on non-PR workflows substitute the squash-merge commit or the merge commit that lands a logical change set; the unit must be applied consistently.)
     </p>
 
     <p>The size-normalization rule:</p>
@@ -41,7 +41,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <p>Why the 500-line threshold:</p>
     <ul>
-      <li><strong>It tracks human verification capacity.</strong> Reviewer comprehension, defect-detection, and the willingness to leave substantive comments all drop sharply past about 400 lines in a single PR. 500 lines is a clean round number that sits just past that cliff, providing a small buffer while remaining recognizably "one substantial change" in most engineering cultures.</li>
+      <li><strong>It tracks human verification capacity.</strong> The reviewer-comprehension cliff at ~200–400 lines is documented in the canonical code-review literature — Cisco's review of ~2,500 code reviews (Cohen, <em>Best Kept Secrets of Peer Code Review</em>, SmartBear, 2006) and subsequent SmartBear / Cisco analyses both find defect-detection efficiency dropping sharply past 200 LOC and effectively collapsing past 400. SmallTalk-style cultures push the threshold higher; mainstream engineering practice has converged on 200–400. 500 lines sits just past that cliff as a clean buffer that maps to a single "substantial change" most reviewers can hold in their head before splitting.</li>
       <li><strong>It catches the mega-merge.</strong> Without normalization, a team shipping one 5,000-line merge as a single "accepted change" gets the same denominator credit as a team shipping one 100-line bug fix — even though the former is an order of magnitude more accepted work.</li>
       <li><strong>It blocks the over-split gaming.</strong> Without a minimum unit size, teams could inflate the denominator by chopping trivial work into ever-smaller PRs. Below 500 lines, splitting buys no extra credit.</li>
     </ul>
@@ -86,10 +86,10 @@ git diff --numstat A..B
       Two operational notes for the recipes below: pass <code>-R owner/repo</code> when running outside the repo's working tree, and remember that <code>--limit 1000</code> is the maximum <code>gh pr list</code> accepts. For windows with more than 1,000 merged PRs, use <code>gh api graphql --paginate</code> with a PR-search query, or use the REST search API with explicit cursor pagination.
     </p>
 
-    <p>One-liner that produces the normalized accepted-change unit count for the window. The <code>(add // 0)</code> at the end guards against an empty list (no PRs in window, or all filtered out) — without it, <code>jq</code> returns <code>null</code>:</p>
+    <p>One-liner that produces the normalized accepted-change unit count for the window. Each PR contributes <code>max(1, ceil(LOC/500))</code> units — so a binary-only PR (additions + deletions = 0 from <code>gh</code>'s perspective, since it counts line deltas only) still counts as 1 unit, matching the library's <code>normalizeChanges()</code>. The <code>(add // 0)</code> at the end guards against an empty list:</p>
 <pre><code>gh pr list -R owner/repo --state merged --search 'merged:2026-04-01..2026-04-30' \
   --json additions,deletions --limit 1000 \
-  | jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | (add // 0)'
+  | jq '[.[] | (.additions + .deletions) | (. / 500) | ceil | if . &lt; 1 then 1 else . end] | (add // 0)'
 </code></pre>
 
     <h3>Excluding vendored, generated, lockfiles</h3>
@@ -227,7 +227,7 @@ dist/**           linguist-generated
 
     <h3>Tokenization changes within a vendor's own model family</h3>
     <p>
-      A "minor" model bump can shift token usage 20–30% even when the model is doing the same job. Claude Opus 4.7's tokenization, for example, was reported to consume substantially more tokens per operation than 4.6 on identical workloads — a team tracking "tokens per change" through the upgrade would have seen a phantom regression that had nothing to do with their delivery system. Vendors do not coordinate tokenization changes with measurement frameworks.
+      A model bump can shift token usage substantially even when the model is doing the same job. Claude Opus 4.7's new tokenizer is the worked example: Anthropic disclosed a 1.0–1.35× inflation range vs. 4.6 depending on content type, and independent measurements by <a href="https://openrouter.ai/announcements/opus-47-tokenizer-analysis">OpenRouter</a> and <a href="https://simonwillison.net/2026/apr/20/claude-token-counts/">Simon Willison</a> (April 2026) found <strong>~12–27% more tokens on typical workloads</strong> and <strong>32–34% on large (10K+ token) prompts</strong> — at unchanged per-token pricing. A team tracking "tokens per change" through that upgrade would have seen a phantom regression that had nothing to do with their delivery system. Vendors do not coordinate tokenization changes with measurement frameworks.
     </p>
 
     <h3>Identical tasks vary wildly in token count</h3>
@@ -264,17 +264,17 @@ dist/**           linguist-generated
 
     <h3>Worked example: the Claude 4.6 → 4.7 bump</h3>
     <p>
-      Claude Opus 4.7 launched at the same dollar price per token as 4.6. But 4.7's tokenization consumed roughly <strong>30% more tokens per operation</strong> on identical workloads. For teams that adopted 4.7, the model-cost component in dollars rose ~30% without any change in their own delivery system.
+      Claude Opus 4.7 launched at the same dollar price per token as 4.6, but with a new tokenizer that consumes more tokens for the same content. Anthropic disclosed a 1.0–1.35× inflation range; independent measurements (<a href="https://openrouter.ai/announcements/opus-47-tokenizer-analysis">OpenRouter</a>, <a href="https://simonwillison.net/2026/apr/20/claude-token-counts/">Simon Willison</a>, April 2026) found <strong>12–27% higher token usage on typical workloads</strong>, and <strong>32–34% on large (10K+ token) prompts</strong>. For teams that adopted 4.7, the model-cost component in dollars rose by that range without any change in their own delivery system.
     </p>
 
     <p>A team watching only the headline cost per accepted change would have seen one of two equally bad outcomes:</p>
     <ul>
-      <li><strong>The headline climbs ~30%.</strong> The team faces an unanswerable question — did we get less productive, did the model get more expensive, or did something else degrade? Wasted investigation, missed root cause.</li>
-      <li><strong>The headline stays flat or drops.</strong> 4.7's per-task capability gains were sometimes enough to offset the extra tokens — fewer iterations per accepted change, so net spend stayed flat. The team congratulates itself on AI productivity, never knowing that vendor cost rose 30% and only luck masked it. A signal procurement and leadership needed to hear, missed.</li>
+      <li><strong>The headline climbs ~20%.</strong> The team faces an unanswerable question — did we get less productive, did the model get more expensive, or did something else degrade? Wasted investigation, missed root cause.</li>
+      <li><strong>The headline stays flat or drops.</strong> 4.7's per-task capability gains were sometimes enough to offset the extra tokens — fewer iterations per accepted change, so net spend stayed flat. The team congratulates itself on AI productivity, never knowing that vendor cost rose ~20% and only luck masked it. A signal procurement and leadership needed to hear, missed.</li>
     </ul>
 
     <p>
-      With <strong>component-level tracking</strong>, the same scenario reads instantly: model cost up ~30%, all other components flat. The conclusion is immediate — this is an upstream vendor change, not a delivery-system change. Talk to procurement; if you are getting offsetting capability gains, document them; if not, evaluate alternatives.
+      With <strong>component-level tracking</strong>, the same scenario reads instantly: model cost up ~20%, all other components flat. The conclusion is immediate — this is an upstream vendor change, not a delivery-system change. Talk to procurement; if you are getting offsetting capability gains, document them; if not, evaluate alternatives.
     </p>
 
     <h3>What each component catches that the headline doesn't</h3>

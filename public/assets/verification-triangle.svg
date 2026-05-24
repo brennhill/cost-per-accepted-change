@@ -8,6 +8,6 @@
   <text x="34" y="204" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="#1a1a1a">Eval quality</text>
   <circle cx="206" cy="180" r="10" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="1.6"/>
   <text x="206" y="204" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="#1a1a1a">Cost</text>
-  <text x="120" y="118" text-anchor="middle" font-family="Helvetica" font-size="9" font-weight="600" letter-spacing="2" fill="#1a1a1a" opacity="0.55">THE VERIFICATION</text>
-  <text x="120" y="132" text-anchor="middle" font-family="Helvetica" font-size="9" font-weight="600" letter-spacing="2" fill="#1a1a1a" opacity="0.55">TRIANGLE</text>
+  <text x="120" y="118" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="9" font-weight="600" letter-spacing="2" fill="#1a1a1a" opacity="0.55">THE VERIFICATION</text>
+  <text x="120" y="132" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="9" font-weight="600" letter-spacing="2" fill="#1a1a1a" opacity="0.55">TRIANGLE</text>
 </svg>

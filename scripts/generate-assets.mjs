@@ -34,27 +34,34 @@ const ASSETS_DIR = join(PUBLIC_DIR, 'assets');
 // memory at script startup and hand the TTF buffers to resvg. This ensures
 // PNG rendering uses the bundled font (not whatever system serif happens to
 // be installed) so output is byte-stable on every host.
-const SOURCE_SERIF_DIR = join(
-  __dirname,
-  '..',
-  'node_modules',
-  '@fontsource',
-  'source-serif-4',
-  'files',
-);
-const WOFF2_FILES = [
-  'source-serif-4-latin-400-normal.woff2',
-  'source-serif-4-latin-400-italic.woff2',
-  'source-serif-4-latin-600-normal.woff2',
-  'source-serif-4-latin-600-italic.woff2',
+const FONTS_ROOT = join(__dirname, '..', 'node_modules', '@fontsource');
+
+// Source Serif 4 — body / formula text. Iowan/Charter fallback was producing
+// different renders on macOS vs Linux/CI; bundling fixes that.
+const SOURCE_SERIF_FILES = [
+  'source-serif-4/files/source-serif-4-latin-400-normal.woff2',
+  'source-serif-4/files/source-serif-4-latin-400-italic.woff2',
+  'source-serif-4/files/source-serif-4-latin-600-normal.woff2',
+  'source-serif-4/files/source-serif-4-latin-600-italic.woff2',
 ];
+
+// Inter — sans-serif for UI labels (eyebrows, taglines, domain). SVG
+// markup says font-family="Helvetica, Arial, sans-serif"; Inter satisfies
+// that fallback on every host so the eyebrow text renders identically on
+// macOS (no Helvetica fallback) and Linux CI (no Helvetica at all).
+const INTER_FILES = [
+  'inter/files/inter-latin-400-normal.woff2',
+  'inter/files/inter-latin-600-normal.woff2',
+];
+
+const ALL_WOFF2_FILES = [...SOURCE_SERIF_FILES, ...INTER_FILES];
 
 let cachedFontBuffers = null;
 async function loadFontBuffers() {
   if (cachedFontBuffers) return cachedFontBuffers;
   cachedFontBuffers = await Promise.all(
-    WOFF2_FILES.map(async (name) => {
-      const woff2 = readFileSync(join(SOURCE_SERIF_DIR, name));
+    ALL_WOFF2_FILES.map(async (relativePath) => {
+      const woff2 = readFileSync(join(FONTS_ROOT, relativePath));
       const ttf = await wawoff2.decompress(woff2);
       return Buffer.from(ttf);
     }),
@@ -63,7 +70,8 @@ async function loadFontBuffers() {
 }
 
 /**
- * Assert that the bundled Source Serif 4 is actually being used by resvg.
+ * Assert that both bundled fonts (Source Serif 4 and Inter) are actually
+ * being used by resvg.
  *
  * Background: resvg-js (verified through 2.6.2) silently drops woff/woff2
  * files passed via fontFiles or fontBuffers — only TTF/OTF are accepted.
@@ -71,36 +79,42 @@ async function loadFontBuffers() {
  * version, broken decompression, wrong format) would silently fall back
  * to a system font and produce subtly wrong PNGs without raising any error.
  *
- * The check: render the same SVG twice — once with our bundled fonts, once
- * with nothing. If the outputs are byte-equal, the font load failed and
- * the script aborts loudly instead of shipping wrong assets.
+ * The check: for each font family, render the same SVG twice — once with
+ * our bundled fonts, once with nothing — and assert the outputs differ.
  */
 async function assertFontsLoaded() {
-  const testSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60"><text x="10" y="40" font-family="Source Serif 4" font-size="30" fill="black">test</text></svg>`;
-
   const fontBuffers = await loadFontBuffers();
-  const withFonts = new Resvg(testSvg, {
-    font: { fontBuffers, loadSystemFonts: false, defaultFontFamily: 'Source Serif 4' },
-  })
-    .render()
-    .asPng();
-  const withoutFonts = new Resvg(testSvg, {
-    font: { loadSystemFonts: false, defaultFontFamily: 'Source Serif 4' },
-  })
-    .render()
-    .asPng();
 
-  if (Buffer.compare(withFonts, withoutFonts) === 0) {
-    throw new Error(
-      'Font assertion failed: Source Serif 4 fontBuffers produced byte-identical output ' +
-        'to a no-fonts render. resvg-js may have silently dropped the buffers. ' +
-        'Check that wawoff2 decompressed to valid TTF (resvg only accepts TTF/OTF, never ' +
-        'woff/woff2). PNGs would have shipped with the wrong font.',
+  const cases = [
+    { family: 'Source Serif 4', label: 'serif body' },
+    { family: 'Inter', label: 'sans labels' },
+  ];
+
+  for (const { family, label } of cases) {
+    const testSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" width="240" height="60"><text x="10" y="40" font-family="${family}" font-size="30" fill="black">test</text></svg>`;
+
+    const withFonts = new Resvg(testSvg, {
+      font: { fontBuffers, loadSystemFonts: false, defaultFontFamily: family },
+    })
+      .render()
+      .asPng();
+    const withoutFonts = new Resvg(testSvg, {
+      font: { loadSystemFonts: false, defaultFontFamily: family },
+    })
+      .render()
+      .asPng();
+
+    if (Buffer.compare(withFonts, withoutFonts) === 0) {
+      throw new Error(
+        `Font assertion failed: ${family} (${label}) fontBuffers produced byte-identical ` +
+          'output to a no-fonts render. resvg-js may have silently dropped the buffer. ' +
+          'Check that wawoff2 decompressed the woff2 to valid TTF for this font family.',
+      );
+    }
+    console.log(
+      `✓ ${family} confirmed loaded (with: ${withFonts.length} B, without: ${withoutFonts.length} B)`,
     );
   }
-  console.log(
-    `✓ Source Serif 4 confirmed loaded (with-font render: ${withFonts.length} B, no-font: ${withoutFonts.length} B)`,
-  );
 }
 
 const COLORS = {
@@ -127,20 +141,20 @@ const markSvg = (color = COLORS.accent, bg = 'none') => `<svg xmlns="http://www.
 const cpacGraphicSvg = (color = COLORS.accent) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 252" width="600" height="252">
   <rect x="6" y="6" width="588" height="240" fill="none" stroke="${color}" stroke-width="0.8" rx="2"/>
   <rect x="14" y="14" width="572" height="224" fill="none" stroke="${color}" stroke-width="0.4" opacity="0.4" rx="1"/>
-  <text x="300" y="44" text-anchor="middle" font-family="Helvetica" font-size="10" font-weight="700" letter-spacing="3.2" fill="${color}" opacity="0.7">COST PER ACCEPTED CHANGE</text>
+  <text x="300" y="44" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="3.2" fill="${color}" opacity="0.7">COST PER ACCEPTED CHANGE</text>
   <line x1="220" y1="54" x2="278" y2="54" stroke="${color}" stroke-width="0.5" opacity="0.45"/>
   <line x1="322" y1="54" x2="380" y2="54" stroke="${color}" stroke-width="0.5" opacity="0.45"/>
   <circle cx="300" cy="54" r="1.4" fill="${color}" opacity="0.55"/>
   <text x="300" y="103" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="15" font-style="italic" fill="${color}">model cost · infrastructure · engineering time · review · rework</text>
   <line x1="76" y1="124" x2="524" y2="124" stroke="${color}" stroke-width="1.6"/>
   <text x="300" y="150" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="15" font-style="italic" fill="${color}">accepted change units</text>
-  <text x="300" y="170" text-anchor="middle" font-family="Helvetica" font-size="9" fill="${color}" opacity="0.55">( reached production and stayed there )</text>
+  <text x="300" y="170" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="9" fill="${color}" opacity="0.55">( reached production and stayed there )</text>
   <g transform="translate(282, 185)" fill="${color}">
     <text x="18" y="14" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600">$</text>
     <line x1="4" y1="19" x2="32" y2="19" stroke="${color}" stroke-width="1.1" stroke-linecap="round"/>
     <text x="18" y="33" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="11" font-weight="600">AC</text>
   </g>
-  <text x="300" y="232" text-anchor="middle" font-family="Helvetica" font-size="9" letter-spacing="1.6" fill="${color}" opacity="0.6">THE COST OF DELIVERED SOFTWARE THAT STAYED DELIVERED</text>
+  <text x="300" y="232" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="9" letter-spacing="1.6" fill="${color}" opacity="0.6">THE COST OF DELIVERED SOFTWARE THAT STAYED DELIVERED</text>
 </svg>`;
 
 // ----- Verification Triangle -------------------------------------------
@@ -158,8 +172,8 @@ const triangleSvg = (color = COLORS.ink, highlight = 'cost') => {
   <text x="34" y="204" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Eval quality</text>
   <circle cx="206" cy="180" r="${r('cost')}" fill="${f('cost')}" stroke="${color}" stroke-width="1.6"/>
   <text x="206" y="204" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Cost</text>
-  <text x="120" y="118" text-anchor="middle" font-family="Helvetica" font-size="9" font-weight="600" letter-spacing="2" fill="${color}" opacity="0.55">THE VERIFICATION</text>
-  <text x="120" y="132" text-anchor="middle" font-family="Helvetica" font-size="9" font-weight="600" letter-spacing="2" fill="${color}" opacity="0.55">TRIANGLE</text>
+  <text x="120" y="118" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="9" font-weight="600" letter-spacing="2" fill="${color}" opacity="0.55">THE VERIFICATION</text>
+  <text x="120" y="132" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="9" font-weight="600" letter-spacing="2" fill="${color}" opacity="0.55">TRIANGLE</text>
 </svg>`;
 };
 
@@ -172,7 +186,7 @@ const ogImageSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
   <rect x="32" y="32" width="1136" height="566" fill="none" stroke="${COLORS.accent}" stroke-width="1.2" opacity="0.35" rx="4"/>
 
   <!-- Eyebrow -->
-  <text x="600" y="120" text-anchor="middle" font-family="Helvetica" font-size="18" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">A CANONICAL DEFINITION</text>
+  <text x="600" y="120" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">A CANONICAL DEFINITION</text>
 
   <!-- Main title -->
   <text x="600" y="200" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="68" font-weight="600" fill="${COLORS.ink}">Cost per accepted change</text>
@@ -190,12 +204,12 @@ const ogImageSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
 
   <text x="600" y="440" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">accepted change units</text>
 
-  <text x="600" y="475" text-anchor="middle" font-family="Helvetica" font-size="14" fill="${COLORS.accent}" opacity="0.6">( reached production and stayed there )</text>
+  <text x="600" y="475" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" fill="${COLORS.accent}" opacity="0.6">( reached production and stayed there )</text>
 
   <!-- Footer / domain -->
-  <text x="600" y="565" text-anchor="middle" font-family="Helvetica" font-size="20" font-weight="700" letter-spacing="4" fill="${COLORS.ink}">COSTPERACCEPTEDCHANGE.ORG</text>
+  <text x="600" y="565" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="4" fill="${COLORS.ink}">COSTPERACCEPTEDCHANGE.ORG</text>
 
-  <text x="600" y="590" text-anchor="middle" font-family="Helvetica" font-size="12" letter-spacing="2.5" fill="${COLORS.inkMuted}">DEFINED IN THE DELIVERY GAP · BRENN HILL · 2026</text>
+  <text x="600" y="590" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" letter-spacing="2.5" fill="${COLORS.inkMuted}">DEFINED IN THE DELIVERY GAP · BRENN HILL · 2026</text>
 </svg>`;
 
 // ----- Post images (for LinkedIn / X / Bluesky / etc.) -----------------
@@ -218,7 +232,7 @@ function formulaStampFragment({ cx, cy, width, height }) {
   <text x="${cx}" y="${numeratorY}" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">model · infrastructure · engineering · review · rework</text>
   <line x1="${x + 40}" y1="${barY}" x2="${x + width - 40}" y2="${barY}" stroke="${COLORS.accent}" stroke-width="2.4"/>
   <text x="${cx}" y="${denominatorY}" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">accepted change units</text>
-  <text x="${cx}" y="${subY}" text-anchor="middle" font-family="Helvetica" font-size="13" fill="${COLORS.accent}" opacity="0.6">( reached production and stayed there )</text>`;
+  <text x="${cx}" y="${subY}" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" fill="${COLORS.accent}" opacity="0.6">( reached production and stayed there )</text>`;
 }
 
 /**
@@ -232,7 +246,7 @@ const postHookSquareSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox
   <rect x="40" y="40" width="1120" height="1120" fill="none" stroke="${COLORS.accent}" stroke-width="1" opacity="0.3" rx="4"/>
 
   <!-- Eyebrow -->
-  <text x="600" y="150" text-anchor="middle" font-family="Helvetica" font-size="22" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">THE DELIVERY GAP</text>
+  <text x="600" y="150" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">THE DELIVERY GAP</text>
 
   <!-- Headline (two lines) -->
   <text x="600" y="320" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="92" font-weight="600" fill="${COLORS.ink}">AI made code</text>
@@ -252,10 +266,10 @@ const postHookSquareSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox
   ${formulaStampFragment({ cx: 600, cy: 880, width: 880, height: 220 })}
 
   <!-- Domain -->
-  <text x="600" y="1080" text-anchor="middle" font-family="Helvetica" font-size="26" font-weight="700" letter-spacing="5" fill="${COLORS.ink}">COSTPERACCEPTEDCHANGE.ORG</text>
+  <text x="600" y="1080" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="5" fill="${COLORS.ink}">COSTPERACCEPTEDCHANGE.ORG</text>
 
   <!-- Byline -->
-  <text x="600" y="1120" text-anchor="middle" font-family="Helvetica" font-size="14" letter-spacing="3" fill="${COLORS.inkMuted}">DEFINED IN THE DELIVERY GAP · BRENN HILL · 2026</text>
+  <text x="600" y="1120" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" letter-spacing="3" fill="${COLORS.inkMuted}">DEFINED IN THE DELIVERY GAP · BRENN HILL · 2026</text>
 </svg>`;
 
 /**
@@ -268,7 +282,7 @@ const postHookPortraitSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewB
   <rect x="36" y="36" width="1008" height="1278" fill="none" stroke="${COLORS.accent}" stroke-width="1" opacity="0.3" rx="4"/>
 
   <!-- Eyebrow -->
-  <text x="540" y="160" text-anchor="middle" font-family="Helvetica" font-size="22" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">THE DELIVERY GAP</text>
+  <text x="540" y="160" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">THE DELIVERY GAP</text>
 
   <!-- Headline (two lines) -->
   <text x="540" y="340" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="88" font-weight="600" fill="${COLORS.ink}">AI made code</text>
@@ -288,10 +302,10 @@ const postHookPortraitSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewB
   ${formulaStampFragment({ cx: 540, cy: 945, width: 820, height: 220 })}
 
   <!-- Domain -->
-  <text x="540" y="1210" text-anchor="middle" font-family="Helvetica" font-size="26" font-weight="700" letter-spacing="5" fill="${COLORS.ink}">COSTPERACCEPTEDCHANGE.ORG</text>
+  <text x="540" y="1210" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="5" fill="${COLORS.ink}">COSTPERACCEPTEDCHANGE.ORG</text>
 
   <!-- Byline -->
-  <text x="540" y="1250" text-anchor="middle" font-family="Helvetica" font-size="14" letter-spacing="3" fill="${COLORS.inkMuted}">DEFINED IN THE DELIVERY GAP · BRENN HILL · 2026</text>
+  <text x="540" y="1250" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" letter-spacing="3" fill="${COLORS.inkMuted}">DEFINED IN THE DELIVERY GAP · BRENN HILL · 2026</text>
 </svg>`;
 
 // ----- Render helpers --------------------------------------------------

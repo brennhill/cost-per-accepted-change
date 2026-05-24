@@ -74,10 +74,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </fieldset>
     </form>
 
-    <div class="calc-result" id="result">
+    <div class="calc-result" id="result" aria-live="polite" aria-atomic="false">
       <span class="label">Cost per accepted change</span>
-      <span class="value" id="result-value" aria-live="polite">—</span>
-      <div class="breakdown" id="result-breakdown" aria-hidden="true"></div>
+      <span class="value" id="result-value">—</span>
+      <div class="breakdown" id="result-breakdown"></div>
     </div>
 
     <div class="calc-actions">

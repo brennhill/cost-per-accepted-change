@@ -82,7 +82,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </p>
     <p>
       <strong>What it catches:</strong> sentiment, perception, what teams will <em>say</em> about AI.<br>
-      <strong>What it misses:</strong> reality. In a randomized controlled trial of 16 experienced open-source developers across 246 real tasks, <a href="https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/">METR found that allowing AI tools <em>increased</em> completion time by 19%</a>, while the same developers <em>self-reported</em> a 20% speedup. The perception-reality gap was large enough to invert the conclusion. Self-report is not a measurement; it is a hypothesis. (METR has since <a href="https://metr.org/blog/2026-02-24-uplift-update/">noted</a> that experienced developers are increasingly unwilling to work without AI, which biases any new measurement of the gap.)
+      <strong>What it misses:</strong> reality. In a randomized controlled trial of 16 experienced open-source developers across 246 real tasks, <a href="https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/">METR (July 2025) found that allowing AI tools increased completion time by 19%</a> — a 20% slowdown — while the same developers self-reported that AI had sped them up by 20%. The perception-reality gap was wide enough to invert the conclusion. Self-report is not a measurement; it is a hypothesis. (METR has since <a href="https://metr.org/blog/2026-02-24-uplift-update/">noted</a> that experienced developers are increasingly unwilling to work without AI, which biases any new measurement of the gap.)
     </p>
 
     <h3>8. FinOps cost-to-serve</h3>
@@ -92,6 +92,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <p>
       <strong>What it catches:</strong> operational unit economics, well-instrumented and well-understood.<br>
       <strong>What it misses:</strong> the cost of <em>producing</em> the software. FinOps measures the right side of the deployment boundary; cost per accepted change measures the left.
+    </p>
+
+    <h2>The framework it sits inside: the Verification Triangle</h2>
+    <p>
+      Cost per accepted change is the cost vertex of a three-vertex framework defined in <em>The Delivery Gap</em>. The other two vertices describe what is being delivered and how well it is checked:
+    </p>
+    <ul>
+      <li><strong>Intent clarity</strong> — is the team converging on the right thing, fast enough? Measured by first-pass acceptance, post-merge rework, and increment frequency. Not by scoring spec documents — specs are the receipt of iteration, not the recipe.</li>
+      <li><strong>Eval quality</strong> — are defects caught early, and by machines? Operationalized as six tiers of quality gates (four machine, one human, one peer), built cumulatively. Measured by machine catch rate and change failure rate.</li>
+      <li><strong>Cost</strong> — what does each trusted change actually cost to deliver? This is the vertex cost per accepted change quantifies, paired with lead time to accepted change.</li>
+    </ul>
+    <p>
+      The three vertices are mutually informing: weak intent makes the gates verify the wrong thing; weak gates hide cost in rework; unmeasured cost means you cannot see whether the other two are improving. Cost per accepted change is necessary but not sufficient — it is the bottom-line dollar measurement that the other two vertices supply context for.
     </p>
 
     <h2>Where cost per accepted change fits</h2>
@@ -122,7 +135,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <h3>Why "and stayed there"</h3>
     <p>
-      Without this clause, CPAC could be gamed by shipping recklessly and counting every merge. With it, the metric self-corrects: silent escapes that get quietly fixed are excluded from the denominator <em>and</em> their fix cost is added to the numerator. This is the rework defense, built into the metric instead of bolted on.
+      Without this clause, cost per accepted change could be gamed by shipping recklessly and counting every merge. With it, the metric self-corrects: silent escapes that get quietly fixed are excluded from the denominator <em>and</em> their fix cost is added to the numerator. This is the rework defense, built into the metric instead of bolted on.
     </p>
     <p>
       The "stayed there" duration defaults to <strong>30 days post-merge</strong>, applied per-change rather than per-reporting-window. This is the same discipline as cohort-based retention measurement: don't evaluate a cohort that hasn't had time to mature. Teams may use 14 days (faster cadence, less lag) or 60–90 days (high-confidence, regulated environments). See the <a href="/faq">FAQ</a> for the full reasoning.

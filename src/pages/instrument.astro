@@ -108,9 +108,11 @@ git log --grep='^Revert "' \
   --since=2026-04-01 --until=2026-04-30 \
   --pretty=format:'%h %s'
 
-# Or via gh, including the original PR
-gh pr list --state merged \
-  --search 'merged:2026-04-01..2026-04-30 "reverts #" in:body' \
+# Or via gh — match GitHub's auto-generated revert PR title pattern.
+# (Body-search for "reverts #" is unreliable: GitHub's search tokenizer
+# strips the # and over-matches the word "reverts".)
+gh pr list -R owner/repo --state merged \
+  --search 'merged:2026-04-01..2026-04-30 in:title "Revert"' \
   --json number,title,body,additions,deletions
 </code></pre>
 
@@ -164,8 +166,10 @@ gh pr list --state merged \
 # Step 2: for each PR, check it hasn't been reverted or fix-followed
 #   within the 30-day survival window. Filter merges.json to surviving PRs.
 
-# Step 3: normalize via the 500-LOC rule
-jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | add' merges.json
+# Step 3: normalize via the 500-LOC rule. Floor of 1 unit per surviving PR
+# so binary-only PRs (additions+deletions=0 from gh's perspective) still
+# count, matching the library's normalizeChanges() helper.
+jq '[.[] | (.additions + .deletions) | (. / 500) | ceil | if . &lt; 1 then 1 else . end] | (add // 0)' merges.json
 </code></pre>
 
     <p>The full recipe lives in the <a href="/faq">FAQ</a>; the calculator library exports <a href="https://github.com/brennhill/cost-per-accepted-change/blob/main/src/lib/calculator.ts"><code>normalizeChanges()</code></a> for the LOC step.</p>
@@ -183,17 +187,29 @@ WINDOW_START="2026-04-01"
 WINDOW_END="2026-04-30"
 OWNER="my-org"
 REPO="my-repo"
-TEAM_KEY="my-team"
 HOURLY_RATE=150
 
-# 1. Model cost — pull from your provider's billing API for $TEAM_KEY.
-#    `// 0` defaults to 0 if the field is null or absent.
-MODEL_COST=$(curl -s ".../usage?key=$TEAM_KEY&amp;start=$WINDOW_START&amp;end=$WINDOW_END" \
-  | jq '.cost_usd // 0')
+# ------- REPLACE BEFORE USE -------
+# The two URLs below are placeholders. Fill them in with your provider's
+# real billing endpoints, or the script will report $0 for model + infra
+# cost (and you'll know to come back here). See documentation:
+#   Anthropic Admin API:  https://docs.anthropic.com/en/api/admin-api/usage-cost
+#   OpenAI Usage API:     https://platform.openai.com/docs/api-reference/usage
+#   AWS Cost Explorer:    aws ce get-cost-and-usage --time-period ...
+# ----------------------------------
 
-# 2. Infra cost — pull from cloud billing tagged team=$TEAM_KEY.
-INFRA_COST=$(aws ce get-cost-and-usage ... \
-  | jq '(.ResultsByTime[0].Total.AmortizedCost.Amount | tonumber) // 0')
+# 1. Model cost — pull from your provider's billing API. The `|| echo 0`
+#    fallback lets the script complete even if the endpoint is unreachable;
+#    you'll see $0 for model cost and know what to fix.
+MODEL_COST=$(curl -fsS "https://REPLACE_ME/billing?start=$WINDOW_START&amp;end=$WINDOW_END" 2&gt;/dev/null \
+  | jq '.cost_usd // 0' 2&gt;/dev/null || echo 0)
+
+# 2. Infra cost — pull from cloud billing. Same fallback pattern.
+INFRA_COST=$(aws ce get-cost-and-usage \
+  --time-period "Start=$WINDOW_START,End=$WINDOW_END" \
+  --granularity MONTHLY --metrics AmortizedCost 2&gt;/dev/null \
+  | jq '(.ResultsByTime[0].Total.AmortizedCost.Amount | tonumber) // 0' 2&gt;/dev/null \
+  || echo 0)
 
 # 3. Engineering time — blended rate × planned capacity (integer math is fine).
 ENG_HOURS=1280   # 10 engineers × 4 weeks × 32h
@@ -210,12 +226,17 @@ REWORK_PR_COUNT=$(gh pr list -R "$OWNER/$REPO" \
 REWORK_COST=$((REWORK_PR_COUNT * 2 * HOURLY_RATE))
 
 # 6. Accepted change units — gh + jq + ceil. `add // 0` guards empty windows.
-#    Note: --limit 1000 is gh's max for this flag. For larger windows, use
+#    Note: --limit 1000 is gh's max for this flag. The truncation check
+#    below warns if you hit the cap; for larger windows use
 #    `gh api graphql --paginate` with a PR-search query.
-UNITS=$(gh pr list -R "$OWNER/$REPO" --state merged \
+PRS_JSON=$(gh pr list -R "$OWNER/$REPO" --state merged \
   --search "merged:$WINDOW_START..$WINDOW_END" \
-  --json additions,deletions --limit 1000 \
-  | jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | (add // 0)')
+  --json additions,deletions --limit 1000)
+if [[ "$(echo "$PRS_JSON" | jq 'length')" -eq 1000 ]]; then
+  echo "WARN: gh pr list hit the --limit 1000 cap; UNITS may be truncated." &gt;&amp;2
+fi
+UNITS=$(echo "$PRS_JSON" \
+  | jq '[.[] | (.additions + .deletions) | (. / 500) | ceil | if . &lt; 1 then 1 else . end] | (add // 0)')
 
 # 7. Compose and report. jq does the float arithmetic and the zero-units guard.
 jq -nr \

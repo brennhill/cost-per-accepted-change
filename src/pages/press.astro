@@ -13,7 +13,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       Cost per accepted change is a free, citable measurement standard for AI-augmented software delivery. This page collects the materials journalists, analysts, and researchers need to cover it.
     </p>
 
-    <h2 class="no-rule">Quick facts</h2>
+    <h2 class="no-rule">Coverage and appearances</h2>
+    <p>
+      <a href="https://podcasts.apple.com/gb/podcast/525-the-delivery-gap-from-vibe-coding-to-productive/id1514322284?i=1000768668198"><strong>Podcast appearance:</strong> 525 — The Delivery Gap: From Vibe Coding to Productive Coding</a>
+    </p>
+
+    <h2>The book</h2>
+    <p>
+      Cost per accepted change is defined in <a href="https://www.amazon.com/Delivery-Gap-Adoption-Engineering-Leaders-ebook/dp/B0GWRY2XH1/"><em>The Delivery Gap</em></a> by Brenn Hill (2026), as the cost vertex of the Verification Triangle framework.
+    </p>
+
+    <h2>Reviews</h2>
+    <ul>
+      <li><a href="https://bestreviewsclub.com/the-delivery-gap/">Best Reviews Club — <em>The Delivery Gap</em></a></li>
+      <li><a href="https://nomareads.com/book-review-the-delivery-gap-by-brenn-hill/">Noma Reads — Book Review: <em>The Delivery Gap</em> by Brenn Hill</a></li>
+    </ul>
+
+    <h2>Praise for <em>The Delivery Gap</em></h2>
+    <blockquote>
+      "The 'Accelerate' for the age of AI."
+      <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted); margin-top: 0.4rem;">— Xavier Anguera, SVP of AI, Babbel</p>
+    </blockquote>
+    <blockquote>
+      "The question was never whether AI could write code faster. The question is whether you can trust what it ships. Hill gives engineering leaders the framework they actually need."
+      <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted); margin-top: 0.4rem;">— Mark Morawski, Managing Director, JPMorgan Chase & Co.</p>
+    </blockquote>
+    <blockquote>
+      "A book that will be cited belatedly in eng productivity postmortems."
+      <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted); margin-top: 0.4rem;">— Brad Moore, VP of Engineering, Delivery Hero (previously Spotify, Uber, Apple)</p>
+    </blockquote>
+
+    <h2>Quick facts</h2>
     <table>
       <tbody>
         <tr><th>What it is</th><td>A measurement standard for the cost of producing software that reaches production and stays there.</td></tr>
@@ -33,7 +63,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       For direct quotation:
     </p>
     <blockquote>
-      Cost per accepted change is the fully-loaded cost of producing software that reached production and stayed there, divided by the number of accepted change units that did. It pairs FinOps cost-to-serve discipline with a development-side denominator. Where vanity metrics like "AI code share" or PRs-merged inflate as teams adopt AI tooling, cost per accepted change moves with actual delivery economics — making it the bottom-line number engineering leaders can put in front of a CFO.
+      Cost per accepted change is the fully-loaded cost of producing software that reached production and stayed there, divided by the number of accepted change units that did. It pairs FinOps cost-to-serve discipline with a development-side denominator. Where activity metrics like "AI code share" or pull-requests-merged inflate as teams adopt AI tooling, cost per accepted change moves with actual delivery economics. It is designed for aggregate, time-series, group-level use as an executive bottom-line — not for ranking individuals, comparing unrelated teams, or setting targets.
     </blockquote>
 
     <h2>Shorter quotable summaries</h2>
@@ -44,18 +74,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       "It is FinOps cost-to-serve, moved one layer upstream — measuring the cost of <em>producing</em> trusted software, not the cost of running it."
     </blockquote>
     <blockquote>
-      "The metric that catches the perception-reality gap independent studies have documented in AI-assisted development — including <a href="https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/">METR's 2025 finding</a> that experienced developers self-reported a 20% speedup while measurably slowing by 19%."
+      "The metric is designed to catch the perception-reality gap independent studies document in AI-assisted development — including <a href="https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/">METR's July 2025 randomized trial</a>, which found AI tools increased experienced developers' completion time by 19% (a 20% slowdown) while the same developers self-reported a 20% speedup."
     </blockquote>
 
     <h2>Why it matters now</h2>
     <p>
-      In 2026, enterprises are deploying AI dev tooling at scale but cannot reliably measure whether the investment is paying off. MIT-reported figures suggest <strong>95% of AI pilots show no measurable P&L impact</strong>; <strong>only ~29% of executives say they can confidently measure AI ROI</strong>. The gap is not a math problem — it is a definitional one. There has been no canonical, vendor-neutral metric for the cost of AI-augmented software delivery. Cost per accepted change is one.
+      In 2026, enterprises are deploying AI dev tooling at scale but cannot reliably measure whether the investment is paying off. MIT's NANDA initiative — in <a href="https://nanda.media.mit.edu/ai_report_2025.pdf"><em>The GenAI Divide: State of AI in Business 2025</em></a> (52 executive interviews, 153 survey respondents, 300 public deployments analyzed) — found that <strong>95% of generative AI pilots delivered no measurable P&L impact</strong>; only ~5% achieved rapid revenue acceleration (<a href="https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/">Fortune coverage, August 2025</a>). <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai">McKinsey's State of AI 2025</a> independently found that only 39% of organizations attribute any EBIT impact to AI, most of those less than 5%. The gap is not a math problem — it is a definitional one. There has been no shared, vendor-neutral metric for the cost of AI-augmented software delivery. Cost per accepted change is one.
     </p>
+
+    <h2>How the metric is and is not designed to be used</h2>
+    <p>
+      For accurate coverage, please reflect both sides:
+    </p>
+    <ul>
+      <li><strong>It is</strong> a steering metric for engineering and finance leaders at the team or organization level, reported as a time series, paired with a leading indicator (DORA change failure rate, AI tool acceptance rate, or DevEx pulse).</li>
+      <li><strong>It is not</strong> a per-change or per-engineer benchmark, a cross-team comparator without controls for work-mix, or a target to set against. See <a href="/use">how to use cost per accepted change</a> for the variance reasoning and the operating constraints.</li>
+    </ul>
 
     <h2>Downloadable graphics</h2>
     <p>All graphics are released for editorial and educational use without attribution requirement. Attribution to <code>costperacceptedchange.org</code> is appreciated where space allows.</p>
 
     <div class="template-grid">
+      <div class="template-card">
+        <p class="meta">Hero diagram · 1200 × 1200 (square) and 1080 × 1350 (portrait)</p>
+        <h3>Social post images</h3>
+        <p>The "AI made code generation faster. Not delivery." hook image, sized for LinkedIn (portrait) and X / Bluesky / Mastodon (square). Free to repost.</p>
+        <p>
+          <a class="btn" href="/assets/post-hook-square.png" download>Square PNG</a>
+          <a class="btn" href="/assets/post-hook-portrait.png" download style="margin-left: 0.4rem;">Portrait PNG</a>
+        </p>
+      </div>
+
       <div class="template-card">
         <p class="meta">Social card · 1200 × 630</p>
         <h3>Open Graph image</h3>

@@ -111,16 +111,20 @@ function buildTrackerSheet(wb) {
   // I (total cost), K (CPAC), and L (Δ vs prior) all return "" when their
   // inputs are missing or zero, so the sheet stays readable as users delete
   // example rows or insert blank ones below.
+  // Use NA() for empty/undefined cells so charts skip them cleanly in
+  // Excel, Google Sheets, and Numbers. ("" causes Google Sheets to plot 0
+  // and Numbers to surface #REF! through dependent formulas.)
+  // Also use IFERROR to keep chart axes clean if upstream cells contain errors.
   const writeFormulas = (r, isFirstRow) => {
     ws.getCell(`I${r}`).value = {
-      formula: `IF(SUM(D${r}:H${r})=0,"",D${r}+E${r}+F${r}+G${r}+H${r})`,
+      formula: `IFERROR(IF(SUM(D${r}:H${r})=0,NA(),D${r}+E${r}+F${r}+G${r}+H${r}),NA())`,
     };
     ws.getCell(`K${r}`).value = {
-      formula: `IF(OR(I${r}="",J${r}="",J${r}=0),"",I${r}/J${r})`,
+      formula: `IFERROR(IF(OR(ISNA(I${r}),ISBLANK(J${r}),J${r}=0),NA(),I${r}/J${r}),NA())`,
     };
     ws.getCell(`L${r}`).value = isFirstRow
-      ? { formula: `""` }
-      : { formula: `IF(OR(K${r}="",K${r - 1}=""),"",(K${r}-K${r - 1})/K${r - 1})` };
+      ? { formula: `NA()` }
+      : { formula: `IFERROR(IF(OR(ISNA(K${r}),ISNA(K${r - 1})),NA(),(K${r}-K${r - 1})/K${r - 1}),NA())` };
   };
 
   example.forEach((row, i) => {
