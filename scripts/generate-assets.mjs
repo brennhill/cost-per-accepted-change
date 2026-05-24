@@ -20,17 +20,20 @@
  */
 
 import { Resvg } from '@resvg/resvg-js';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import wawoff2 from 'wawoff2';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(__dirname, '..', 'public');
 const ASSETS_DIR = join(PUBLIC_DIR, 'assets');
 
-// Self-hosted Source Serif 4 (via @fontsource). Bundled with the script so
-// PNG rendering is byte-stable regardless of host OS — fixes the prior
-// macOS-only consistency caveat.
+// Self-hosted Source Serif 4 (via @fontsource). resvg-js only accepts TTF/OTF
+// font buffers, so we decompress the @fontsource woff2 files to TTF in
+// memory at script startup and hand the TTF buffers to resvg. This ensures
+// PNG rendering uses the bundled font (not whatever system serif happens to
+// be installed) so output is byte-stable on every host.
 const SOURCE_SERIF_DIR = join(
   __dirname,
   '..',
@@ -39,12 +42,25 @@ const SOURCE_SERIF_DIR = join(
   'source-serif-4',
   'files',
 );
-const FONT_FILES = [
-  join(SOURCE_SERIF_DIR, 'source-serif-4-latin-400-normal.woff2'),
-  join(SOURCE_SERIF_DIR, 'source-serif-4-latin-400-italic.woff2'),
-  join(SOURCE_SERIF_DIR, 'source-serif-4-latin-600-normal.woff2'),
-  join(SOURCE_SERIF_DIR, 'source-serif-4-latin-600-italic.woff2'),
+const WOFF2_FILES = [
+  'source-serif-4-latin-400-normal.woff2',
+  'source-serif-4-latin-400-italic.woff2',
+  'source-serif-4-latin-600-normal.woff2',
+  'source-serif-4-latin-600-italic.woff2',
 ];
+
+let cachedFontBuffers = null;
+async function loadFontBuffers() {
+  if (cachedFontBuffers) return cachedFontBuffers;
+  cachedFontBuffers = await Promise.all(
+    WOFF2_FILES.map(async (name) => {
+      const woff2 = readFileSync(join(SOURCE_SERIF_DIR, name));
+      const ttf = await wawoff2.decompress(woff2);
+      return Buffer.from(ttf);
+    }),
+  );
+  return cachedFontBuffers;
+}
 
 const COLORS = {
   ink: '#1a1a1a',
@@ -244,15 +260,15 @@ function writeSvg(path, content) {
   console.log(`wrote ${path}`);
 }
 
-function renderPng(svgString, outPath, fitWidth) {
+async function renderPng(svgString, outPath, fitWidth) {
+  const fontBuffers = await loadFontBuffers();
   const resvg = new Resvg(svgString, {
     fitTo: fitWidth ? { mode: 'width', value: fitWidth } : undefined,
     background: 'rgba(255,255,255,0)',
     font: {
-      // Load bundled Source Serif 4 first so the headline / formula text
-      // renders the same on every host. System fonts remain available for
-      // the Helvetica / sans-serif UI labels.
-      fontFiles: FONT_FILES,
+      // TTF buffers from the bundled Source Serif 4 woff2 files (decompressed
+      // at startup). System fonts still load for the Helvetica UI labels.
+      fontBuffers,
       loadSystemFonts: true,
       defaultFontFamily: 'Source Serif 4',
     },
@@ -264,36 +280,39 @@ function renderPng(svgString, outPath, fitWidth) {
 
 // ----- Build -----------------------------------------------------------
 
-function build() {
+async function build() {
   // Mark
   const markStandalone = markSvg(COLORS.accent, COLORS.paper);
   writeSvg(join(ASSETS_DIR, 'mark.svg'), markStandalone);
-  renderPng(markStandalone, join(ASSETS_DIR, 'mark.png'), 512);
+  await renderPng(markStandalone, join(ASSETS_DIR, 'mark.png'), 512);
 
   // CPAC graphic
   const cpac = cpacGraphicSvg(COLORS.accent);
   writeSvg(join(ASSETS_DIR, 'cpac-graphic.svg'), cpac);
-  renderPng(cpac, join(ASSETS_DIR, 'cpac-graphic.png'), 1200);
+  await renderPng(cpac, join(ASSETS_DIR, 'cpac-graphic.png'), 1200);
 
   // Verification Triangle
   const triangle = triangleSvg(COLORS.ink, 'cost');
   writeSvg(join(ASSETS_DIR, 'verification-triangle.svg'), triangle);
-  renderPng(triangle, join(ASSETS_DIR, 'verification-triangle.png'), 720);
+  await renderPng(triangle, join(ASSETS_DIR, 'verification-triangle.png'), 720);
 
   // OG image (1200x630, render at intrinsic size)
   const og = ogImageSvg();
   writeSvg(join(ASSETS_DIR, 'og-image.svg'), og);
-  renderPng(og, join(PUBLIC_DIR, 'og-image.png'), 1200);
+  await renderPng(og, join(PUBLIC_DIR, 'og-image.png'), 1200);
 
   // Social post image — square (universal: X, Bluesky, LinkedIn, Mastodon)
   const postSquare = postHookSquareSvg();
   writeSvg(join(ASSETS_DIR, 'post-hook-square.svg'), postSquare);
-  renderPng(postSquare, join(ASSETS_DIR, 'post-hook-square.png'), 1200);
+  await renderPng(postSquare, join(ASSETS_DIR, 'post-hook-square.png'), 1200);
 
   // Social post image — portrait (LinkedIn-optimal 4:5)
   const postPortrait = postHookPortraitSvg();
   writeSvg(join(ASSETS_DIR, 'post-hook-portrait.svg'), postPortrait);
-  renderPng(postPortrait, join(ASSETS_DIR, 'post-hook-portrait.png'), 1080);
+  await renderPng(postPortrait, join(ASSETS_DIR, 'post-hook-portrait.png'), 1080);
 }
 
-build();
+build().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
