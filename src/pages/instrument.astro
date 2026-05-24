@@ -120,9 +120,11 @@ gh pr list --state merged \
   --json number,title,additions,deletions
 </code></pre>
 
-    <p><strong>(c) Conventional Commits.</strong> If your team uses <a href="https://www.conventionalcommits.org/">Conventional Commits</a>, you get free typing of every commit (<code>fix:</code>, <code>revert:</code>, <code>feat:</code>). Parse the merged commit messages:</p>
-<pre><code>git log --since=2026-04-01 --until=2026-04-30 --merges \
-  --pretty=format:'%s' | grep -E '^(fix|revert)(\(.+\))?: '
+    <p><strong>(c) Conventional Commits.</strong> If your team uses <a href="https://www.conventionalcommits.org/">Conventional Commits</a>, you get free typing of every commit (<code>fix:</code>, <code>revert:</code>, <code>feat:</code>). Parse the commit messages directly — without <code>--merges</code>, since merge commits typically have non-conventional messages like <code>Merge pull request #123 ...</code>:</p>
+<pre><code># Works for any workflow. For squash-merge workflows, you can add `--merges`
+# since the squash commit carries the conventional-format message.
+git log --since=2026-04-01 --until=2026-04-30 \
+  --pretty=format:'%s' | grep -E '^(fix|revert)(\(.*\))?: '
 </code></pre>
 
     <p>For each identified revert / fix, capture the hours spent. The cheapest approach is a manual hour estimate per ticket reviewed in the window's quarterly review. The most rigorous is to attach a <code>time-spent</code> field to each fix ticket and roll up automatically.</p>
@@ -169,51 +171,76 @@ jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | ad
     <p>The full recipe lives in the <a href="/faq">FAQ</a>; the calculator library exports <a href="https://github.com/brennhill/cost-per-accepted-change/blob/main/src/lib/calculator.ts"><code>normalizeChanges()</code></a> for the LOC step.</p>
 
     <h2>Putting it together: the monthly pipeline</h2>
-    <p>A minimum-viable monthly script. Cron it for the first of the month, fetching the prior month's data:</p>
+    <p>A minimum-viable monthly script. Cron it for the first of the month, fetching the prior month's data. Bash arithmetic (<code>$((...))</code>) is integer-only, and billing APIs return decimals — so the final composition is done in <code>jq</code>, which handles floats and divide-by-zero cleanly.</p>
 <pre><code>#!/usr/bin/env bash
+set -euo pipefail
+
 # Run on the 1st of every month, computing the prior month's CPAC.
-# Adjust dates and team key for your setup.
+# Requires: gh (authenticated), jq, and access to your provider billing
+# + cloud billing. Adjust dates, repo, team key, and hourly rate.
 
 WINDOW_START="2026-04-01"
 WINDOW_END="2026-04-30"
+OWNER="my-org"
+REPO="my-repo"
 TEAM_KEY="my-team"
 HOURLY_RATE=150
 
-# 1. Model cost — pull from your provider's billing API for $TEAM_KEY
-MODEL_COST=$(curl -s ".../usage?key=$TEAM_KEY&start=$WINDOW_START&end=$WINDOW_END" | jq '.cost_usd')
+# 1. Model cost — pull from your provider's billing API for $TEAM_KEY.
+#    `// 0` defaults to 0 if the field is null or absent.
+MODEL_COST=$(curl -s ".../usage?key=$TEAM_KEY&amp;start=$WINDOW_START&amp;end=$WINDOW_END" \
+  | jq '.cost_usd // 0')
 
-# 2. Infra cost — pull from cloud billing tagged with team=$TEAM_KEY
-INFRA_COST=$(aws ce get-cost-and-usage ... | jq '.ResultsByTime[0].Total.AmortizedCost.Amount')
+# 2. Infra cost — pull from cloud billing tagged team=$TEAM_KEY.
+INFRA_COST=$(aws ce get-cost-and-usage ... \
+  | jq '(.ResultsByTime[0].Total.AmortizedCost.Amount | tonumber) // 0')
 
-# 3. Engineering time — blended rate × planned capacity
+# 3. Engineering time — blended rate × planned capacity (integer math is fine).
 ENG_HOURS=1280   # 10 engineers × 4 weeks × 32h
 ENG_COST=$((ENG_HOURS * HOURLY_RATE))
 
-# 4. Review cost — sample week × 4
-REVIEW_HOURS=40   # from sampled week
+# 4. Review cost — sampled week × 4.
+REVIEW_HOURS=40
 REVIEW_COST=$((REVIEW_HOURS * HOURLY_RATE))
 
-# 5. Rework cost — fix and revert PRs × rough estimate
-REWORK_HOURS=$(gh pr list --search "merged:$WINDOW_START..$WINDOW_END label:fix,hotfix,revert" \
-  --json number | jq 'length * 2')   # rough: 2h per fix on average
-REWORK_COST=$((REWORK_HOURS * HOURLY_RATE))
+# 5. Rework cost — count fix/hotfix/revert PRs in window, ~2h per fix average.
+REWORK_PR_COUNT=$(gh pr list -R "$OWNER/$REPO" \
+  --search "merged:$WINDOW_START..$WINDOW_END label:fix,hotfix,revert" \
+  --json number --limit 1000 | jq 'length')
+REWORK_COST=$((REWORK_PR_COUNT * 2 * HOURLY_RATE))
 
-# 6. Accepted change units — gh + jq + ceil
-UNITS=$(gh pr list --state merged --search "merged:$WINDOW_START..$WINDOW_END" \
+# 6. Accepted change units — gh + jq + ceil. `add // 0` guards empty windows.
+#    Note: --limit 1000 is gh's max for this flag. For larger windows, use
+#    `gh api graphql --paginate` with a PR-search query.
+UNITS=$(gh pr list -R "$OWNER/$REPO" --state merged \
+  --search "merged:$WINDOW_START..$WINDOW_END" \
   --json additions,deletions --limit 1000 \
-  | jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | add')
+  | jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | (add // 0)')
 
-# 7. Compute and report
-TOTAL=$((MODEL_COST + INFRA_COST + ENG_COST + REVIEW_COST + REWORK_COST))
-echo "Window: $WINDOW_START to $WINDOW_END"
-echo "Model:    \$$MODEL_COST"
-echo "Infra:    \$$INFRA_COST"
-echo "Eng:      \$$ENG_COST"
-echo "Review:   \$$REVIEW_COST"
-echo "Rework:   \$$REWORK_COST"
-echo "Total:    \$$TOTAL"
-echo "Units:    $UNITS"
-echo "CPAC:     \$$((TOTAL / UNITS))"
+# 7. Compose and report. jq does the float arithmetic and the zero-units guard.
+jq -nr \
+  --argjson model "$MODEL_COST" \
+  --argjson infra "$INFRA_COST" \
+  --argjson eng "$ENG_COST" \
+  --argjson review "$REVIEW_COST" \
+  --argjson rework "$REWORK_COST" \
+  --argjson units "$UNITS" \
+  --arg start "$WINDOW_START" \
+  --arg end "$WINDOW_END" '
+  ($model + $infra + $eng + $review + $rework) as $total |
+  (if $units == 0 then "N/A (no accepted changes in window)"
+   else "$\(($total * 100 / $units | round) / 100)"
+   end) as $cpac |
+  "Window: \($start) to \($end)
+Model:    $\($model)
+Infra:    $\($infra)
+Eng:      $\($eng)
+Review:   $\($review)
+Rework:   $\($rework)
+Total:    $\($total)
+Units:    \($units)
+CPAC:     \($cpac)"
+'
 </code></pre>
 
     <p>

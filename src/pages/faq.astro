@@ -67,31 +67,41 @@ git diff --numstat A..B
 </code></pre>
 
     <h3>Per-commit, across a date window</h3>
+    <p>The <code>$1 != "-"</code> filter skips binary files (which <code>git log --numstat</code> outputs as <code>- -</code>). This is what you want for a LOC-based CPAC denominator — binary churn isn't reviewable in lines.</p>
 <pre><code>git log --since=2026-04-01 --until=2026-04-30 \
   --pretty=tformat: --numstat \
-  | awk '&#123;add+=$1; del+=$2&#125; END &#123;print add+del&#125;'
+  | awk '$1 != "-" &#123;add+=$1; del+=$2&#125; END &#123;print add+del&#125;'
 </code></pre>
 
     <h3>Per-PR via the GitHub CLI (recommended for normalization)</h3>
     <p>
       The PR is the right unit for the 500-LOC normalization rule. The GitHub CLI returns one number per PR, which is exactly what the calculator library's <a href="https://github.com/brennhill/cost-per-accepted-change/blob/main/src/lib/calculator.ts"><code>normalizeChanges()</code></a> helper expects:
     </p>
-<pre><code>gh pr list --state merged \
+<pre><code>gh pr list -R owner/repo --state merged \
   --search 'merged:2026-04-01..2026-04-30' \
   --json number,additions,deletions --limit 1000
 </code></pre>
 
-    <p>One-liner that produces the normalized accepted-change unit count for the window:</p>
-<pre><code>gh pr list --state merged --search 'merged:2026-04-01..2026-04-30' \
+    <p>
+      Two operational notes for the recipes below: pass <code>-R owner/repo</code> when running outside the repo's working tree, and remember that <code>--limit 1000</code> is the maximum <code>gh pr list</code> accepts. For windows with more than 1,000 merged PRs, use <code>gh api graphql --paginate</code> with a PR-search query, or use the REST search API with explicit cursor pagination.
+    </p>
+
+    <p>One-liner that produces the normalized accepted-change unit count for the window. The <code>(add // 0)</code> at the end guards against an empty list (no PRs in window, or all filtered out) — without it, <code>jq</code> returns <code>null</code>:</p>
+<pre><code>gh pr list -R owner/repo --state merged --search 'merged:2026-04-01..2026-04-30' \
   --json additions,deletions --limit 1000 \
-  | jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | add'
+  | jq '[.[] | (.additions + .deletions) | select(. &gt; 0) | (. / 500) | ceil] | (add // 0)'
 </code></pre>
 
     <h3>Excluding vendored, generated, lockfiles</h3>
     <p>Required for any defensible CPAC submission. Two approaches:</p>
-<pre><code># Pathspec exclusions on the diff itself
+<pre><code># Pathspec exclusions on the diff itself.
+# Use `:(exclude,glob)` for path-spanning patterns — without the `glob`
+# magic, `**` is not recognized as a cross-directory wildcard.
 git diff --numstat A..B -- \
-  ':!vendor/**' ':!**/*.lock' ':!**/dist/**' ':!**/*.generated.*'
+  ':(exclude)vendor' \
+  ':(exclude,glob)**/*.lock' \
+  ':(exclude)dist' \
+  ':(exclude,glob)**/*.generated.*'
 
 # Or mark in .gitattributes — GitHub's API honors these for PR stats
 vendor/**         linguist-vendored
