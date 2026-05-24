@@ -8,20 +8,20 @@
   <text x="600" y="120" text-anchor="middle" font-family="Helvetica" font-size="18" font-weight="700" letter-spacing="6" fill="#7a1d1d" opacity="0.8">A CANONICAL DEFINITION</text>
 
   <!-- Main title -->
-  <text x="600" y="200" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="68" font-weight="600" fill="#1a1a1a">Cost per accepted change</text>
+  <text x="600" y="200" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="68" font-weight="600" fill="#1a1a1a">Cost per accepted change</text>
 
   <!-- Subtitle -->
-  <text x="600" y="252" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="#5a5a5a">The fully-loaded cost of producing software that stayed in production.</text>
+  <text x="600" y="252" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="#5a5a5a">The fully-loaded cost of producing software that stayed in production.</text>
 
   <!-- Formula block -->
   <rect x="200" y="300" width="800" height="220" fill="none" stroke="#7a1d1d" stroke-width="1.4" rx="3"/>
   <rect x="208" y="308" width="784" height="204" fill="none" stroke="#7a1d1d" stroke-width="0.6" opacity="0.4" rx="2"/>
 
-  <text x="600" y="380" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="#7a1d1d">model cost · infrastructure · engineering time · review · rework</text>
+  <text x="600" y="380" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="#7a1d1d">model cost · infrastructure · engineering time · review · rework</text>
 
   <line x1="260" y1="405" x2="940" y2="405" stroke="#7a1d1d" stroke-width="2.4"/>
 
-  <text x="600" y="440" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="#7a1d1d">accepted change units</text>
+  <text x="600" y="440" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="#7a1d1d">accepted change units</text>
 
   <text x="600" y="475" text-anchor="middle" font-family="Helvetica" font-size="14" fill="#7a1d1d" opacity="0.6">( reached production and stayed there )</text>
 

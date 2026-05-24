@@ -14,12 +14,9 @@
  *
  * Run with: node scripts/generate-assets.mjs
  *
- * Font note: SVGs reference "Iowan Old Style, Charter, Georgia, serif".
- * Iowan Old Style ships on macOS; Charter is uncommon on Linux/Windows.
- * resvg picks the first available — on macOS the PNGs match the on-site
- * rendering exactly; on Linux/Windows expect Georgia or a system serif
- * fallback with slightly different metrics. Regenerate on macOS for the
- * canonical rendering, or commit the PNGs once generated locally.
+ * Fonts: Source Serif 4 (Adobe, OFL) is bundled via @fontsource and loaded
+ * into resvg's font config below, so PNG rendering is byte-stable on every
+ * host OS. System fonts remain available for the Helvetica UI labels.
  */
 
 import { Resvg } from '@resvg/resvg-js';
@@ -30,6 +27,24 @@ import { dirname, join } from 'node:path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(__dirname, '..', 'public');
 const ASSETS_DIR = join(PUBLIC_DIR, 'assets');
+
+// Self-hosted Source Serif 4 (via @fontsource). Bundled with the script so
+// PNG rendering is byte-stable regardless of host OS — fixes the prior
+// macOS-only consistency caveat.
+const SOURCE_SERIF_DIR = join(
+  __dirname,
+  '..',
+  'node_modules',
+  '@fontsource',
+  'source-serif-4',
+  'files',
+);
+const FONT_FILES = [
+  join(SOURCE_SERIF_DIR, 'source-serif-4-latin-400-normal.woff2'),
+  join(SOURCE_SERIF_DIR, 'source-serif-4-latin-400-italic.woff2'),
+  join(SOURCE_SERIF_DIR, 'source-serif-4-latin-600-normal.woff2'),
+  join(SOURCE_SERIF_DIR, 'source-serif-4-latin-600-italic.woff2'),
+];
 
 const COLORS = {
   ink: '#1a1a1a',
@@ -45,9 +60,9 @@ const COLORS = {
 
 const markSvg = (color = COLORS.accent, bg = 'none') => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
   ${bg !== 'none' ? `<rect width="64" height="64" fill="${bg}"/>` : ''}
-  <text x="32" y="27" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-weight="600" fill="${color}">$</text>
+  <text x="32" y="27" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-weight="600" fill="${color}">$</text>
   <line x1="12" y1="33" x2="52" y2="33" stroke="${color}" stroke-width="2.4" stroke-linecap="round"/>
-  <text x="32" y="53" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="18" font-weight="600" fill="${color}">AC</text>
+  <text x="32" y="53" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="18" font-weight="600" fill="${color}">AC</text>
 </svg>`;
 
 // ----- CPAC Graphic (the formula stamp) --------------------------------
@@ -59,14 +74,14 @@ const cpacGraphicSvg = (color = COLORS.accent) => `<svg xmlns="http://www.w3.org
   <line x1="220" y1="54" x2="278" y2="54" stroke="${color}" stroke-width="0.5" opacity="0.45"/>
   <line x1="322" y1="54" x2="380" y2="54" stroke="${color}" stroke-width="0.5" opacity="0.45"/>
   <circle cx="300" cy="54" r="1.4" fill="${color}" opacity="0.55"/>
-  <text x="300" y="103" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="15" font-style="italic" fill="${color}">model cost · infrastructure · engineering time · review · rework</text>
+  <text x="300" y="103" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="15" font-style="italic" fill="${color}">model cost · infrastructure · engineering time · review · rework</text>
   <line x1="76" y1="124" x2="524" y2="124" stroke="${color}" stroke-width="1.6"/>
-  <text x="300" y="150" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="15" font-style="italic" fill="${color}">accepted change units</text>
+  <text x="300" y="150" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="15" font-style="italic" fill="${color}">accepted change units</text>
   <text x="300" y="170" text-anchor="middle" font-family="Helvetica" font-size="9" fill="${color}" opacity="0.55">( reached production and stayed there )</text>
   <g transform="translate(282, 185)" fill="${color}">
-    <text x="18" y="14" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600">$</text>
+    <text x="18" y="14" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600">$</text>
     <line x1="4" y1="19" x2="32" y2="19" stroke="${color}" stroke-width="1.1" stroke-linecap="round"/>
-    <text x="18" y="33" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="11" font-weight="600">AC</text>
+    <text x="18" y="33" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="11" font-weight="600">AC</text>
   </g>
   <text x="300" y="232" text-anchor="middle" font-family="Helvetica" font-size="9" letter-spacing="1.6" fill="${color}" opacity="0.6">THE COST OF DELIVERED SOFTWARE THAT STAYED DELIVERED</text>
 </svg>`;
@@ -81,11 +96,11 @@ const triangleSvg = (color = COLORS.ink, highlight = 'cost') => {
   <line x1="120" y1="34" x2="206" y2="180" stroke="${color}" stroke-width="1.4" opacity="0.55"/>
   <line x1="34" y1="180" x2="206" y2="180" stroke="${color}" stroke-width="1.4" opacity="0.55"/>
   <circle cx="120" cy="34" r="${r('intent')}" fill="${f('intent')}" stroke="${color}" stroke-width="1.6"/>
-  <text x="120" y="20" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Intent clarity</text>
+  <text x="120" y="20" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Intent clarity</text>
   <circle cx="34" cy="180" r="${r('eval')}" fill="${f('eval')}" stroke="${color}" stroke-width="1.6"/>
-  <text x="34" y="204" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Eval quality</text>
+  <text x="34" y="204" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Eval quality</text>
   <circle cx="206" cy="180" r="${r('cost')}" fill="${f('cost')}" stroke="${color}" stroke-width="1.6"/>
-  <text x="206" y="204" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Cost</text>
+  <text x="206" y="204" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="13" font-weight="600" fill="${color}">Cost</text>
   <text x="120" y="118" text-anchor="middle" font-family="Helvetica" font-size="9" font-weight="600" letter-spacing="2" fill="${color}" opacity="0.55">THE VERIFICATION</text>
   <text x="120" y="132" text-anchor="middle" font-family="Helvetica" font-size="9" font-weight="600" letter-spacing="2" fill="${color}" opacity="0.55">TRIANGLE</text>
 </svg>`;
@@ -103,20 +118,20 @@ const ogImageSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
   <text x="600" y="120" text-anchor="middle" font-family="Helvetica" font-size="18" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">A CANONICAL DEFINITION</text>
 
   <!-- Main title -->
-  <text x="600" y="200" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="68" font-weight="600" fill="${COLORS.ink}">Cost per accepted change</text>
+  <text x="600" y="200" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="68" font-weight="600" fill="${COLORS.ink}">Cost per accepted change</text>
 
   <!-- Subtitle -->
-  <text x="600" y="252" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.inkMuted}">The fully-loaded cost of producing software that stayed in production.</text>
+  <text x="600" y="252" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.inkMuted}">The fully-loaded cost of producing software that stayed in production.</text>
 
   <!-- Formula block -->
   <rect x="200" y="300" width="800" height="220" fill="none" stroke="${COLORS.accent}" stroke-width="1.4" rx="3"/>
   <rect x="208" y="308" width="784" height="204" fill="none" stroke="${COLORS.accent}" stroke-width="0.6" opacity="0.4" rx="2"/>
 
-  <text x="600" y="380" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">model cost · infrastructure · engineering time · review · rework</text>
+  <text x="600" y="380" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">model cost · infrastructure · engineering time · review · rework</text>
 
   <line x1="260" y1="405" x2="940" y2="405" stroke="${COLORS.accent}" stroke-width="2.4"/>
 
-  <text x="600" y="440" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">accepted change units</text>
+  <text x="600" y="440" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">accepted change units</text>
 
   <text x="600" y="475" text-anchor="middle" font-family="Helvetica" font-size="14" fill="${COLORS.accent}" opacity="0.6">( reached production and stayed there )</text>
 
@@ -143,9 +158,9 @@ function formulaStampFragment({ cx, cy, width, height }) {
   return `
   <rect x="${x}" y="${y}" width="${width}" height="${height}" fill="none" stroke="${COLORS.accent}" stroke-width="1.4" rx="3"/>
   <rect x="${x + 8}" y="${y + 8}" width="${width - 16}" height="${height - 16}" fill="none" stroke="${COLORS.accent}" stroke-width="0.6" opacity="0.4" rx="2"/>
-  <text x="${cx}" y="${numeratorY}" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">model · infrastructure · engineering · review · rework</text>
+  <text x="${cx}" y="${numeratorY}" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">model · infrastructure · engineering · review · rework</text>
   <line x1="${x + 40}" y1="${barY}" x2="${x + width - 40}" y2="${barY}" stroke="${COLORS.accent}" stroke-width="2.4"/>
-  <text x="${cx}" y="${denominatorY}" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">accepted change units</text>
+  <text x="${cx}" y="${denominatorY}" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="22" font-style="italic" fill="${COLORS.accent}">accepted change units</text>
   <text x="${cx}" y="${subY}" text-anchor="middle" font-family="Helvetica" font-size="13" fill="${COLORS.accent}" opacity="0.6">( reached production and stayed there )</text>`;
 }
 
@@ -163,18 +178,18 @@ const postHookSquareSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox
   <text x="600" y="150" text-anchor="middle" font-family="Helvetica" font-size="22" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">THE DELIVERY GAP</text>
 
   <!-- Headline (two lines) -->
-  <text x="600" y="320" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="92" font-weight="600" fill="${COLORS.ink}">AI made code</text>
-  <text x="600" y="425" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="92" font-weight="600" fill="${COLORS.ink}">generation faster.</text>
+  <text x="600" y="320" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="92" font-weight="600" fill="${COLORS.ink}">AI made code</text>
+  <text x="600" y="425" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="92" font-weight="600" fill="${COLORS.ink}">generation faster.</text>
 
   <!-- Counter line -->
-  <text x="600" y="540" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="68" font-style="italic" font-weight="600" fill="${COLORS.accent}">Not delivery.</text>
+  <text x="600" y="540" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="68" font-style="italic" font-weight="600" fill="${COLORS.accent}">Not delivery.</text>
 
   <!-- Decorative rule -->
   <line x1="540" y1="600" x2="660" y2="600" stroke="${COLORS.accent}" stroke-width="1.2" opacity="0.55"/>
 
   <!-- Body -->
-  <text x="600" y="660" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">Cost per accepted change. The bottom-line metric</text>
-  <text x="600" y="703" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">for AI-augmented software delivery.</text>
+  <text x="600" y="660" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">Cost per accepted change. The bottom-line metric</text>
+  <text x="600" y="703" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">for AI-augmented software delivery.</text>
 
   <!-- Formula stamp -->
   ${formulaStampFragment({ cx: 600, cy: 880, width: 880, height: 220 })}
@@ -199,18 +214,18 @@ const postHookPortraitSvg = () => `<svg xmlns="http://www.w3.org/2000/svg" viewB
   <text x="540" y="160" text-anchor="middle" font-family="Helvetica" font-size="22" font-weight="700" letter-spacing="6" fill="${COLORS.accent}" opacity="0.8">THE DELIVERY GAP</text>
 
   <!-- Headline (two lines) -->
-  <text x="540" y="340" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="88" font-weight="600" fill="${COLORS.ink}">AI made code</text>
-  <text x="540" y="445" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="88" font-weight="600" fill="${COLORS.ink}">generation faster.</text>
+  <text x="540" y="340" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="88" font-weight="600" fill="${COLORS.ink}">AI made code</text>
+  <text x="540" y="445" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="88" font-weight="600" fill="${COLORS.ink}">generation faster.</text>
 
   <!-- Counter -->
-  <text x="540" y="570" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="68" font-style="italic" font-weight="600" fill="${COLORS.accent}">Not delivery.</text>
+  <text x="540" y="570" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="68" font-style="italic" font-weight="600" fill="${COLORS.accent}">Not delivery.</text>
 
   <!-- Decorative rule -->
   <line x1="480" y1="630" x2="600" y2="630" stroke="${COLORS.accent}" stroke-width="1.2" opacity="0.55"/>
 
   <!-- Body -->
-  <text x="540" y="700" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">Cost per accepted change. The bottom-line metric</text>
-  <text x="540" y="743" text-anchor="middle" font-family="Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">for AI-augmented software delivery.</text>
+  <text x="540" y="700" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">Cost per accepted change. The bottom-line metric</text>
+  <text x="540" y="743" text-anchor="middle" font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif" font-size="28" font-style="italic" fill="${COLORS.inkMuted}">for AI-augmented software delivery.</text>
 
   <!-- Formula stamp -->
   ${formulaStampFragment({ cx: 540, cy: 945, width: 820, height: 220 })}
@@ -234,7 +249,12 @@ function renderPng(svgString, outPath, fitWidth) {
     fitTo: fitWidth ? { mode: 'width', value: fitWidth } : undefined,
     background: 'rgba(255,255,255,0)',
     font: {
+      // Load bundled Source Serif 4 first so the headline / formula text
+      // renders the same on every host. System fonts remain available for
+      // the Helvetica / sans-serif UI labels.
+      fontFiles: FONT_FILES,
       loadSystemFonts: true,
+      defaultFontFamily: 'Source Serif 4',
     },
   });
   const png = resvg.render().asPng();

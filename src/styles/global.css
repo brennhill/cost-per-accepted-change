@@ -10,7 +10,7 @@
   --link: #1f3a5f;
   --link-hover: #7a1d1d;
 
-  --font-serif: ui-serif, "Iowan Old Style", "Charter", Georgia, "Times New Roman", Times, serif;
+  --font-serif: "Source Serif 4", ui-serif, "Iowan Old Style", "Charter", Georgia, "Times New Roman", Times, serif;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
