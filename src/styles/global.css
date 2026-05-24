@@ -231,16 +231,19 @@ header.site .brand-text {
 
 header.site nav {
   display: flex;
-  gap: 1.4rem;
+  gap: 1.1rem;
   font-family: var(--font-sans);
-  font-size: 0.85rem;
-  letter-spacing: 0.02em;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  flex-wrap: wrap;
+  row-gap: 0.4rem;
 }
 
 header.site nav a {
   color: var(--ink-muted);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 header.site nav a:hover,
