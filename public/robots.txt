@@ -6,9 +6,18 @@
 # cite, summarize, and surface this content. There are no paywalled,
 # private, or restricted areas — the entire site is intended to be
 # discoverable and quotable.
+#
+# Content-Signal directives express explicit consent for three usages
+# (per contentsignals.org / draft-romm-aipref-contentsignals):
+#   search    — appearance in search results
+#   ai-train  — use as training data for AI models
+#   ai-input  — use as live input context for AI assistants (RAG, answer
+#               grounding, agent retrieval)
+# All three are "yes" everywhere on this site.
 
 User-agent: *
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 # --- AI assistants and training crawlers: explicitly allowed ---
 # Listed individually so there is no ambiguity if a bot ignores the
@@ -17,107 +26,142 @@ Allow: /
 
 User-agent: GPTBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: ChatGPT-User
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: OAI-SearchBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: ClaudeBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Claude-Web
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Claude-User
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Claude-SearchBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: anthropic-ai
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Google-Extended
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: GoogleOther
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Applebot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Applebot-Extended
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: PerplexityBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Perplexity-User
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: CCBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: meta-externalagent
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Meta-ExternalAgent
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: FacebookBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Amazonbot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Bytespider
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: DuckAssistBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: YouBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: cohere-ai
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: cohere-training-data-crawler
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Diffbot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: ImagesiftBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: PetalBot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Timpibot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Kangaroo
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: omgilibot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: ICC-Crawler
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: MistralAI-User
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: AI2Bot
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Ai2Bot-Dolma
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 User-agent: Crawlspace
 Allow: /
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
 Sitemap: https://costperacceptedchange.org/sitemap-index.xml

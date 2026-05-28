@@ -8,6 +8,12 @@
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-site
 
+/
+  Link: </llms.txt>; rel="describedby"; type="text/markdown", </sitemap-index.xml>; rel="sitemap"; type="application/xml"
+
+/index.html
+  Link: </llms.txt>; rel="describedby"; type="text/markdown", </sitemap-index.xml>; rel="sitemap"; type="application/xml"
+
 /og-image.png
   Cross-Origin-Resource-Policy: cross-origin
   Cache-Control: public, max-age=86400
