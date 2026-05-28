@@ -106,6 +106,39 @@ console.log(cpac.breakdown); // share-of-total per component
     <p>
       Source: <a href="https://github.com/brennhill/cost-per-accepted-change">github.com/brennhill/cost-per-accepted-change</a>. MIT-licensed.
     </p>
+
+    <h2>Use the CLI</h2>
+    <p>
+      For one-shot calculations and full repo audits, install the CLI. <code>cpac audit</code> walks a GitHub repo over a date window, detects reverts via commit messages and explicit <code>Reverts #N</code> references, applies the 500-LOC normalization, and emits the accepted-change-unit count. Pair it with the five cost components for the full CPAC:
+    </p>
+<pre><code># Pure math
+npx cost-per-accepted-change-cli cpac calc \
+  --modelCost 1200 --infraCost 400 --engineeringTime 18000 \
+  --reviewCost 6000 --reworkCost 2400 --acceptedChanges 42
+
+# Audit a real repo window for the denominator
+npx cost-per-accepted-change-cli cpac audit \
+  --repo owner/name --since 2026-04-01 --until 2026-04-30
+</code></pre>
+    <p>Requires the <a href="https://cli.github.com">GitHub CLI</a> on your PATH and an authenticated session.</p>
+
+    <h2>Use the MCP server</h2>
+    <p>
+      The same audit + calculator core is exposed as an MCP stdio server (<code>cpac-mcp</code>) so AI agents in Claude Code, Cursor, and other MCP-aware clients can compute CPAC directly inside a conversation. Three tools: <code>calculate_cpac</code>, <code>normalize_changes</code>, <code>audit_repo</code>.
+    </p>
+<pre><code>// Add to your MCP client configuration
+&#123;
+  "mcpServers": &#123;
+    "cpac": &#123;
+      "command": "npx",
+      "args": ["-y", "cost-per-accepted-change-cli", "cpac-mcp"]
+    &#125;
+  &#125;
+&#125;
+</code></pre>
+    <p>
+      The skill manifest is published at <a href="/.well-known/agent-skills/cost-per-accepted-change.md"><code>/.well-known/agent-skills/cost-per-accepted-change.md</code></a> and indexed at <a href="/.well-known/agent-skills/index.json"><code>/.well-known/agent-skills/index.json</code></a> per the Agent Skills Discovery RFC. Source: <a href="https://github.com/brennhill/cost-per-accepted-change/tree/main/tools/cpac-cli"><code>tools/cpac-cli</code></a>.
+    </p>
   </article>
 
   <script>

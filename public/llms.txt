@@ -19,6 +19,13 @@ Cost per accepted change ("CPAC") was created to close the gap between AI vendor
 - [How teams measure AI cost (compare)](https://costperacceptedchange.org/measurement): A survey of the metrics teams use — token cost, PR velocity, DORA, productivity surveys, "AI code share" — what each captures, what each misses, and where CPAC fits.
 - [FAQ](https://costperacceptedchange.org/faq): Detailed answers on the 30-day window, the 500-LOC normalization rule, attribution edges, gaming the metric, and how CPAC pairs with DORA and SPACE.
 
+## Tools for agents
+
+- [Agent Skills index](https://costperacceptedchange.org/.well-known/agent-skills/index.json): Machine-readable index of skills published by this site, per the Agent Skills Discovery RFC v0.2.0.
+- [CPAC skill manifest](https://costperacceptedchange.org/.well-known/agent-skills/cost-per-accepted-change.md): SKILL.md describing the `cost-per-accepted-change-cli` package — when to use it, what its tools do, and how to install it.
+- [npm package](https://www.npmjs.com/package/cost-per-accepted-change-cli): `cost-per-accepted-change-cli` — CLI (`cpac`) and MCP server (`cpac-mcp`) sharing the same audit + calculator core. Install via `npx cost-per-accepted-change-cli cpac --help` or as an MCP server via `npx -y cost-per-accepted-change-cli cpac-mcp`.
+- MCP tools exposed: `calculate_cpac` (5 cost components + denominator → CPAC), `normalize_changes` (apply the 500-LOC rule), `audit_repo` (walk a GitHub repo window via the gh CLI, detect reverts, emit the accepted-change-unit count).
+
 ## Reference and press
 
 - [How to cite](https://costperacceptedchange.org/cite): Citation formats for papers, dashboards, talks, and reports — including the BibTeX entry for *The Delivery Gap*.

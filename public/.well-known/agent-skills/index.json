@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agentskills.io/schemas/index.v0.2.0.json",
+  "version": "0.2.0",
+  "site": {
+    "name": "Cost per accepted change",
+    "homepage": "https://costperacceptedchange.org",
+    "description": "Canonical definition site for cost per accepted change — the fully-loaded cost of producing software that reached production and stayed there, divided by the number of changes that did."
+  },
+  "skills": [
+    {
+      "name": "cost-per-accepted-change",
+      "type": "skill",
+      "description": "Compute cost per accepted change (CPAC) for a real GitHub repository. Tools: calculate_cpac (pure math), normalize_changes (500-LOC rule), audit_repo (gh-backed PR walk with revert detection). Available as both a CLI (`cpac`) and an MCP server (`cpac-mcp`).",
+      "url": "https://costperacceptedchange.org/.well-known/agent-skills/cost-per-accepted-change.md",
+      "sha256": "c59b4ee5d89a8e03f9fe360c4990810c7db18985313b70c0c5a0e2c574a165ce",
+      "version": "0.1.0",
+      "source": "https://github.com/brennhill/cost-per-accepted-change/tree/main/tools/cpac-cli",
+      "install": {
+        "npx": "npx -y cost-per-accepted-change-cli cpac --help",
+        "mcp": {
+          "command": "npx",
+          "args": ["-y", "cost-per-accepted-change-cli", "cpac-mcp"]
+        }
+      }
+    }
+  ]
+}

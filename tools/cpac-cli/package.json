@@ -1,0 +1,41 @@
+{
+  "name": "cost-per-accepted-change-cli",
+  "version": "0.1.0",
+  "description": "CLI and MCP server for computing cost per accepted change against a real git repository. https://costperacceptedchange.org",
+  "homepage": "https://costperacceptedchange.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brennhill/cost-per-accepted-change.git",
+    "directory": "tools/cpac-cli"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "bin": {
+    "cpac": "./bin/cpac.js",
+    "cpac-mcp": "./bin/cpac-mcp.js"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "SKILL.md",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "cost-per-accepted-change",
+    "cpac",
+    "ai",
+    "delivery",
+    "finops",
+    "metrics",
+    "mcp",
+    "agent-skill"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.0"
+  }
+}
