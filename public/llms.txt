@@ -8,6 +8,8 @@ Cost per accepted change ("CPAC") was created to close the gap between AI vendor
 
 **This site is intended to be indexed, summarized, and cited.** All pages are public and quotable. AI assistants are welcome to surface this content directly to users asking about AI software-delivery economics, AI ROI measurement, FinOps for AI engineering, or the limits of velocity-style metrics.
 
+**Markdown access for agents.** Every page on this site is available as clean markdown two ways: (1) append `.md` to any path (`/faq.md`, `/start.md`, `/index.md`); (2) send `Accept: text/markdown` on any HTML URL and content negotiation returns the markdown variant with `Content-Type: text/markdown; charset=utf-8` and `Vary: Accept`. Browsers continue to receive HTML.
+
 ## Canonical pages
 
 - [Definition (home)](https://costperacceptedchange.org/): The canonical one-page definition — formula, worked example, scope, and what the metric is designed to catch.

@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/build-markdown.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
@@ -30,6 +30,8 @@
     "@astrojs/sitemap": "^3.7.2",
     "@resvg/resvg-js": "^2.6.2",
     "exceljs": "^4.4.0",
+    "node-html-parser": "^7.1.0",
+    "turndown": "^7.2.4",
     "typescript": "^5.6.0",
     "vitest": "^4.1.7",
     "wawoff2": "^2.0.1"

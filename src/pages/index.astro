@@ -43,7 +43,10 @@ import VerificationTriangle from '../components/VerificationTriangle.astro';
       AI did not make software delivery faster. It made code <em>generation</em> faster. The distance between the two — between what organizations expect from AI and what they actually deliver — is the delivery gap.
     </p>
     <p>
-      Token cost, pull-request count, and "AI code share" are activity metrics. They count what was produced, not what was kept. <strong>Cost per accepted change is the outcome metric:</strong> the number to report to the board.
+      Token cost, pull-request count, and "AI code share" are activity metrics — they count what was produced, not what was kept. <strong>DORA's change failure rate is the closest existing signal, and it captures something real:</strong> that some merges fail. But it counts <em>incidents</em>, not the dollar cost of the rework those incidents demand — and post-AI, rework cost has become the dominant hidden line. SPACE's five dimensions are the gold standard for diagnosing developer experience, but they were never designed to roll up to a CFO-facing number.
+    </p>
+    <p>
+      <strong>Cost per accepted change is the outcome metric:</strong> the dollar cost of producing software your team actually kept. The number to report to the board, sitting one layer above the diagnostics — not replacing them.
     </p>
     <p>
       It is <a href="https://www.finops.org/">FinOps</a> cost-to-serve moved one layer upstream — the cost to <em>produce</em> delivered software, not the cost to <em>run</em> it.

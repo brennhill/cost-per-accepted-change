@@ -54,8 +54,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       Deployment frequency, lead time for changes, change failure rate, and time to restore. Defined by <a href="https://dora.dev/">DORA</a>; popularized by <em>Accelerate</em> (Forsgren, Humble, Kim, 2018) and the annual State of DevOps reports.
     </p>
     <p>
-      <strong>What it catches:</strong> how a delivery system <em>behaves</em>. Industry-standard, well-defended, mature instrumentation.<br>
-      <strong>What it misses:</strong> what that behavior <em>costs</em>. A team can have excellent DORA numbers and a terrible cost picture if velocity is bought with disproportionate review and rework — exactly the AI-augmented failure mode. DORA and CPAC are complementary.
+      <strong>What it catches:</strong> how a delivery system <em>behaves</em>. Industry-standard, well-defended, mature instrumentation — the framework engineering leaders already use to talk about delivery health.<br>
+      <strong>What it misses:</strong> what that behavior <em>costs</em>. Specifically, <strong>change failure rate counts incidents — not the dollar cost of the rework those incidents demand.</strong> A team where senior engineers absorb a 40-hour rework week posts the same change-failure-rate as a team where junior engineers absorb four 10-hour rework weeks; only CPAC sees the cost difference. A team can post excellent DORA numbers and a terrible cost picture if velocity is bought with disproportionate review and rework — exactly the AI-augmented failure mode. DORA and CPAC are complementary: DORA describes the delivery system; CPAC is the dollar layer DORA was never designed to be.
     </p>
 
     <h3>5. SPACE framework</h3>
@@ -63,8 +63,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       Satisfaction, Performance, Activity, Communication, Efficiency. A multi-dimensional developer-productivity framework from Microsoft Research and GitHub (Forsgren, Storey, Maddila, Zimmermann, Houck, Butler, 2021).
     </p>
     <p>
-      <strong>What it catches:</strong> a balanced view of productivity that resists single-metric gaming.<br>
-      <strong>What it misses:</strong> a unit-cost number a CFO can act on. SPACE is the right framing for developer experience research; it is not a finance-facing metric.
+      <strong>What it catches:</strong> a balanced view of productivity that resists single-metric gaming — the framework everyone reaches for when they want to defeat the "lines of code" trap.<br>
+      <strong>What it misses:</strong> a unit-cost number a CFO can act on. SPACE's five dimensions are diagnostic by design; none of them collapse to a single dollar value, and SPACE was never built to. CPAC is the dollar bottom line that SPACE's dimensions help explain when it moves.
     </p>
 
     <h3>6. DevEx scores</h3>

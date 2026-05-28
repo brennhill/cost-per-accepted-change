@@ -32,6 +32,13 @@
   Access-Control-Allow-Origin: *
   Cache-Control: public, max-age=300
 
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+  Cross-Origin-Resource-Policy: cross-origin
+  Access-Control-Allow-Origin: *
+  Vary: Accept
+  Cache-Control: public, max-age=300
+
 /robots.txt
   Cross-Origin-Resource-Policy: cross-origin
   Access-Control-Allow-Origin: *

@@ -408,7 +408,13 @@ dist/**           linguist-generated
 
     <h2>How does CPAC relate to DORA metrics?</h2>
     <p>
-      DORA metrics describe how a delivery system <em>behaves</em>: how often it ships, how quickly, with what failure rate. CPAC describes what that behavior <em>costs</em>. The two are complementary. A team can have excellent DORA numbers and a terrible CPAC if its velocity is bought with disproportionate review and rework cost — which is exactly the AI-augmented failure mode.
+      DORA metrics describe how a delivery system <em>behaves</em>: how often it ships, how quickly, with what failure rate. CPAC describes what that behavior <em>costs</em>. The two are complementary; CPAC is the dollar layer DORA was never designed to be.
+    </p>
+    <p>
+      The cleanest illustration is the change-failure-rate gap. <strong>Change failure rate counts incidents — not the cost of the rework those incidents demand.</strong> Two teams can post an identical 8% change failure rate: one absorbs the rework with senior engineers at $200/hour over a 40-hour week, the other with junior engineers at $100/hour over four 10-hour weeks. Same DORA number, ~2× difference in rework cost, completely different return on the AI investment that produced the failures. CPAC sees the difference because rework is a numerator line; DORA sees only the incident count. This is exactly the AI-augmented failure mode — review and rework cost climbs while DORA's headline holds.
+    </p>
+    <p>
+      Run DORA for delivery-system behavior. Run CPAC for delivery-system economics. The two together — DORA as leading indicator, CPAC as cost outcome — is the right reporting posture for a finance-aware engineering organization.
     </p>
 
     <h2>How does CPAC relate to FinOps?</h2>
