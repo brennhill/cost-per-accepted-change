@@ -29,24 +29,66 @@ const turndown = new TurndownService({
 });
 
 // GFM tables — turndown doesn't ship table support by default; add it.
+// Recurse the turndown converter on each cell's innerHTML so inline
+// formatting (links, bold, em, code) survives. Only emit a header row
+// when the table actually has a <thead> — headerless tables (no <thead>)
+// previously promoted their first data row to a column header, which
+// silently mangled the homepage's worked-example table.
+// Turndown's internal DOM (domino) returns NodeLists that aren't
+// iterable with `for...of`, so we wrap every querySelectorAll result
+// in Array.from() before processing.
+const qsa = (root, sel) => Array.from(root.querySelectorAll(sel));
+
 turndown.addRule('table', {
   filter: 'table',
   replacement(content, node) {
-    const rows = node.querySelectorAll('tr');
-    if (!rows.length) return '';
-    const cellsOf = (row) =>
-      row
-        .querySelectorAll('th,td')
-        .map((c) => c.textContent.trim().replace(/\s+/g, ' ').replace(/\|/g, '\\|'));
-    const out = [];
-    const header = cellsOf(rows[0]);
-    if (!header.length) return '';
-    out.push('| ' + header.join(' | ') + ' |');
-    out.push('| ' + header.map(() => '---').join(' | ') + ' |');
-    for (let i = 1; i < rows.length; i++) {
-      const cells = cellsOf(rows[i]);
-      if (cells.length) out.push('| ' + cells.join(' | ') + ' |');
+    const renderCell = (cell) => {
+      const md = turndown.turndown(cell.innerHTML || '').trim();
+      // Markdown tables can't contain newlines or unescaped pipes in cells.
+      return md.replace(/\r?\n+/g, ' ').replace(/\|/g, '\\|');
+    };
+    const cellsOf = (row) => qsa(row, 'th,td').map(renderCell);
+
+    const headSection = node.querySelector('thead');
+    const headRows = headSection ? qsa(headSection, 'tr') : [];
+    let bodyRows;
+    if (headSection) {
+      const tbody = node.querySelector('tbody');
+      if (tbody) {
+        bodyRows = qsa(tbody, 'tr');
+      } else {
+        bodyRows = qsa(node, 'tr').filter((r) => !headSection.contains(r));
+      }
+    } else {
+      bodyRows = qsa(node, 'tr');
     }
+
+    const renderedBody = [];
+    let columnCount = 0;
+    for (const row of bodyRows) {
+      const cells = cellsOf(row);
+      if (!cells.length) continue;
+      columnCount = Math.max(columnCount, cells.length);
+      renderedBody.push('| ' + cells.join(' | ') + ' |');
+    }
+
+    const out = [];
+    if (headRows.length) {
+      const header = cellsOf(headRows[0]);
+      columnCount = Math.max(columnCount, header.length);
+      if (header.length) {
+        out.push('| ' + header.join(' | ') + ' |');
+        out.push('| ' + header.map(() => '---').join(' | ') + ' |');
+      }
+    } else if (columnCount > 0) {
+      // GFM requires a header separator for tables to render. Emit an
+      // empty header row so the data is recognized as a table — the
+      // first data row stays as data (not promoted to a header).
+      out.push('| ' + Array(columnCount).fill('').map(() => ' ').join(' | ') + ' |');
+      out.push('| ' + Array(columnCount).fill('---').join(' | ') + ' |');
+    }
+    out.push(...renderedBody);
+    if (!out.length) return '';
     return '\n\n' + out.join('\n') + '\n\n';
   },
 });
@@ -56,7 +98,7 @@ async function* walk(dir) {
     const full = join(dir, entry.name);
     if (entry.isDirectory()) {
       // Skip well-known and _astro — they have no human article content.
-      if (entry.name.startsWith('.well-known') || entry.name === '_astro') continue;
+      if (entry.name === '.well-known' || entry.name === '_astro') continue;
       yield* walk(full);
     } else if (entry.isFile() && full.endsWith('.html')) {
       yield full;
@@ -101,15 +143,33 @@ async function convertOne(htmlPath) {
 }
 
 async function main() {
-  let count = 0;
-  for await (const htmlPath of walk(DIST)) {
-    const md = await convertOne(htmlPath);
-    if (!md) continue;
-    const mdPath = htmlPath.replace(/\.html$/, '.md');
-    await writeFile(mdPath, md, 'utf8');
-    count++;
+  const htmlPaths = [];
+  for await (const p of walk(DIST)) htmlPaths.push(p);
+
+  const results = await Promise.all(
+    htmlPaths.map(async (htmlPath) => {
+      const md = await convertOne(htmlPath);
+      if (!md) {
+        return { htmlPath, written: false, reason: 'no article.page or main' };
+      }
+      const mdPath = htmlPath.replace(/\.html$/, '.md');
+      await writeFile(mdPath, md, 'utf8');
+      return { htmlPath, written: true };
+    }),
+  );
+
+  const written = results.filter((r) => r.written).length;
+  const skipped = results.filter((r) => !r.written);
+  for (const s of skipped) {
+    process.stderr.write(
+      `build-markdown: skipped ${relative(DIST, s.htmlPath)} — ${s.reason}\n`,
+    );
   }
-  process.stdout.write(`build-markdown: wrote ${count} .md siblings\n`);
+  process.stdout.write(
+    `build-markdown: wrote ${written} .md sibling${written === 1 ? '' : 's'}` +
+      (skipped.length ? ` (${skipped.length} skipped)` : '') +
+      '\n',
+  );
 }
 
 main().catch((err) => {

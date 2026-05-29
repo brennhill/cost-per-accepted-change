@@ -29,6 +29,8 @@ Usage:
               [--json]
   cpac --help | --version
 
+Flags accept both \`--name value\` and \`--name=value\` syntax.
+
 Numerator inputs (for calc and audit-with-costs):
   --modelCost N          LLM / API spend in the window
   --infraCost N          Infrastructure spend in the window
@@ -54,6 +56,19 @@ Examples:
 Docs: https://costperacceptedchange.org
 `;
 
+const BOOLEAN_FLAGS = new Set(['json', 'help', 'version']);
+const KNOWN_FLAGS = {
+  calc: new Set([
+    'modelCost', 'infraCost', 'engineeringTime', 'reviewCost',
+    'reworkCost', 'acceptedChanges', 'json',
+  ]),
+  audit: new Set([
+    'since', 'until', 'repo', 'survival', 'threshold',
+    'modelCost', 'infraCost', 'engineeringTime', 'reviewCost', 'reworkCost',
+    'json',
+  ]),
+};
+
 function die(msg, code = 1) {
   process.stderr.write(`cpac: ${msg}\n`);
   process.exit(code);
@@ -65,9 +80,24 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a.startsWith('--')) {
-      const name = a.slice(2);
-      if (name === 'json' || name === 'help' || name === 'version') {
+      const eq = a.indexOf('=');
+      let name;
+      let inlineValue;
+      if (eq >= 0) {
+        name = a.slice(2, eq);
+        inlineValue = a.slice(eq + 1);
+      } else {
+        name = a.slice(2);
+        inlineValue = undefined;
+      }
+      if (!name) die(`bare "--" is not a valid flag`);
+      if (BOOLEAN_FLAGS.has(name)) {
+        if (inlineValue !== undefined && inlineValue !== '' && inlineValue !== 'true') {
+          die(`flag --${name} does not take a value (got "${inlineValue}")`);
+        }
         flags.set(name, true);
+      } else if (inlineValue !== undefined) {
+        flags.set(name, inlineValue);
       } else {
         const next = argv[i + 1];
         if (next === undefined || next.startsWith('--')) {
@@ -83,7 +113,19 @@ function parseArgs(argv) {
   return { positionals, flags };
 }
 
-function num(flags, name, { required = false, integer = false } = {}) {
+function validateFlags(subcommand, flags) {
+  const known = KNOWN_FLAGS[subcommand];
+  if (!known) return;
+  const unknown = [];
+  for (const name of flags.keys()) {
+    if (!known.has(name)) unknown.push(name);
+  }
+  if (unknown.length) {
+    die(`unknown flag(s) for "${subcommand}": ${unknown.map((n) => '--' + n).join(', ')}. Try: cpac --help`);
+  }
+}
+
+function num(flags, name, { required = false, integer = false, positive = false } = {}) {
   const raw = flags.get(name);
   if (raw === undefined) {
     if (required) die(`missing required --${name}`);
@@ -92,6 +134,7 @@ function num(flags, name, { required = false, integer = false } = {}) {
   const n = Number(raw);
   if (!Number.isFinite(n)) die(`--${name} must be a number; got "${raw}"`);
   if (integer && !Number.isInteger(n)) die(`--${name} must be an integer; got "${raw}"`);
+  if (positive && !(n > 0)) die(`--${name} must be positive; got ${n}`);
   return n;
 }
 
@@ -102,6 +145,7 @@ function str(flags, name, { required = false } = {}) {
 }
 
 function runCalc(flags) {
+  validateFlags('calc', flags);
   const inputs = {
     modelCost: num(flags, 'modelCost', { required: true }),
     infraCost: num(flags, 'infraCost', { required: true }),
@@ -135,11 +179,14 @@ function runCalc(flags) {
 }
 
 async function runAudit(flags) {
+  validateFlags('audit', flags);
   const since = str(flags, 'since', { required: true });
   const until = str(flags, 'until', { required: true });
   const repo = str(flags, 'repo');
-  const survivalWindowDays = num(flags, 'survival', { integer: true }) ?? 30;
-  const threshold = num(flags, 'threshold', { integer: true }) ?? 500;
+  const survivalWindowDays = num(flags, 'survival', { integer: true, positive: true }) ?? 30;
+  // threshold is positive but not necessarily integer (matches calculator.js
+  // which accepts any positive number).
+  const threshold = num(flags, 'threshold', { positive: true }) ?? 500;
 
   let report;
   try {
@@ -157,24 +204,30 @@ async function runAudit(flags) {
     'reviewCost',
     'reworkCost',
   ].some((k) => flags.has(k));
-  let cpac;
+  let cpac = null;
+  let cpacError = null;
   if (hasAnyCost) {
     if (report.counts.acceptedChangeUnits === 0) {
-      die('audit found 0 accepted change units in the window — cannot compute CPAC');
+      cpacError = 'audit found 0 accepted change units in the window — cannot compute CPAC';
+    } else {
+      const inputs = {
+        modelCost: num(flags, 'modelCost') ?? 0,
+        infraCost: num(flags, 'infraCost') ?? 0,
+        engineeringTime: num(flags, 'engineeringTime') ?? 0,
+        reviewCost: num(flags, 'reviewCost') ?? 0,
+        reworkCost: num(flags, 'reworkCost') ?? 0,
+        acceptedChanges: report.counts.acceptedChangeUnits,
+      };
+      cpac = { inputs, result: costPerAcceptedChange(inputs) };
     }
-    const inputs = {
-      modelCost: num(flags, 'modelCost') ?? 0,
-      infraCost: num(flags, 'infraCost') ?? 0,
-      engineeringTime: num(flags, 'engineeringTime') ?? 0,
-      reviewCost: num(flags, 'reviewCost') ?? 0,
-      reworkCost: num(flags, 'reworkCost') ?? 0,
-      acceptedChanges: report.counts.acceptedChangeUnits,
-    };
-    cpac = { inputs, result: costPerAcceptedChange(inputs) };
   }
 
   if (flags.get('json')) {
-    process.stdout.write(JSON.stringify({ audit: report, cpac }, null, 2) + '\n');
+    // Always emit the audit payload — never swallow it on the zero-units
+    // path. cpac is null when uncomputable; the consumer can check.
+    process.stdout.write(
+      JSON.stringify({ audit: report, cpac, error: cpacError }, null, 2) + '\n',
+    );
     return;
   }
 
@@ -182,13 +235,16 @@ async function runAudit(flags) {
   const lines = [
     `Audit ${repoLabel}  ${since}..${until}  survival=${survivalWindowDays}d  threshold=${threshold}LOC`,
     ``,
-    `  Merged PRs:              ${report.counts.mergedPRs}`,
-    `  Survived PRs:            ${report.counts.survivedPRs}`,
-    `  Invalidated PRs:         ${report.counts.invalidatedPRs}`,
-    `  Accepted change units:   ${report.counts.acceptedChangeUnits}`,
+    `  Merged PRs:                  ${report.counts.mergedPRs}`,
+    `  Confirmed survived PRs:      ${report.counts.confirmedSurvivedPRs}`,
+    `  Provisional survived PRs:    ${report.counts.provisionalSurvivedPRs}`,
+    `  Invalidated PRs:             ${report.counts.invalidatedPRs}`,
+    `  Accepted change units:       ${report.counts.acceptedChangeUnits} (confirmed only)`,
   ];
-  if (report.counts.tooRecentToEvaluate > 0) {
-    lines.push(`  Too-recent to evaluate:  ${report.counts.tooRecentToEvaluate}`);
+  if (report.counts.provisionalChangeUnits > 0) {
+    lines.push(
+      `  Provisional change units:    ${report.counts.provisionalChangeUnits} (NOT in denominator)`,
+    );
   }
   if (report.warnings.length) {
     lines.push('');
@@ -211,6 +267,9 @@ async function runAudit(flags) {
     lines.push(`  Cost per accepted change: ${formatCurrency(cpac.result.value)}`);
     lines.push(`    Total cost: ${formatCurrency(cpac.result.totalCost)}`);
     lines.push(`    Denominator: ${cpac.result.acceptedChanges} accepted change units`);
+  } else if (cpacError) {
+    lines.push('');
+    lines.push(`  ! ${cpacError}`);
   } else {
     lines.push('');
     lines.push(`  Pass --modelCost / --infraCost / ... to compute the full CPAC.`);

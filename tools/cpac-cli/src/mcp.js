@@ -133,14 +133,18 @@ export function buildServer() {
               linesChanged: z
                 .number()
                 .nonnegative()
-                .describe('additions + deletions, excluding vendored / generated / lockfiles'),
+                .describe(
+                  'additions + deletions, excluding vendored / generated / lockfiles. ' +
+                    'Entries with linesChanged === 0 are accepted and silently skipped ' +
+                    '(they contribute 0 units), matching the calculator core.',
+                ),
             }),
           )
           .describe('List of merged changes that stayed in production.'),
         threshold: z
           .number()
-          .int()
           .positive()
+          .max(100000)
           .optional()
           .describe(`Lines per unit. Default ${CHANGE_UNIT_LINES}.`),
       },
@@ -192,12 +196,14 @@ export function buildServer() {
           .number()
           .int()
           .positive()
+          .max(365)
           .optional()
           .describe('Days a change must persist post-merge to be "accepted". Default 30.'),
         threshold: z
           .number()
           .int()
           .positive()
+          .max(100000)
           .optional()
           .describe(`LOC normalization threshold. Default ${CHANGE_UNIT_LINES}.`),
       },

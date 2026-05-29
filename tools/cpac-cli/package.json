@@ -10,7 +10,6 @@
   },
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.js",
   "bin": {
     "cpac": "./bin/cpac.js",
     "cpac-mcp": "./bin/cpac-mcp.js"

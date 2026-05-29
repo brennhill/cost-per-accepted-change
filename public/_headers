@@ -39,6 +39,17 @@
   Vary: Accept
   Cache-Control: public, max-age=300
 
+# Nested .md siblings (e.g. /templates/quarterly-review.md). Cloudflare
+# Pages' `_headers` single-`*` glob does not cross `/`, so the rule
+# above misses any .md below the root. Repeat for one nesting level —
+# our build emits at most one subdirectory deep.
+/*/*.md
+  Content-Type: text/markdown; charset=utf-8
+  Cross-Origin-Resource-Policy: cross-origin
+  Access-Control-Allow-Origin: *
+  Vary: Accept
+  Cache-Control: public, max-age=300
+
 /robots.txt
   Cross-Origin-Resource-Policy: cross-origin
   Access-Control-Allow-Origin: *
