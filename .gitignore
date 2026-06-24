@@ -8,3 +8,4 @@ dist/
 *.log
 .wrangler/
 .dev.vars
+.serena/

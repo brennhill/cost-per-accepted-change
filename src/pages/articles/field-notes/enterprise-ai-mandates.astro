@@ -1,0 +1,209 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const SITE = 'https://costperacceptedchange.org';
+const slug = 'enterprise-ai-mandates';
+const published = '2026-06-24';
+
+const sources = [
+  {
+    id: 'sf-half',
+    text: 'Entrepreneur, "Salesforce CEO Marc Benioff: AI Is Handling Half of Tasks" (June 2025) — Benioff says AI does "30% to 50% of the work" at ~93% accuracy. Self-reported; "work" is undefined and the range is wide.',
+    url: 'https://www.entrepreneur.com/business-news/salesforce-ceo-marc-benioff-ai-is-handling-half-of-tasks/493870',
+  },
+  {
+    id: 'sf-hire',
+    text: 'ITPro — Benioff: Salesforce was "seriously debating" whether to hire any software engineers in 2025; he later softened this, saying his engineers were "hugely augmented" but still needed and that the model "cannot operate autonomously."',
+    url: 'https://www.itpro.com/software/development/maybe-we-arent-going-to-hire-anybody-this-year-marc-benioff-says-salesforce-might-not-hire-any-software-engineers-in-2025-as-the-firm-reaps-the-benefits-of-ai-agents',
+  },
+  {
+    id: 'sf-redeploy',
+    text: 'Fortune (Sept 2, 2025) — Benioff says Salesforce reduced customer-support headcount from ~9,000 to ~5,000, framed as redeployment: "hundreds" of employees moved into professional services, sales, and customer success rather than a clean ~4,000-person layoff.',
+    url: 'https://fortune.com/2025/09/02/salesforce-ceo-billionaire-marc-benioff-ai-agents-jobs-layoffs-customer-service-sales/',
+  },
+  {
+    id: 'shopify',
+    text: 'Forrester analysis of Tobi Lütke’s Shopify memo (April 2025): "Before asking for more headcount and resources, teams must demonstrate why they cannot get what they want done using AI," and "Reflexive AI usage is now a baseline expectation." Forrester questioned the "prove a negative" logic and Shopify’s unverified productivity claims.',
+    url: 'https://www.forrester.com/blogs/what-you-can-learn-from-shopifys-ceos-memo-on-workforce-ai/',
+  },
+  {
+    id: 'duo-memo',
+    text: 'Entrepreneur — Luis von Ahn’s April 28, 2025 "AI-first" memo: Duolingo would "gradually stop using contractors to do work that AI can handle," with headcount given "only if a team cannot automate more of their work."',
+    url: 'https://www.entrepreneur.com/business-news/duolingo-ceo-clarifies-ai-stance-after-backlash-read-memo/492141',
+  },
+  {
+    id: 'duo-walkback',
+    text: 'Fortune (May 24, 2025) — von Ahn clarifies: "I do not see AI as replacing what our employees do (we are, in fact, continuing to hire at the same speed as before)," calling AI "a tool to accelerate what we do, at the same or better level of quality," and adding "I didn’t do that well."',
+    url: 'https://fortune.com/2025/05/24/duolingo-ai-first-employees-ceo-luis-von-ahn/',
+  },
+  {
+    id: 'ibm-projection',
+    text: 'Fortune (May 1, 2023) — Arvind Krishna said IBM would pause/slow hiring for ~26,000 back-office roles and "could easily see 30% of that getting replaced by AI and automation over a five-year period" (~7,800). This was a projection of what is automatable, not a layoff figure.',
+    url: 'https://fortune.com/2023/05/01/ibm-ceo-ai-artificial-intelligence-back-office-jobs-pause-hiring/',
+  },
+  {
+    id: 'ibm-net',
+    text: 'PYMNTS, summarizing the WSJ (May 2025) — Krishna: AI replaced the work of "a few hundred" HR staff, but IBM’s total employment "actually gone up," because the savings funded hiring of programmers, salespeople, and marketers. The viral "8,000 HR jobs cut then rehired" claim is false; IBM’s AskHR automates ~94% of routine HR inquiries.',
+    url: 'https://www.pymnts.com/artificial-intelligence-2/2025/ibm-ceo-hr-layoffs-due-to-ai-led-to-more-investment-in-other-roles/',
+  },
+];
+
+const jsonLd = {
+  '@type': 'Article',
+  '@id': `${SITE}/articles/field-notes/${slug}#article`,
+  headline: "AI-first mandates, and the number that would tell you they're working",
+  description:
+    'Salesforce, Shopify, Duolingo, and IBM each announced an AI-first mandate on an input metric — adoption, or headcount avoided. An illustrative reading of what a kept-value denominator would add.',
+  inLanguage: 'en',
+  datePublished: published,
+  dateModified: published,
+  author: { '@id': `${SITE}/#person-brennhill` },
+  publisher: { '@id': `${SITE}/#person-brennhill` },
+  image: `${SITE}/og-image.png`,
+  mainEntityOfPage: `${SITE}/articles/field-notes/${slug}`,
+  isPartOf: { '@id': `${SITE}/#website` },
+  about: { '@id': `${SITE}/#definedterm` },
+  articleSection: 'Field Notes',
+  isAccessibleForFree: true,
+  keywords: [
+    'AI mandate',
+    'Salesforce Agentforce',
+    'Shopify',
+    'Duolingo',
+    'IBM',
+    'cost per accepted change',
+    'AI governance',
+  ],
+  citation: sources.map((s) => ({ '@type': 'CreativeWork', name: s.text, url: s.url })),
+};
+---
+<BaseLayout
+  title="AI-first mandates, and the number that would tell you they're working"
+  description="Salesforce, Shopify, Duolingo, and IBM each announced an AI-first mandate on an input metric — adoption, or headcount avoided. An illustrative reading of what a kept-value denominator would add."
+  path={`/articles/field-notes/${slug}`}
+  jsonLd={jsonLd}
+  breadcrumbs={[
+    { name: 'Articles', path: '/articles' },
+    { name: 'Field notes', path: '/articles/field-notes' },
+  ]}
+>
+  <article class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span><a href="/articles">Articles</a><span class="sep">›</span><a href="/articles/field-notes">Field notes</a><span class="sep">›</span>AI mandates
+    </nav>
+
+    <p class="eyebrow">Field note · Salesforce · Shopify · Duolingo · IBM</p>
+    <h1>AI-first mandates, and the number that would tell you they're working</h1>
+    <p class="article-meta">
+      By Brenn Hill<span class="dot">·</span>June 2026<span class="dot">·</span>~10 min read
+    </p>
+
+    <p class="lede">
+      In 2024 and 2025, a run of well-known leaders stood up and said some version of the same brave thing: we are going AI-first, and we mean it. These were sincere attempts to lead through a genuinely confusing moment, and several were admirably transparent about it. But almost every mandate set its target on the same kind of number — how much AI gets used, or how much hiring gets avoided — and those are <em>inputs</em>. The question a mandate can't answer on its own is whether the work the AI produced was any good and got kept.
+    </p>
+
+    <div class="callout">
+      <span class="label">What this is</span>
+      An illustrative analysis built on public memos, earnings remarks, and reputable reporting — all cited below, with company claims distinguished from independent reporting. No inside information; none of these companies has endorsed it. The worked figures later are <strong>hypothetical, chosen to show the method</strong>. Most of this work is non-code, so it uses cost per accepted change in its generalized form — "cost per accepted unit of work."
+    </div>
+
+    <h2 class="no-rule">Four mandates, briefly and fairly</h2>
+    <p>
+      Each of these deserves to be described generously, because each was a real attempt to do the right thing with incomplete information.
+    </p>
+
+    <h3>Salesforce</h3>
+    <p>
+      Marc Benioff said AI was doing <strong>"30% to 50% of the work"</strong> at Salesforce,<sup><a href="#s-sf-half">[1]</a></sup> and mused that the company was "seriously debating" whether to hire any software engineers in 2025 — a line he later softened, noting his engineers were "hugely augmented" but still very much needed.<sup><a href="#s-sf-hire">[2]</a></sup> Support headcount came down from about 9,000 to 5,000, which Salesforce framed as <em>redeployment</em> into sales and customer success rather than a clean layoff.<sup><a href="#s-sf-redeploy">[3]</a></sup> The fair summary: bold adoption, honestly caveated, with the firm later walking the most sweeping claims back toward nuance.
+    </p>
+
+    <h3>Shopify</h3>
+    <p>
+      Tobi Lütke's memo asked teams to <strong>"demonstrate why they cannot get what they want done using AI"</strong> before requesting new headcount, and declared "reflexive AI usage is now a baseline expectation."<sup><a href="#s-shopify">[4]</a></sup> Many read it as a leader saying the quiet part out loud, which took some courage. It's also where the input-versus-outcome tension is clearest: "use AI first" is a usage rule, and the memo's striking productivity figures (a "100x" claim, for one) were Shopify's own and never independently verified.
+    </p>
+
+    <h3>Duolingo</h3>
+    <p>
+      Luis von Ahn's "AI-first" memo said Duolingo would <strong>"gradually stop using contractors to do work that AI can handle."</strong><sup><a href="#s-duo-memo">[5]</a></sup> After a sharp public reaction, he clarified — graciously — that AI was "a tool to accelerate what we do, at the same or better level of quality," that the company was "continuing to hire at the same speed as before," and, plainly, "I didn't do that well."<sup><a href="#s-duo-walkback">[6]</a></sup> It's a genuinely likeable course-correction. Notice, though, that the "same or better quality" reassurance was itself a claim without a number attached.
+    </p>
+
+    <h3>IBM</h3>
+    <p>
+      IBM is the one to study, because it arguably got the governance right. Arvind Krishna's much-quoted 2023 figure — that AI could replace ~30% of ~26,000 back-office roles — was explicitly a <em>projection of what was automatable</em>, not a layoff, and the widely-shared "IBM cut 8,000 HR jobs then rehired after AI failed" story is simply false.<sup><a href="#s-ibm-net">[8]</a></sup> What actually happened: AskHR automated ~94% of routine HR inquiries, the work of "a few hundred" roles was displaced — and IBM's <strong>total</strong> headcount went <em>up</em>, because the savings were reinvested into hiring programmers and salespeople.<sup><a href="#s-ibm-net">[8]</a></sup><sup><a href="#s-ibm-projection">[7]</a></sup> IBM watched a net outcome, not just an adoption rate.
+    </p>
+
+    <h2>What every one of them measured</h2>
+    <p>
+      Line the mandates up and the shared shape is unmistakable. The numbers on the marquee were <strong>percent of work done by AI, percent of inquiries deflected, headcount avoided, contractors phased out.</strong> Every one is an input or a cost-out — a measure of how much the organization leaned on AI, or how much labor it removed. None of them, on its own, says whether what the AI produced was accepted, was good, and stayed good.
+    </p>
+    <p>
+      That's not a knock on the leaders; it's just how the available dashboards point. "We use AI for 50% of the work" feels like an outcome, and it's reported like one, but it's really a statement about <em>activity</em> — the same trap, one altitude up, that "percent of code written by AI" sets for engineering teams.
+    </p>
+
+    <div class="callout">
+      <span class="label">The pattern, said kindly</span>
+      In every case, the quality-and-value side was either left unmeasured, reported as a self-assessment, or only clarified later. Salesforce eventually acknowledged its agents could "drift"; Shopify's headline productivity numbers were unverified; Duolingo's "same or better quality" was an assurance, not a measurement; and IBM — the exception — is exactly the one that tracked a net result. The lesson isn't "don't set AI mandates." It's "a mandate needs a denominator."
+    </div>
+
+    <h2>What a kept-value denominator adds</h2>
+    <p>
+      A mandate is a lever: <em>use AI more</em>, <em>don't add headcount unless AI can't do it</em>. Levers are fine — sometimes exactly what a moment needs. But you can't tell whether pulling a lever helped without an outcome number on the other end, and "adoption went up" isn't one. Generalize cost per accepted change to any function and you get that number: <strong>cost per accepted unit of work</strong> — the fully-loaded cost of producing outputs (resolutions, drafts, code, decisions) that were accepted and <em>stayed</em> accepted, divided by the count that did, with the cost of redoing the rest counted in.
+    </p>
+    <p>
+      Put that under a mandate and it suddenly becomes steerable. "AI now does 60% of tier-one support" stops being the headline and becomes an input; the headline becomes "the cost of a resolution that actually sticks fell 18%, and re-contacts held flat" — or, if the mandate is being met on paper while quality quietly leaks, "adoption hit target, but cost per accepted resolution barely moved because escalations rose." Same mandate, but now you know which it is.
+    </p>
+
+    <h2>A worked reading (illustrative)</h2>
+    <p>
+      Hypothetical numbers — <em>not</em> any real company's — for a support function asked to go AI-first. The mandate's own metric (share of tickets handled by AI) sails past target. Here's that success next to the kept-value view:
+    </p>
+
+    <table>
+      <thead>
+        <tr><th></th><th>Before mandate</th><th>After mandate</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Share of tickets handled by AI (the mandate metric)</td><td>10%</td><td><strong>65%</strong></td></tr>
+        <tr><td>Tickets handled</td><td>100,000</td><td>100,000</td></tr>
+        <tr><td>Re-contacts / escalations within 14 days</td><td>8,000</td><td>18,000</td></tr>
+        <tr><td>Resolutions that <em>stayed</em> resolved</td><td>92,000</td><td>82,000</td></tr>
+        <tr><td>Direct handling cost</td><td>$360,000</td><td>$190,000</td></tr>
+        <tr><td>Rework cost (escalations, human cleanup)</td><td>$40,000</td><td>$80,000</td></tr>
+        <tr><th>Total cost</th><th>$400,000</th><th>$270,000</th></tr>
+        <tr><th>Cost per accepted resolution</th><th>$4.35</th><th>$3.29</th></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Read this carefully, because it's deliberately <em>not</em> a "gotcha." The mandate worked: cost per accepted resolution fell from $4.35 to $3.29, a real 24% improvement. <strong>And</strong> the kept-value lens shows the part the adoption metric hid — re-contacts more than doubled and 10,000 fewer problems actually stuck — so leadership can bank the genuine saving <em>while</em> seeing exactly where to reinvest some of it (in the escalation path) before quality erodes further. That's the whole gift of a denominator: it lets you celebrate the win and steer the risk at the same time, instead of choosing one.
+    </p>
+
+    <h2>The takeaway</h2>
+    <p>
+      None of these leaders did anything foolish. They placed real bets under real uncertainty, mostly in public, and several adjusted with grace when the picture filled in. If there's a shared lesson, IBM already embodies it: <strong>govern the net outcome, not the adoption rate.</strong> Watch what the AI produced that got <em>kept</em>, price the rework on what didn't, and reinvest the genuine savings on purpose.
+    </p>
+    <p>
+      An AI mandate without a kept-value number is steering by the accelerator pedal — you can feel that you're going faster without knowing if you're getting anywhere. Cost per accepted change, generalized to whatever work the mandate touches, is the speedometer. It doesn't tell you to slow down or speed up; it just tells you the truth about how far the effort is actually carrying you, which is all any of us is really trying to find out.
+    </p>
+
+    <p style="margin-top: 2em;">
+      <a class="btn btn-primary" href="/calculator">Run your own numbers →</a>
+      <a class="btn" href="/start" style="margin-left: 0.6rem;">Quick start for leaders →</a>
+      <a class="btn" href="/articles/field-notes" style="margin-left: 0.6rem;">More field notes →</a>
+    </p>
+
+    <h2>Sources</h2>
+    <ol class="sources">
+      {sources.map((s) => (
+        <li id={`s-${s.id}`}>
+          {s.text} <a href={s.url}>{s.url}</a>
+        </li>
+      ))}
+    </ol>
+
+    <hr />
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      This is a field note — a friendly, illustrative reading of the public record, not a commissioned case study and not a scorecard. These leaders made their calls in the open, which is the only reason there's enough here to learn from. Corrections and better public data are genuinely welcome via <a href="https://github.com/brennhill/cost-per-accepted-change">GitHub</a>.
+    </p>
+  </article>
+</BaseLayout>

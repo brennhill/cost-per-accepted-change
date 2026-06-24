@@ -620,6 +620,65 @@ footer.site a:hover {
   font-size: 0.97rem;
 }
 
+/* === Field notes / articles === */
+
+/* Visible breadcrumb trail (mirrors the BreadcrumbList JSON-LD). */
+.crumbs {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+  margin: 0 0 1.4em;
+}
+
+.crumbs a {
+  color: var(--ink-muted);
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  color: var(--accent);
+}
+
+.crumbs .sep {
+  margin: 0 0.45em;
+  color: var(--ink-faint);
+}
+
+/* Byline / dateline under an article H1. */
+.article-meta {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  margin: 0 0 1.6em;
+}
+
+.article-meta .dot {
+  margin: 0 0.5em;
+  color: var(--ink-faint);
+}
+
+/* Sources / footnotes list at the foot of a field note. */
+.sources {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.sources li {
+  margin: 0.5em 0;
+}
+
+/* "Forthcoming" entries in the field-note index. */
+.template-card.forthcoming {
+  opacity: 0.72;
+}
+
+.template-card.forthcoming .meta {
+  color: var(--accent);
+}
+
 /* === Print styles === */
 
 @media print {

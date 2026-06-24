@@ -2,12 +2,54 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CPACGraphic from '../components/CPACGraphic.astro';
 import VerificationTriangle from '../components/VerificationTriangle.astro';
+
+const SITE = 'https://costperacceptedchange.org';
+
+// The homepage is the canonical definition. We expose it two ways: a
+// DefinedTerm (so search engines can treat "cost per accepted change" as a
+// named concept) and a TechArticle (so the definition carries an author,
+// dates, and is eligible for article rich results). They cross-link via @id.
+const jsonLd = [
+  {
+    '@type': 'DefinedTerm',
+    '@id': `${SITE}/#definedterm`,
+    name: 'Cost per accepted change',
+    alternateName: 'CPAC',
+    termCode: 'CPAC',
+    description:
+      'The fully-loaded cost of producing software that reaches production and stays there, divided by the number of changes that do.',
+    url: SITE,
+    inDefinedTermSet: {
+      '@type': 'DefinedTermSet',
+      name: 'The Verification Triangle',
+      description:
+        'The three-vertex framework — intent clarity, verification quality, and cost — defined in The Delivery Gap (Brenn Hill, 2026). Cost per accepted change is the cost vertex.',
+    },
+  },
+  {
+    '@type': 'TechArticle',
+    '@id': `${SITE}/#article`,
+    headline: 'Cost per accepted change',
+    description:
+      'The canonical definition of cost per accepted change — a measurement for the true cost of producing trusted software in the AI-augmented era.',
+    inLanguage: 'en',
+    datePublished: '2026-05-23',
+    dateModified: '2026-05-28',
+    author: { '@id': `${SITE}/#person-brennhill` },
+    publisher: { '@id': `${SITE}/#person-brennhill` },
+    image: `${SITE}/og-image.png`,
+    mainEntityOfPage: SITE,
+    isPartOf: { '@id': `${SITE}/#website` },
+    about: { '@id': `${SITE}/#definedterm` },
+  },
+];
 ---
 <BaseLayout
   title="Cost per accepted change"
   description="The canonical definition of cost per accepted change — a measurement for the true cost of producing trusted software in the AI-augmented era."
   path="/"
   ogType="website"
+  jsonLd={jsonLd}
 >
   <article class="page">
     <p class="eyebrow">A definition</p>
@@ -32,8 +74,8 @@ import VerificationTriangle from '../components/VerificationTriangle.astro';
         <li>You are spending on AI dev tools and cannot translate that spend into delivered value.</li>
         <li>Your team is shipping more pull requests, but reverts and follow-up fixes have crept up.</li>
         <li>Senior engineers say AI slowed them down even when dashboards show speed.</li>
-        <li>You need one number to put in front of a CFO or board — not five vanity metrics.</li>
-        <li>Your AI vendor's "productivity" claims do not line up with anything your finance team can see.</li>
+        <li>You need one clear number to put in front of a CFO or board — not a handful of activity metrics that each tell only part of the story.</li>
+        <li>Your AI vendor's productivity claims are hard to square with anything your finance team can actually see — and you'd like a fair way to reconcile them.</li>
       </ul>
       <p class="footnote">If three or more apply, you have a measurement gap that cost per accepted change is designed to close. See <a href="/measurement">how it compares</a> to other approaches.</p>
     </aside>
@@ -101,7 +143,7 @@ import VerificationTriangle from '../components/VerificationTriangle.astro';
     <ul>
       <li><strong>Reviewer load shifted onto your most expensive engineers.</strong> If senior engineers are absorbing the verification cost of AI generation, cost per accepted change sees it. PR count does not.</li>
       <li><strong>Silent rework.</strong> A change that is "merged" but quietly fixed three days later does not stay in production. It is excluded from the denominator and the fix is counted in the numerator.</li>
-      <li><strong>Optimization theater.</strong> Cutting model cost while increasing rework cost is not progress. Cost per accepted change is the bottom line that catches the trade-off.</li>
+      <li><strong>A false economy.</strong> Trimming model spend while rework quietly rises isn't really a saving — and it's an easy trap to fall into, because the model bill is the number you see first. Cost per accepted change keeps the whole trade-off in view, so the saving is real when you make it.</li>
     </ul>
 
     <h2>What it is not</h2>
