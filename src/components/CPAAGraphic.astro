@@ -1,0 +1,93 @@
+---
+interface Props {
+  width?: number;
+  class?: string;
+}
+
+const { width = 600, class: className } = Astro.props;
+const height = Math.round(width * 0.42);
+---
+<svg
+  width={width}
+  height={height}
+  viewBox="0 0 600 252"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="Cost per accepted action — the fully-loaded cost of running an AI agent, divided by the count of actions it performed that were accepted and stayed accepted"
+  class={`cpac-graphic ${className ?? ''}`}
+>
+  <title>Cost per accepted action formula, rendered as a diagram</title>
+
+  <!-- Outer hairline border -->
+  <rect x="6" y="6" width="588" height="240" fill="none" stroke="currentColor" stroke-width="0.8" rx="2" />
+
+  <!-- Inner hairline (decorative double-rule) -->
+  <rect x="14" y="14" width="572" height="224" fill="none" stroke="currentColor" stroke-width="0.4" opacity="0.4" rx="1" />
+
+  <!-- Top eyebrow title -->
+  <text
+    x="300" y="44" text-anchor="middle"
+    font-family="Helvetica, sans-serif"
+    font-size="10"
+    font-weight="700"
+    letter-spacing="3.2"
+    fill="currentColor"
+    opacity="0.7"
+  >COST PER ACCEPTED ACTION</text>
+
+  <!-- Small flanking ornament rules under the eyebrow -->
+  <line x1="214" y1="54" x2="272" y2="54" stroke="currentColor" stroke-width="0.5" opacity="0.45" />
+  <line x1="328" y1="54" x2="386" y2="54" stroke="currentColor" stroke-width="0.5" opacity="0.45" />
+  <circle cx="300" cy="54" r="1.4" fill="currentColor" opacity="0.55" />
+
+  <!-- Numerator -->
+  <text
+    x="300" y="103" text-anchor="middle"
+    font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif"
+    font-size="13"
+    font-style="italic"
+    fill="currentColor"
+  >inference · tools · infra · oversight · remediation · failed runs</text>
+
+  <!-- Thick division bar -->
+  <line x1="64" y1="124" x2="536" y2="124" stroke="currentColor" stroke-width="1.6" />
+
+  <!-- Denominator -->
+  <text
+    x="300" y="150" text-anchor="middle"
+    font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif"
+    font-size="15"
+    font-style="italic"
+    fill="currentColor"
+  >accepted action units</text>
+
+  <!-- Subscript clarification under denominator -->
+  <text
+    x="300" y="170" text-anchor="middle"
+    font-family="Helvetica, sans-serif"
+    font-size="9"
+    fill="currentColor"
+    opacity="0.55"
+  >( accepted and stayed accepted )</text>
+
+  <!-- $/AA seal -->
+  <g transform="translate(282, 185)" fill="currentColor">
+    <text x="18" y="14" text-anchor="middle"
+      font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif"
+      font-size="13" font-weight="600">$</text>
+    <line x1="4" y1="19" x2="32" y2="19" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+    <text x="18" y="33" text-anchor="middle"
+      font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif"
+      font-size="11" font-weight="600">AA</text>
+  </g>
+
+  <!-- Footer tagline -->
+  <text
+    x="300" y="232" text-anchor="middle"
+    font-family="Helvetica, sans-serif"
+    font-size="9"
+    letter-spacing="1.6"
+    fill="currentColor"
+    opacity="0.6"
+  >THE COST OF AGENT WORK THAT STAYED DONE</text>
+</svg>

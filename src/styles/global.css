@@ -679,6 +679,137 @@ footer.site a:hover {
   color: var(--accent);
 }
 
+/* === Calculator tabs (FOR DEVELOPMENT / FOR AGENTS) === */
+
+.tabs {
+  display: flex;
+  gap: 0.3rem;
+  border-bottom: 1px solid var(--rule);
+  margin: 1.8em 0 0;
+}
+
+.tab {
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink-muted);
+  background: none;
+  border: 1px solid transparent;
+  border-bottom: none;
+  padding: 0.6em 1.1em;
+  cursor: pointer;
+  border-radius: 2px 2px 0 0;
+  margin-bottom: -1px;
+}
+
+.tab:hover {
+  color: var(--ink);
+}
+
+.tab[aria-selected="true"] {
+  color: var(--accent);
+  border-color: var(--rule);
+  background: var(--paper);
+  border-bottom: 1px solid var(--paper);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.tabpanel {
+  padding-top: 1.6em;
+}
+
+.tabpanel[hidden] {
+  display: none;
+}
+
+.tab-intro {
+  font-size: 0.97rem;
+  color: var(--ink-muted);
+  margin: 0 0 0.4em;
+}
+
+/* === Accepted-action funnel diagram (CPAA page) === */
+
+.funnel {
+  margin: 1.8em 0 2.4em;
+}
+
+.funnel-label {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  margin: 0 0 0.5em;
+}
+
+.funnel-bar {
+  display: flex;
+  height: 3rem;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.funnel-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  line-height: 1.2;
+}
+
+.funnel-seg.kept {
+  background: var(--accent);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.funnel-seg.lost {
+  color: var(--ink-muted);
+  background: var(--paper-tint);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    rgba(0, 0, 0, 0.045) 5px,
+    rgba(0, 0, 0, 0.045) 6px
+  );
+}
+
+.funnel-legend {
+  display: flex;
+  margin-top: 0.5rem;
+}
+
+.funnel-legend > div {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  padding-right: 0.8rem;
+  line-height: 1.35;
+}
+
+.funnel-legend .arrow {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+@media (max-width: 540px) {
+  .funnel-seg { font-size: 0.68rem; }
+  .funnel-legend { flex-direction: column; gap: 0.4rem; }
+  .funnel-legend > div { padding-right: 0; }
+}
+
 /* === Print styles === */
 
 @media print {

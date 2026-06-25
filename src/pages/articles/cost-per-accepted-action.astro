@@ -1,0 +1,261 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CPAAGraphic from '../../components/CPAAGraphic.astro';
+
+const SITE = 'https://costperacceptedchange.org';
+const slug = 'cost-per-accepted-action';
+const published = '2026-06-25';
+
+// CPAA is a named concept in the same set as cost per accepted change, and a
+// TechArticle that defines it. The two cross-link by @id.
+const jsonLd = [
+  {
+    '@type': 'DefinedTerm',
+    '@id': `${SITE}/articles/${slug}#definedterm`,
+    name: 'Cost per accepted action',
+    alternateName: 'CPAA',
+    termCode: 'CPAA',
+    description:
+      'The fully-loaded cost of operating an AI agent over a window, divided by the number of agent actions that were accepted and stayed accepted.',
+    url: `${SITE}/articles/${slug}`,
+    inDefinedTermSet: {
+      '@type': 'DefinedTermSet',
+      name: 'The Verification Triangle',
+      description:
+        'The cost-of-trusted-work metrics defined in The Delivery Gap (Brenn Hill, 2026): cost per accepted change for producing software, and cost per accepted action for running agents.',
+    },
+  },
+  {
+    '@type': 'TechArticle',
+    '@id': `${SITE}/articles/${slug}#article`,
+    headline: 'Cost per accepted action: a FinOps metric for running AI agents',
+    description:
+      'Cost per accepted action (CPAA) applies the cost-per-accepted-change discipline to agent runtime — pricing the agent work that was accepted and stayed accepted, not the tokens or runs it consumed.',
+    inLanguage: 'en',
+    datePublished: published,
+    dateModified: published,
+    author: { '@id': `${SITE}/#person-brennhill` },
+    publisher: { '@id': `${SITE}/#person-brennhill` },
+    image: `${SITE}/og-image.png`,
+    mainEntityOfPage: `${SITE}/articles/${slug}`,
+    isPartOf: { '@id': `${SITE}/#website` },
+    about: { '@id': `${SITE}/articles/${slug}#definedterm` },
+    mentions: { '@id': `${SITE}/#definedterm` },
+    articleSection: 'Frameworks',
+    isAccessibleForFree: true,
+    keywords: [
+      'cost per accepted action',
+      'agent FinOps',
+      'AI agent monitoring',
+      'agent cost',
+      'human in the loop',
+      'cost per accepted change',
+    ],
+  },
+];
+---
+<BaseLayout
+  title="Cost per accepted action — FinOps for running agents"
+  description="Cost per accepted action (CPAA) applies the cost-per-accepted-change discipline to agent runtime: the fully-loaded cost of operating an AI agent, divided by the actions that were accepted and stayed accepted."
+  path={`/articles/${slug}`}
+  jsonLd={jsonLd}
+  breadcrumbs={[{ name: 'Articles', path: '/articles' }]}
+>
+  <article class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span><a href="/articles">Articles</a><span class="sep">›</span>Cost per accepted action
+    </nav>
+
+    <p class="eyebrow">Framework · For running agents</p>
+    <h1>Cost per accepted action</h1>
+    <p class="article-meta">
+      By Brenn Hill<span class="dot">·</span>June 2026<span class="dot">·</span>~9 min read
+    </p>
+
+    <p class="lede">
+      Cost per accepted change measures the cost of <em>producing</em> trusted software. As teams move from AI that writes code to agents that <em>do work</em> in production, the same question reappears one layer over: not "what did we build and keep," but "what did the agent <em>do</em>, and did it stick?" Cost per accepted action is that metric — the runtime sibling, built on exactly the same bones.
+    </p>
+
+    <div class="cpac-graphic-wrap">
+      <CPAAGraphic width={600} />
+    </div>
+
+    <div class="callout">
+      <span class="label">The one-line version</span>
+      <strong><a href="/">Cost per accepted change</a></strong> prices a <em>change</em> that reached production and stayed. <strong>Cost per accepted action</strong> prices an <em>action</em> an agent performed that was accepted and stayed accepted. Same discipline — denominate by kept outcomes, count the fully-loaded cost, report in dollars — moved from build-time to run-time.
+    </div>
+
+    <h2 class="no-rule">Why a new denominator</h2>
+    <p>
+      The instinctive way to watch an agent is by its bill: cost per token, cost per request, cost per agent-run. Those are the agent-world equivalent of "lines of code" — activity metrics that rise whether or not the work was any good. An agent that runs ten thousand times but whose actions get overridden, rolled back, or quietly re-done has produced ten thousand <em>runs</em> and far fewer <em>kept outcomes</em>. A per-token dashboard will call that cheap. It is not.
+    </p>
+    <p>
+      Cost per accepted action borrows the move that makes cost per accepted change honest: <strong>put kept value in the denominator.</strong> Count the actions that were accepted and <em>stayed</em> accepted, and let the cost of the ones that didn't fall into the numerator as remediation. The result is a single, finance-legible number that tracks the economics of trusted autonomous work, not the volume of it.
+    </p>
+
+    <h2>The formula, expanded</h2>
+    <p>The numerator is the fully-loaded cost of running the agent over a window — and, as with cost per accepted change, the lines that matter most are the ones a token bill never shows:</p>
+
+    <table>
+      <thead>
+        <tr><th>Component</th><th>What it captures</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Inference cost</td><td>LLM tokens — input, output, cache, reasoning — including retries and multi-step loops.</td></tr>
+        <tr><td>Tool &amp; API cost</td><td>External calls the agent makes: search, code execution, RAG / vector, paid third-party APIs.</td></tr>
+        <tr><td>Infrastructure cost</td><td>Orchestration runtime, sandboxes, memory / vector stores, observability, queues.</td></tr>
+        <tr><td><strong>Oversight cost</strong></td><td>The human-in-the-loop labor — approvals, reviews, the <em>show-and-prove</em> load. As autonomy scales, this becomes the dominant hidden line, exactly as review cost did for AI-assisted coding.</td></tr>
+        <tr><td><strong>Remediation cost</strong></td><td>Cleaning up actions that did not stay: rollbacks, human redo, incident response, customer remediation.</td></tr>
+        <tr><td>Failed-run cost</td><td>Runs that produced nothing usable but still billed tokens and compute.</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      The denominator is the count of <strong>accepted action units</strong>: consequential agent actions that were accepted and stayed accepted during the window, complexity-normalized so a one-shot classification and a fifty-step autonomous workflow aren't counted as equals. (A natural normalizer is the action's <strong>risk grade</strong> — more on that below.)
+    </p>
+
+    <h2>"Stayed accepted" — the rework defense, for agents</h2>
+    <p>
+      The clause that does the work, just like the "stayed there" clause in cost per accepted change. An action counts in the denominator only if, within a survival window, it was <em>not</em>:
+    </p>
+    <ul>
+      <li><strong>reverted or rolled back</strong> — the action was undone;</li>
+      <li><strong>overridden or corrected</strong> by a human reviewer;</li>
+      <li><strong>re-run</strong> to get a result that finally stuck;</li>
+      <li><strong>re-opened</strong> by the end user (the support "re-contact" signal); or</li>
+      <li>the cause of an <strong>incident, complaint, or compliance issue</strong> needing remediation in the window.</li>
+    </ul>
+
+    <div class="funnel" role="img" aria-label="Of all actions an agent completes in a window, the portion that is accepted and stays accepted counts in the denominator; the portion that does not stay generates remediation cost in the numerator.">
+      <p class="funnel-label">Actions the agent completed this window</p>
+      <div class="funnel-bar">
+        <div class="funnel-seg kept" style="flex: 72">Accepted &amp; stayed</div>
+        <div class="funnel-seg lost" style="flex: 28">Did not stay</div>
+      </div>
+      <div class="funnel-legend">
+        <div style="flex: 72"><span class="arrow">↓</span> counts in the <strong>denominator</strong> — accepted action units</div>
+        <div style="flex: 28"><span class="arrow">↓</span> its cleanup is <strong>remediation cost</strong> in the numerator</div>
+      </div>
+    </div>
+
+    <p>
+      That double-hit is the point, and it's inherited straight from cost per accepted change: a shortfall shows up <em>twice</em> — once by shrinking the denominator, once by growing the numerator — so a metric built on it can't be fooled by an agent that ships fast and reliably wrong.
+    </p>
+
+    <div class="callout">
+      <span class="label">Two nuances worth baking in</span>
+      <strong>Approval is not an override.</strong> In a human-in-the-loop system, a reviewer approving an action is the design working, not a failure — the test is whether the action <em>stayed</em> without later correction. And <strong>a correct escalation is a win.</strong> An agent that recognizes it can't safely handle something and hands off to a human produced a good outcome; only <em>failure</em> handoffs — it tried, got it wrong, a human cleaned up — count against the denominator.
+    </div>
+
+    <h2>A worked example</h2>
+    <p>
+      A fleet of support-and-ops agents over a one-week window. Loaded human-review time runs through the oversight line.
+    </p>
+
+    <table>
+      <tbody>
+        <tr><td>Inference cost</td><td>$3,000</td></tr>
+        <tr><td>Tool &amp; API cost</td><td>$1,200</td></tr>
+        <tr><td>Infrastructure cost</td><td>$800</td></tr>
+        <tr><td>Oversight cost (human-in-the-loop)</td><td>$9,000</td></tr>
+        <tr><td>Remediation cost (overridden / rolled-back actions)</td><td>$4,000</td></tr>
+        <tr><td>Failed-run cost</td><td>$1,000</td></tr>
+        <tr><th>Total cost</th><th>$19,000</th></tr>
+        <tr><td>Actions attempted</td><td>12,500</td></tr>
+        <tr><td>Accepted action units (accepted &amp; stayed)</td><td><strong>5,000</strong></td></tr>
+        <tr><th>Cost per accepted action</th><th>$3.80</th></tr>
+      </tbody>
+    </table>
+
+    <p>
+      A per-run dashboard divides $19,000 by all 12,500 attempts and reports a cheerful <strong>$1.52 a run</strong>. Cost per accepted action divides by the 5,000 that actually stuck — <strong>$3.80</strong>, two-and-a-half times higher — and shows <em>why</em>: oversight and remediation together are <strong>68% of the bill</strong>, the two lines the run-counter can't see. Nothing here says "don't run the agent." It says the real cost lives in the human load and the cleanup, so that's where the next improvement is — raise the acceptance rate, and both the denominator and those two lines move in your favor at once.
+    </p>
+
+    <h2>A FinOps operating model</h2>
+    <p>
+      What makes this a FinOps practice and not just a metric is the loop around it. It maps cleanly onto the <a href="https://www.finops.org/">FinOps Foundation</a>'s three phases:
+    </p>
+
+    <div class="template-grid">
+      <div class="template-card">
+        <p class="meta">Phase 1</p>
+        <h3>Inform</h3>
+        <p>
+          Tag every action with <code>agent</code>, <code>task-type</code>, <code>risk grade</code>, <code>tenant/team</code>, and <code>outcome</code> (accepted / overridden / escalated / reverted). Attribute spend to <em>accepted outcomes</em>, not the total token bill. This is the visibility layer — showback by team, agent, and task.
+        </p>
+      </div>
+      <div class="template-card">
+        <p class="meta">Phase 2</p>
+        <h3>Optimize</h3>
+        <p>
+          Drive cost per accepted action down: cache, right-size the model per risk grade, cap loop depth — and, the biggest lever, <strong>raise the acceptance rate</strong>. Fewer reverts and failure-escalations beats cheaper tokens, because it lifts the denominator and cuts remediation at the same time.
+        </p>
+      </div>
+      <div class="template-card">
+        <p class="meta">Phase 3</p>
+        <h3>Operate</h3>
+        <p>
+          Govern continuously: budgets and anomaly alerts on cost per accepted action per agent and team, and — the real prize — tie any expansion of agent <em>autonomy</em> to the trend, not to adoption. A flat per-seat token cap is a blunt v0 of this; the trend is the steering wheel.
+        </p>
+      </div>
+    </div>
+
+    <h2>Pair it with leading indicators</h2>
+    <p>
+      As with cost per accepted change, the headline is a summary — don't use it alone. Report it alongside two or three diagnostics that explain <em>why</em> it moved:
+    </p>
+    <ul>
+      <li><strong>Acceptance rate</strong> — share of actions accepted and kept. The primary quality signal.</li>
+      <li><strong>Override / reversal rate</strong> and <strong>failure-escalation rate</strong> — where the denominator is leaking.</li>
+      <li><strong>Autonomy ratio</strong> — share of actions executed without a human gate.</li>
+      <li><strong>Loop depth</strong> and <strong>tokens per accepted action</strong> — where inference cost is going.</li>
+      <li><strong>Machine catch rate</strong> — share of bad actions caught by automated gates <em>before</em> they shipped, rather than downstream.</li>
+    </ul>
+
+    <h2>The bridge: oversight you can measure</h2>
+    <p>
+      Cost per accepted action only works if you can <em>observe</em> which actions stayed — and that observability is precisely what a good oversight framework gives you. <a href="https://looprails.dev">LoopRails</a> is the natural companion: its <strong>RAIL</strong> properties make actions <em>Reversible, Authorized, Interruptible, and Logged</em>, and that <strong>"Logged"</strong> is the audit trail you need to tell an accepted action from a reverted one. Its <strong>risk grades (G0–G3)</strong> are a ready-made complexity normalizer for the denominator — weight accepted actions by grade instead of inventing a new scale.
+    </p>
+    <p>
+      The division of labor is clean: <strong>LoopRails decides which actions need a human and proves the oversight catches mistakes; cost per accepted action prices the ones that got kept.</strong> Oversight and economics, measuring the same thing — trusted autonomous work — from two sides.
+    </p>
+
+    <h2>What it is, and is not</h2>
+    <ul>
+      <li><strong>It is</strong> an aggregate, time-series, fleet-or-team-level steering metric — the dollar bottom line of running agents.</li>
+      <li><strong>It is not</strong> cost-per-token or cost-per-run (those are inputs and diagnostics), a per-agent leaderboard, or an autonomy KPI to chase.</li>
+      <li><strong>It is not</strong> a replacement for safety gates. It pairs with oversight; it never relaxes it.</li>
+    </ul>
+
+    <h2>Compute it</h2>
+    <p>
+      The <a href="/calculator">calculator</a> has a <strong>For agents</strong> tab — enter the six cost lines and your accepted-action count and get the number, with a shareable link. The same logic ships in the reference library:
+    </p>
+<pre><code>import &#123; costPerAcceptedAction &#125; from 'cost-per-accepted-change';
+
+const cpaa = costPerAcceptedAction(&#123;
+  inferenceCost: 3000,
+  toolCost: 1200,
+  infraCost: 800,
+  oversightCost: 9000,
+  remediationCost: 4000,
+  failedRunCost: 1000,
+  acceptedActions: 5000,
+&#125;);
+
+console.log(cpaa.value);     // 3.8
+console.log(cpaa.breakdown); // share-of-total per component
+</code></pre>
+
+    <p style="margin-top: 2em;">
+      <a class="btn btn-primary" href="/calculator?mode=agents">Open the agent calculator →</a>
+      <a class="btn" href="/" style="margin-left: 0.6rem;">Cost per accepted change →</a>
+      <a class="btn" href="/articles/field-notes" style="margin-left: 0.6rem;">Field notes →</a>
+    </p>
+
+    <hr />
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      Cost per accepted action is the runtime sibling of <a href="/">cost per accepted change</a>, defined in <em>The Delivery Gap</em> (Brenn Hill, 2026). It's free to use and adapt; refinements and worked examples are welcome via <a href="https://github.com/brennhill/cost-per-accepted-change">GitHub</a>. See <a href="/cite">how to cite</a>.
+    </p>
+  </article>
+</BaseLayout>

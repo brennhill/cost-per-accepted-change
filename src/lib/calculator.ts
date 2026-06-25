@@ -100,6 +100,106 @@ export function costPerAcceptedChange(inputs: CPACInputs): CPACResult {
   };
 }
 
+/**
+ * Cost per accepted action (CPAA) — the runtime sibling of cost per accepted
+ * change, for *running* AI agents rather than *producing* software.
+ *
+ * An accepted action is a consequential agent action/outcome that was accepted
+ * and stayed accepted through a survival window — not reverted, overridden by a
+ * human, re-run to get a result that stuck, re-opened by the user, or the cause
+ * of an incident requiring remediation. Actions that did not stay are excluded
+ * from the denominator; the cost of cleaning them up is counted in the
+ * numerator as remediation cost. (Approval by a human-in-the-loop reviewer is
+ * not an override — the test is whether the action *stayed* without correction.)
+ */
+export interface CPAAInputs {
+  /** LLM / inference spend — input/output/cache/reasoning tokens, including retries and multi-step loops. */
+  inferenceCost: number;
+  /** External tool & API calls the agent makes: search, code execution, RAG/vector, paid third-party APIs. */
+  toolCost: number;
+  /** Orchestration runtime, sandboxes, memory/vector stores, observability attributable to running the agent. */
+  infraCost: number;
+  /** Human-in-the-loop oversight labor — approvals, reviews, the Show→Prove load — converted to currency. */
+  oversightCost: number;
+  /** Cost of remediating actions that did not stay accepted: rollbacks, human redo, incident response. */
+  remediationCost: number;
+  /** Cost of runs that produced nothing usable but still billed tokens / compute. */
+  failedRunCost: number;
+  /** Count of agent actions accepted and kept during the window (complexity-normalized, e.g. by risk grade). */
+  acceptedActions: number;
+}
+
+export interface CPAAResult {
+  /** The cost per accepted action. */
+  value: number;
+  /** Sum of the numerator. */
+  totalCost: number;
+  /** Echo of the denominator. */
+  acceptedActions: number;
+  /**
+   * Per-component contribution as a **fraction** of total cost (each in [0, 1]).
+   * All components are 0 when `totalCost` is 0.
+   */
+  breakdown: {
+    inferenceCost: number;
+    toolCost: number;
+    infraCost: number;
+    oversightCost: number;
+    remediationCost: number;
+    failedRunCost: number;
+  };
+}
+
+export function costPerAcceptedAction(inputs: CPAAInputs): CPAAResult {
+  assertNonNegative('inferenceCost', inputs.inferenceCost);
+  assertNonNegative('toolCost', inputs.toolCost);
+  assertNonNegative('infraCost', inputs.infraCost);
+  assertNonNegative('oversightCost', inputs.oversightCost);
+  assertNonNegative('remediationCost', inputs.remediationCost);
+  assertNonNegative('failedRunCost', inputs.failedRunCost);
+
+  if (!Number.isInteger(inputs.acceptedActions) || inputs.acceptedActions <= 0) {
+    throw new InvalidCPACInputError(
+      `acceptedActions must be a positive integer; received ${inputs.acceptedActions}`,
+    );
+  }
+
+  const totalCost =
+    inputs.inferenceCost +
+    inputs.toolCost +
+    inputs.infraCost +
+    inputs.oversightCost +
+    inputs.remediationCost +
+    inputs.failedRunCost;
+
+  const value = totalCost / inputs.acceptedActions;
+
+  const breakdown = totalCost === 0
+    ? {
+        inferenceCost: 0,
+        toolCost: 0,
+        infraCost: 0,
+        oversightCost: 0,
+        remediationCost: 0,
+        failedRunCost: 0,
+      }
+    : {
+        inferenceCost: inputs.inferenceCost / totalCost,
+        toolCost: inputs.toolCost / totalCost,
+        infraCost: inputs.infraCost / totalCost,
+        oversightCost: inputs.oversightCost / totalCost,
+        remediationCost: inputs.remediationCost / totalCost,
+        failedRunCost: inputs.failedRunCost / totalCost,
+      };
+
+  return {
+    value,
+    totalCost,
+    acceptedActions: inputs.acceptedActions,
+    breakdown,
+  };
+}
+
 /** Format a number as USD currency. Pure presentation helper. */
 export function formatCurrency(value: number, currency = 'USD', locale = 'en-US'): string {
   return new Intl.NumberFormat(locale, {
