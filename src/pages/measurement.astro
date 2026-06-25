@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import RelatedFrameworks from '../components/RelatedFrameworks.astro';
 ---
 <BaseLayout
   title="How teams measure AI cost"
@@ -100,7 +101,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </p>
     <ul>
       <li><strong>Intent clarity</strong> — is the team converging on the right thing, fast enough? Measured by first-pass acceptance, post-merge rework, and increment frequency. Not by scoring spec documents — specs are the receipt of iteration, not the recipe.</li>
-      <li><strong>Verification quality</strong> — are defects caught early, and by machines? Operationalized as six tiers of quality gates (four machine, one human, one peer), built cumulatively. Measured by machine catch rate and change failure rate.</li>
+      <li><strong>Verification quality</strong> — are defects caught early, and by machines? The discipline of <strong>eval-driven development</strong> (a dedicated site, Eval-Driven Development, is coming soon). Operationalized as six tiers of quality gates (four machine, one human, one peer), built cumulatively. Measured by machine catch rate and change failure rate.</li>
       <li><strong>Cost</strong> — what does each trusted change actually cost to deliver? This is the vertex cost per accepted change quantifies, paired with lead time to accepted change.</li>
     </ul>
     <p>
@@ -188,6 +189,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <p>
       It is not. None of the eight approaches above carries all five cost components in the numerator, the "stayed there" clause in the denominator, and the unit-output shape that maps directly to FinOps. If it were already named, the cost-management conversation around AI would look very different than it does in 2026.
     </p>
+
+    <RelatedFrameworks intro="Cost per accepted change is the cost vertex of a wider toolkit for trustworthy AI delivery. Its companions measure and guard the others." />
 
     <hr />
 

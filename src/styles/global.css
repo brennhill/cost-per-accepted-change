@@ -679,6 +679,89 @@ footer.site a:hover {
   color: var(--accent);
 }
 
+/* === Related frameworks module === */
+
+.related-frameworks {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 1.1em 1.3em 1.2em;
+  margin: 2.4em 0;
+  border-radius: 2px;
+}
+
+.related-frameworks .label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 0.7em;
+}
+
+.related-frameworks .rf-intro {
+  font-size: 0.92rem;
+  color: var(--ink-muted);
+  margin: 0 0 1em;
+}
+
+.related-frameworks ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.related-frameworks li {
+  display: grid;
+  gap: 0.1em 0.7em;
+  grid-template-columns: 9.5rem 1fr;
+  align-items: baseline;
+  padding: 0.7em 0;
+  border-top: 1px solid var(--rule);
+}
+
+.related-frameworks .rf-role {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  padding-top: 0.15em;
+}
+
+.related-frameworks .rf-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.related-frameworks .rf-blurb {
+  grid-column: 2;
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+  line-height: 1.45;
+}
+
+.related-frameworks .rf-soon,
+.footer-meta .soon {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  font-weight: 400;
+}
+
+@media (max-width: 540px) {
+  .related-frameworks li {
+    grid-template-columns: 1fr;
+    gap: 0.15em;
+  }
+  .related-frameworks .rf-blurb {
+    grid-column: 1;
+  }
+}
+
 /* === Calculator tabs (FOR DEVELOPMENT / FOR AGENTS) === */
 
 .tabs {

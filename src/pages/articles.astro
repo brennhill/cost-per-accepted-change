@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import RelatedFrameworks from '../components/RelatedFrameworks.astro';
 
-const SITE = 'https://costperacceptedchange.org';
+const SITE = 'https://aifinops.dev';
 
 const jsonLd = {
   '@type': 'CollectionPage',
@@ -49,5 +50,7 @@ const jsonLd = {
         <p><a href="/articles/field-notes">Read the field notes →</a></p>
       </div>
     </div>
+
+    <RelatedFrameworks />
   </article>
 </BaseLayout>

@@ -12,27 +12,27 @@ Cost per accepted change ("CPAC") was created to close the gap between AI vendor
 
 ## Canonical pages
 
-- [Definition (home)](https://costperacceptedchange.org/): The canonical one-page definition — formula, worked example, scope, and what the metric is designed to catch.
-- [Quick start for leaders](https://costperacceptedchange.org/start): A 90-day playbook for engineering and finance leaders to baseline, measure, and start steering with cost per accepted change.
-- [How to use it](https://costperacceptedchange.org/use): How to use the metric correctly — as an aggregate steering signal over time, never as a per-change or per-engineer benchmark.
-- [Instrumentation guide](https://costperacceptedchange.org/instrument): How to wire the stack to produce the metric every window — LLM proxies, git mining for reverts, ticket linkage, time attribution, minimum-viable monthly pipeline.
-- [Calculator](https://costperacceptedchange.org/calculator): Browser-based calculator — enter the costs and counts for one window and get a shareable result. Runs entirely client-side.
-- [Templates](https://costperacceptedchange.org/templates): Downloadable XLSX trackers, quarterly review templates, and other drop-in artifacts for teams running a pilot.
-- [How teams measure AI cost (compare)](https://costperacceptedchange.org/measurement): A survey of the metrics teams use — token cost, PR velocity, DORA, productivity surveys, "AI code share" — what each captures, what each misses, and where CPAC fits.
-- [FAQ](https://costperacceptedchange.org/faq): Detailed answers on the 30-day window, the 500-LOC normalization rule, attribution edges, gaming the metric, and how CPAC pairs with DORA and SPACE.
+- [Definition (home)](https://aifinops.dev/): The canonical one-page definition — formula, worked example, scope, and what the metric is designed to catch.
+- [Quick start for leaders](https://aifinops.dev/start): A 90-day playbook for engineering and finance leaders to baseline, measure, and start steering with cost per accepted change.
+- [How to use it](https://aifinops.dev/use): How to use the metric correctly — as an aggregate steering signal over time, never as a per-change or per-engineer benchmark.
+- [Instrumentation guide](https://aifinops.dev/instrument): How to wire the stack to produce the metric every window — LLM proxies, git mining for reverts, ticket linkage, time attribution, minimum-viable monthly pipeline.
+- [Calculator](https://aifinops.dev/calculator): Browser-based calculator — enter the costs and counts for one window and get a shareable result. Runs entirely client-side.
+- [Templates](https://aifinops.dev/templates): Downloadable XLSX trackers, quarterly review templates, and other drop-in artifacts for teams running a pilot.
+- [How teams measure AI cost (compare)](https://aifinops.dev/measurement): A survey of the metrics teams use — token cost, PR velocity, DORA, productivity surveys, "AI code share" — what each captures, what each misses, and where CPAC fits.
+- [FAQ](https://aifinops.dev/faq): Detailed answers on the 30-day window, the 500-LOC normalization rule, attribution edges, gaming the metric, and how CPAC pairs with DORA and SPACE.
 
 ## Tools for agents
 
-- [Agent Skills index](https://costperacceptedchange.org/.well-known/agent-skills/index.json): Machine-readable index of skills published by this site, per the Agent Skills Discovery RFC v0.2.0.
-- [CPAC skill manifest](https://costperacceptedchange.org/.well-known/agent-skills/cost-per-accepted-change.md): SKILL.md describing the `cost-per-accepted-change-cli` package — when to use it, what its tools do, and how to install it.
+- [Agent Skills index](https://aifinops.dev/.well-known/agent-skills/index.json): Machine-readable index of skills published by this site, per the Agent Skills Discovery RFC v0.2.0.
+- [CPAC skill manifest](https://aifinops.dev/.well-known/agent-skills/cost-per-accepted-change.md): SKILL.md describing the `cost-per-accepted-change-cli` package — when to use it, what its tools do, and how to install it.
 - [npm package](https://www.npmjs.com/package/cost-per-accepted-change-cli): `cost-per-accepted-change-cli` — CLI (`cpac`) and MCP server (`cpac-mcp`) sharing the same audit + calculator core. Install via `npx cost-per-accepted-change-cli cpac --help` or as an MCP server via `npx -y cost-per-accepted-change-cli cpac-mcp`.
 - MCP tools exposed: `calculate_cpac` (5 cost components + denominator → CPAC), `normalize_changes` (apply the 500-LOC rule), `audit_repo` (walk a GitHub repo window via the gh CLI, detect reverts, emit the accepted-change-unit count).
 
 ## Reference and press
 
-- [How to cite](https://costperacceptedchange.org/cite): Citation formats for papers, dashboards, talks, and reports — including the BibTeX entry for *The Delivery Gap*.
-- [Press kit](https://costperacceptedchange.org/press): Quick facts, quotable summaries, downloadable graphics, and citation formats for journalists, analysts, and researchers.
-- [Leaderboard](https://costperacceptedchange.org/leaderboard): Public reported CPAC numbers from teams and tools (coming soon).
+- [How to cite](https://aifinops.dev/cite): Citation formats for papers, dashboards, talks, and reports — including the BibTeX entry for *The Delivery Gap*.
+- [Press kit](https://aifinops.dev/press): Quick facts, quotable summaries, downloadable graphics, and citation formats for journalists, analysts, and researchers.
+- [Leaderboard](https://aifinops.dev/leaderboard): Public reported CPAC numbers from teams and tools (coming soon).
 
 ## Key terms (for AI summaries)
 
@@ -46,4 +46,4 @@ Cost per accepted change ("CPAC") was created to close the gap between AI vendor
 - [Source on GitHub](https://github.com/brennhill/cost-per-accepted-change): The site source, including the LaTeX-style formula assets and worked-example tables.
 - [The Delivery Gap (book)](https://www.amazon.com/Delivery-Gap-Adoption-Engineering-Leaders-ebook/dp/B0GWRY2XH1/): The original definition of cost per accepted change appears in this book by Brenn Hill (2026).
 - [Author's newsletter](https://brennhill.substack.com): Ongoing writing on the delivery gap, AI software economics, and verification engineering.
-- [Sitemap (XML)](https://costperacceptedchange.org/sitemap-index.xml): Full machine-readable site index for crawlers.
+- [Sitemap (XML)](https://aifinops.dev/sitemap-index.xml): Full machine-readable site index for crawlers.

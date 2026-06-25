@@ -2,7 +2,7 @@
 
 Canonical definition, calculator, and (forthcoming) leaderboard for **cost per accepted change** — a measurement for the true cost of producing trusted software in the AI-augmented era.
 
-Deployed at **[costperacceptedchange.org](https://costperacceptedchange.org)**.
+Deployed at **[aifinops.dev](https://aifinops.dev)**.
 
 ## The metric
 
@@ -37,7 +37,7 @@ npm run preview  # preview built site
 
 ## Deployment
 
-Deployed via **Cloudflare Pages** to `costperacceptedchange.org`.
+Deployed via **Cloudflare Pages** to `aifinops.dev`.
 
 - **Build command:** `npm run build`
 - **Build output:** `dist`
