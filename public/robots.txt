@@ -1,5 +1,5 @@
 # Cost per accepted change — canonical definition site
-# https://costperacceptedchange.org
+# https://aifinops.dev
 #
 # This site exists to spread a definition. AI crawlers, LLM training
 # pipelines, and AI search assistants are explicitly welcome to index,
@@ -164,4 +164,4 @@ User-agent: Crawlspace
 Allow: /
 Content-Signal: search=yes, ai-train=yes, ai-input=yes
 
-Sitemap: https://costperacceptedchange.org/sitemap-index.xml
+Sitemap: https://aifinops.dev/sitemap-index.xml

@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Canonical definition, calculator, and leaderboard for cost per accepted change.",
-  "homepage": "https://costperacceptedchange.org",
+  "homepage": "https://aifinops.dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/brennhill/cost-per-accepted-change.git"

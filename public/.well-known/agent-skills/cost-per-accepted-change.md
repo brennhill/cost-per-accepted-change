@@ -2,13 +2,13 @@
 name: cost-per-accepted-change
 description: Compute cost per accepted change (CPAC) — the fully-loaded cost of producing software that reached production and stayed there, divided by the number of changes that did. Use when a user wants to measure AI delivery economics, FinOps for engineering, or AI ROI in a real repository.
 version: 0.1.0
-homepage: https://costperacceptedchange.org
+homepage: https://aifinops.dev
 license: MIT
 ---
 
 # Cost per accepted change
 
-This skill helps you measure **cost per accepted change** ("CPAC") — the canonical definition from [costperacceptedchange.org](https://costperacceptedchange.org). The metric is the fully-loaded cost of producing software that reached production *and stayed there*, divided by the number of changes that did, size-normalized so one unit represents a comparable amount of substantive work.
+This skill helps you measure **cost per accepted change** ("CPAC") — the canonical definition from [aifinops.dev](https://aifinops.dev). The metric is the fully-loaded cost of producing software that reached production *and stayed there*, divided by the number of changes that did, size-normalized so one unit represents a comparable amount of substantive work.
 
 Use this skill when the user wants to:
 - Answer "is our AI investment paying back?" with a defensible single number
@@ -107,8 +107,8 @@ Inputs:
 
 ## Reference
 
-- Canonical definition: <https://costperacceptedchange.org>
-- FAQ (window selection, normalization rule, anti-gaming): <https://costperacceptedchange.org/faq>
-- Instrumentation guide: <https://costperacceptedchange.org/instrument>
+- Canonical definition: <https://aifinops.dev>
+- FAQ (window selection, normalization rule, anti-gaming): <https://aifinops.dev/faq>
+- Instrumentation guide: <https://aifinops.dev/instrument>
 - Originally defined in *The Delivery Gap* (Brenn Hill, 2026)
 - Source: <https://github.com/brennhill/cost-per-accepted-change>

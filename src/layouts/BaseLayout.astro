@@ -28,21 +28,23 @@ interface Props {
 
 const {
   title,
-  description = "Cost per accepted change: the canonical definition, calculator, and reference for measuring the true cost of producing trusted software.",
+  description = "AI FinOps: measuring and governing the dollar cost of producing and running trusted AI software — anchored by cost per accepted change and cost per accepted action.",
   path = '/',
   ogType = 'article',
   jsonLd,
   breadcrumbs = [],
 } = Astro.props;
 
-const fullTitle = title === 'Cost per accepted change'
-  ? title
-  : `${title} — Cost per accepted change`;
+const SITE = 'https://aifinops.dev';
+const SITE_NAME = 'AI FinOps';
 
-const SITE = 'https://costperacceptedchange.org';
+// The homepage passes a fully-formed, AI-FinOps-led title; subpages get the
+// "{title} — AI FinOps" suffix.
+const fullTitle = path === '/' ? title : `${title} — ${SITE_NAME}`;
+
 const canonical = `${SITE}${path === '/' ? '' : path}`;
 const ogImage = `${SITE}/og-image.png`;
-const ogImageAlt = 'Cost per accepted change — the fully-loaded cost of producing software that stayed in production, divided by the number of changes that did.';
+const ogImageAlt = 'AI FinOps — the dollar cost of producing and running trusted AI software.';
 
 // --- Structured data (JSON-LD) ---------------------------------------------
 // A stable @graph is emitted on every page: the WebSite and its author/
@@ -57,12 +59,14 @@ const baseGraph: Record<string, unknown>[] = [
     '@type': 'WebSite',
     '@id': websiteId,
     url: SITE,
-    name: 'Cost Per Accepted Change',
+    name: 'AI FinOps',
+    alternateName: 'AI FinOps — cost per accepted change & cost per accepted action',
     description:
-      'Cost per accepted change: the canonical definition, calculator, and reference for measuring the true cost of producing trusted software.',
+      'AI FinOps: measuring and governing the dollar cost of producing and running trusted AI software, anchored by cost per accepted change and cost per accepted action.',
     inLanguage: 'en',
     publisher: { '@id': personId },
     author: { '@id': personId },
+    relatedLink: ['https://looprails.dev', 'https://braceframework.org'],
   },
   {
     '@type': 'Person',
@@ -139,7 +143,7 @@ const nav = [
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={ogImageAlt} />
-    <meta property="og:site_name" content="Cost Per Accepted Change" />
+    <meta property="og:site_name" content="AI FinOps" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
@@ -152,9 +156,9 @@ const nav = [
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site">
       <div class="inner">
-        <a href="/" class="brand" aria-label="Cost Per Accepted Change — home">
+        <a href="/" class="brand" aria-label="AI FinOps — home">
           <Mark size={30} class="brand-mark" ariaHidden={true} />
-          <span class="brand-text">Cost Per Accepted Change</span>
+          <span class="brand-text">AI FinOps</span>
         </a>
         <nav aria-label="Main">
           {nav.map((item) => (
@@ -186,7 +190,10 @@ const nav = [
       <div class="inner">
         <div class="col">
           <span class="footer-byline">
-            Defined by <a href="https://www.linkedin.com/in/brennhill/">Brenn Hill</a> in <em>The Delivery Gap</em> (2026). <a href="/cite">Cite</a> · <a href="/press">Press</a>.
+            AI FinOps — by <a href="https://www.linkedin.com/in/brennhill/">Brenn Hill</a>, from <em>The Delivery Gap</em> (2026). <a href="/cite">Cite</a> · <a href="/press">Press</a>.
+          </span>
+          <span class="footer-meta">
+            Companion frameworks: <a href="https://looprails.dev">LoopRails</a> · <a href="https://braceframework.org">BRACE</a> · Eval-Driven Development <span class="soon">(soon)</span>.
           </span>
           <span class="footer-meta">
             Subscribe at <a href="https://brennhill.substack.com">brennhill.substack.com</a>.
