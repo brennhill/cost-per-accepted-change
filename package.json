@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "Canonical definition, calculator, and leaderboard for cost per accepted change.",
+  "description": "AI FinOps — the dollar cost of producing and running trusted AI software, via cost per accepted change and cost per accepted action.",
   "homepage": "https://aifinops.dev",
   "repository": {
     "type": "git",

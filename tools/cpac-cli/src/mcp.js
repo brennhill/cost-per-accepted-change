@@ -46,7 +46,7 @@ export function buildServer() {
         'Tools for computing cost per accepted change (CPAC). The metric ' +
         'is the fully-loaded cost of producing software that reached ' +
         'production and stayed there, divided by the number of changes ' +
-        'that did. Canonical definition: https://costperacceptedchange.org. ' +
+        'that did. Canonical definition: https://aifinops.dev. ' +
         'Use audit_repo to compute the denominator from a real GitHub ' +
         'repository (requires gh CLI on PATH and the user to be ' +
         'authenticated). Use calculate_cpac for the headline math once ' +

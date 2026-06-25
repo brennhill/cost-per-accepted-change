@@ -1,8 +1,8 @@
 {
   "name": "cost-per-accepted-change-cli",
   "version": "0.1.0",
-  "description": "CLI and MCP server for computing cost per accepted change against a real git repository. https://costperacceptedchange.org",
-  "homepage": "https://costperacceptedchange.org",
+  "description": "CLI and MCP server for computing cost per accepted change against a real git repository. https://aifinops.dev",
+  "homepage": "https://aifinops.dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/brennhill/cost-per-accepted-change.git",

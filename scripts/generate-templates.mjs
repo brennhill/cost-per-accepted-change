@@ -35,8 +35,8 @@ const FONT_FORMULA = { name: 'Helvetica', size: 10, bold: true, color: { argb: C
 
 async function build() {
   const wb = new ExcelJS.Workbook();
-  wb.creator = 'costperacceptedchange.org';
-  wb.lastModifiedBy = 'costperacceptedchange.org';
+  wb.creator = 'aifinops.dev';
+  wb.lastModifiedBy = 'aifinops.dev';
   wb.created = new Date();
   wb.modified = new Date();
 
@@ -75,7 +75,7 @@ function buildTrackerSheet(wb) {
   titleCell.value = {
     richText: [
       { text: 'Cost per accepted change — quarterly tracker.   ', font: { name: 'Helvetica', size: 11, bold: true, color: { argb: COLORS.ink } } },
-      { text: 'Canonical definition at costperacceptedchange.org', font: { name: 'Helvetica', size: 10, italic: true, color: { argb: COLORS.muted } } },
+      { text: 'Canonical definition at aifinops.dev', font: { name: 'Helvetica', size: 10, italic: true, color: { argb: COLORS.muted } } },
     ],
   };
   titleCell.alignment = { vertical: 'middle' };
@@ -263,7 +263,7 @@ function buildInstructionsSheet(wb) {
   };
 
   heading('Cost per accepted change — tracker instructions');
-  body('Canonical definition: https://costperacceptedchange.org');
+  body('Canonical definition: https://aifinops.dev');
   body('Defined in The Delivery Gap (Brenn Hill, 2026) as the cost vertex of the Verification Triangle.');
   spacer();
 
@@ -297,11 +297,11 @@ function buildInstructionsSheet(wb) {
   spacer();
 
   subheading('Where to find help');
-  body('— Definition and worked example: https://costperacceptedchange.org/');
-  body('— How to use the metric correctly: https://costperacceptedchange.org/use');
-  body('— FAQ, including the git command recipe for counting line changes: https://costperacceptedchange.org/faq');
-  body('— Calculator (single-window): https://costperacceptedchange.org/calculator');
-  body('— Quarterly review template: https://costperacceptedchange.org/templates/quarterly-review');
+  body('— Definition and worked example: https://aifinops.dev/');
+  body('— How to use the metric correctly: https://aifinops.dev/use');
+  body('— FAQ, including the git command recipe for counting line changes: https://aifinops.dev/faq');
+  body('— Calculator (single-window): https://aifinops.dev/calculator');
+  body('— Quarterly review template: https://aifinops.dev/templates/quarterly-review');
   body('— Source: https://github.com/brennhill/cost-per-accepted-change');
 }
 

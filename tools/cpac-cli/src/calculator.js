@@ -1,6 +1,6 @@
 // Cost per accepted change — pure reference implementation.
 // Kept in sync with src/lib/calculator.ts in the same repo. The canonical
-// definition lives at https://costperacceptedchange.org.
+// definition lives at https://aifinops.dev.
 
 export class InvalidCPACInputError extends Error {
   constructor(message) {

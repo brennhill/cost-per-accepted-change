@@ -1,6 +1,6 @@
 # cost-per-accepted-change-cli
 
-CLI and MCP server for computing [cost per accepted change](https://costperacceptedchange.org) against a real GitHub repository.
+CLI and MCP server for computing [cost per accepted change](https://aifinops.dev) against a real GitHub repository.
 
 ```bash
 npx cost-per-accepted-change-cli cpac --help
@@ -52,7 +52,7 @@ cpac audit --repo brennhill/cost-per-accepted-change \
            --since 2026-04-01 --until 2026-04-30
 ```
 
-Pulls every merged PR in the window, detects reverts and explicit `Reverts #N` references, surfaces heuristic repair candidates (hotfix-titled PRs whose files overlap with an in-window PR — never auto-invalidated), and applies the 500-LOC normalization rule from the [CPAC spec](https://costperacceptedchange.org/faq#size-normalization).
+Pulls every merged PR in the window, detects reverts and explicit `Reverts #N` references, surfaces heuristic repair candidates (hotfix-titled PRs whose files overlap with an in-window PR — never auto-invalidated), and applies the 500-LOC normalization rule from the [CPAC spec](https://aifinops.dev/faq#size-normalization).
 
 Pass the five cost components alongside to compute the full CPAC:
 
@@ -82,8 +82,8 @@ Tools exposed:
 - `normalize_changes` — apply 500-LOC normalization to a list of `{ linesChanged }`
 - `audit_repo` — walk a GitHub repo window, detect reverts, emit accepted-change-unit count
 
-The skill manifest is [SKILL.md](./SKILL.md). The site advertises this skill at <https://costperacceptedchange.org/.well-known/agent-skills/index.json>.
+The skill manifest is [SKILL.md](./SKILL.md). The site advertises this skill at <https://aifinops.dev/.well-known/agent-skills/index.json>.
 
 ## License
 
-MIT. See the [canonical definition](https://costperacceptedchange.org) for the metric itself. Originally defined in *The Delivery Gap* (Brenn Hill, 2026).
+MIT. See the [canonical definition](https://aifinops.dev) for the metric itself. Originally defined in *The Delivery Gap* (Brenn Hill, 2026).

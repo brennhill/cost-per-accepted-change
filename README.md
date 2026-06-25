@@ -1,20 +1,29 @@
-# Cost Per Accepted Change
+# AI FinOps
 
-Canonical definition, calculator, and (forthcoming) leaderboard for **cost per accepted change** — a measurement for the true cost of producing trusted software in the AI-augmented era.
+**AI FinOps** — measuring and governing the dollar cost of producing and running trusted AI software. Two metrics anchor it:
+
+- **Cost per accepted change (CPAC)** — the cost of producing software that reached production and stayed there (for development).
+- **Cost per accepted action (CPAA)** — the cost of agent work that was accepted and stayed accepted (for running agents).
 
 Deployed at **[aifinops.dev](https://aifinops.dev)**.
 
-## The metric
+## The metrics
 
 ```
-(model cost + infrastructure cost + engineering time + review cost + rework cost)
-─────────────────────────────────────────────────────────────────────────────────
-                              accepted changes
+                        cost per accepted change
+(model + infrastructure + engineering time + review + rework)
+─────────────────────────────────────────────────────────────
+                       accepted change units
+
+                        cost per accepted action
+(inference + tools + infra + oversight + remediation + failed runs + failure impact)
+────────────────────────────────────────────────────────────────────────────────────
+                       accepted action units
 ```
 
-An *accepted change* is one that reached production **and stayed there**.
+An *accepted change* (or *action*) is one that reached production / was performed **and stayed there**.
 
-Originally defined in *The Delivery Gap* (Brenn Hill, 2026) as the cost vertex of the Verification Triangle.
+Both are defined in *The Delivery Gap* (Brenn Hill, 2026); cost per accepted change is the cost vertex of the Verification Triangle, and cost per accepted action is its runtime sibling.
 
 ## This repository
 

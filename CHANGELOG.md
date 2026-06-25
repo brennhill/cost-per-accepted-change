@@ -4,6 +4,16 @@ All notable changes to the definition, the calculator library, and the reference
 
 This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions. The definition itself follows [Semantic Versioning](https://semver.org/) — major versions reserved for breaking changes to the formula or to the unit of "accepted change."
 
+## [Unreleased]
+
+### Changed
+- Repositioned as **AI FinOps** and migrated the canonical domain to **aifinops.dev** (from costperacceptedchange.org, now 301-redirected via the Pages middleware).
+
+### Added
+- **Cost per accepted action (CPAA)** — the runtime sibling of cost per accepted change, for running AI agents: `costPerAcceptedAction()` in the library, a dedicated page, and a "For agents" calculator tab. Numerator includes a **failure-impact** line — the downstream financial consequence of actions that failed (escalation, lost sales, refunds, SLA penalties).
+- Field notes (illustrative analyses: GitHub Copilot, Klarna, Uber, the enterprise AI-mandate wave) and sitewide JSON-LD structured data (WebSite, Person, BreadcrumbList, DefinedTerm, FAQPage, Article).
+- Cross-links to the companion frameworks: LoopRails (agent oversight) and BRACE (agent security); Eval-Driven Development named pending launch.
+
 ## v0.1.0 — 2026-05-22 (reference release)
 
 The first public version of the definition, calculator, and reference site.
