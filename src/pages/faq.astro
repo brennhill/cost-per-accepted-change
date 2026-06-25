@@ -1,10 +1,75 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+// FAQPage structured data — eligible for FAQ rich results. Each answer is a
+// faithful condensation of the matching answer rendered on this page (Google
+// requires the structured answer to represent the visible one).
+const faqs = [
+  {
+    q: 'What counts as a change?',
+    a: 'The default unit is a merged pull request to the production branch, size-normalized so one accepted change unit represents a comparable amount of substantive work. A merge of 1–500 lines counts as 1 unit; a larger merge of N lines counts as ⌈N / 500⌉ units. Lines changed is additions plus deletions, excluding vendored code, generated code, lockfiles, and bulk imports.',
+  },
+  {
+    q: 'What does "stayed there" mean?',
+    a: 'A change has stayed in production if it survives its stayed-there window post-merge without being reverted or repaired. Reverts, rollbacks, defect-fixing rewrites, harm-neutralizing feature flags, and hotfixes invalidate acceptance. Building further on top of the change — extending it, refactoring, optimizing, adding tests or docs — does not.',
+  },
+  {
+    q: 'How long is the stayed-there window?',
+    a: 'The recommended default is 30 days post-merge. Fast-moving teams may use 14 days; regulated industries and long-tail-failure systems may use 60–90 days. The window is evaluated per-change from each change’s own merge date, and must be applied consistently across all reporting periods.',
+  },
+  {
+    q: 'How is "acceptance" different from "correctness"?',
+    a: 'Acceptance is observable; correctness is aspirational. CPAC measures whether a change survived contact with production for the window — a real, auditable signal. The defenses against counting incorrect-but-surviving changes are the stayed-there window (lengthen it to catch silent escapes) and the rework cost line in the numerator.',
+  },
+  {
+    q: 'Why not measure tokens or cost-per-token instead of dollars?',
+    a: 'The numerator is denominated in dollars, not tokens, deliberately. Tokens are not comparable between models or vendors, shift within a vendor’s own model family (a tokenizer change can inflate token counts 12–34% at unchanged price), vary wildly for identical tasks, and price input and output differently. Dollars are the unit of business reality and absorb all of those upstream changes without breaking the metric.',
+  },
+  {
+    q: 'Why track each cost component separately?',
+    a: 'The headline cost per accepted change is what you report; it is not what you investigate with. Track each of the five numerator components — model, infrastructure, engineering time, review, rework — as its own time series with absolute value, percent share, and delta vs prior window. A moving headline tells you something changed; only the components tell you what.',
+  },
+  {
+    q: 'How do I value engineering and review time?',
+    a: 'Use a fully-loaded hourly rate — salary, benefits, tooling allocation, overhead. Most organizations already have this number for capacity planning. If not, $150/hour is a reasonable starting estimate for senior engineers in high-cost markets. The absolute value matters less than keeping assumptions consistent across windows.',
+  },
+  {
+    q: 'Does CPAC work for non-code work?',
+    a: 'Yes. The same shape applies wherever AI produces artifacts that must be reviewed before use — drafts, designs, recommendations, plans. The components rename naturally ("accepted recommendations," "accepted designs") and "stayed there" becomes "still in use after N days." This site focuses on code because that is where the literature and measurement infrastructure are best developed.',
+  },
+  {
+    q: 'How does CPAC relate to DORA metrics?',
+    a: 'DORA metrics describe how a delivery system behaves — how often it ships, how fast, with what failure rate. CPAC describes what that behavior costs. They are complementary: change failure rate counts incidents, not the dollar cost of the rework those incidents demand. Two teams with an identical 8% change failure rate can have a roughly 2× difference in rework cost; CPAC sees it because rework is a numerator line.',
+  },
+  {
+    q: 'How does CPAC relate to FinOps?',
+    a: 'CPAC is FinOps cost-to-serve moved one layer upstream. FinOps measures the unit cost of running software; CPAC measures the unit cost of producing trusted software. Organizations with mature FinOps practices already have most of the inputs — CPAC just rearranges them around the accepted-change denominator.',
+  },
+  {
+    q: 'Can I use cost per accepted change alone?',
+    a: 'No. First, the headline is a summary — track the five cost components so you can diagnose what is moving. Second, pair the headline with at least one leading indicator such as change failure rate, lead time to accepted change, machine catch rate, or a DevEx pulse. The headline gives the cost, the components give the source, the leading indicators give the why.',
+  },
+  {
+    q: 'Where does the metric come from?',
+    a: 'Cost per accepted change was defined in The Delivery Gap (Brenn Hill, 2026) as the cost vertex of the Verification Triangle.',
+  },
+];
+
+const jsonLd = {
+  '@type': 'FAQPage',
+  '@id': 'https://costperacceptedchange.org/faq#faqpage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
 ---
 <BaseLayout
   title="FAQ"
   description="Frequently asked questions about cost per accepted change — what counts, what doesn't, and how to measure."
   path="/faq"
+  jsonLd={jsonLd}
 >
   <article class="page">
     <p class="eyebrow">Frequently asked</p>
@@ -381,7 +446,7 @@ dist/**           linguist-generated
       <strong>Investigation:</strong> when cost per accepted change moves, decompose into components, then drill into the low-level metrics that feed the moving component. Headline → component → diagnostic.
     </p>
     <p>
-      <strong>Vendor comparison:</strong> cost-per-request and tokens-per-request are the right metrics for vendor benchmarking — <em>but only alongside</em> a measurement of how many requests or tokens each vendor uses to produce an accepted change. The naive comparison ("Vendor A is $0.10/request, Vendor B is $0.15/request") is the trap; the meaningful comparison is "Vendor A produces an accepted change for $X, Vendor B for $Y." A 50%-cheaper-per-request vendor that takes 3× the iterations is more expensive in CPAC terms.
+      <strong>Vendor comparison:</strong> cost-per-request and tokens-per-request are the right metrics for vendor benchmarking — <em>but only alongside</em> a measurement of how many requests or tokens each vendor uses to produce an accepted change. The tempting comparison ("Vendor A is $0.10/request, Vendor B is $0.15/request") is the one to resist; the meaningful comparison is "Vendor A produces an accepted change for $X, Vendor B for $Y." A 50%-cheaper-per-request vendor that takes 3× the iterations is more expensive in CPAC terms.
     </p>
 
     <p>

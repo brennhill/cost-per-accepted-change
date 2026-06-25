@@ -1,0 +1,188 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const SITE = 'https://costperacceptedchange.org';
+const slug = 'klarna';
+const published = '2026-06-24';
+
+const sources = [
+  {
+    id: 'launch',
+    text: 'Klarna, "Klarna AI assistant handles two-thirds of customer service chats in its first month" (Feb 27, 2024) — the source of the 2.3M-conversations, 700-agent-equivalent, 11-to-2-minute, and $40M figures. Every headline number traces to this Klarna release.',
+    url: 'https://www.klarna.com/international/press/klarna-ai-assistant-handles-two-thirds-of-customer-service-chats-in-its-first-month/',
+  },
+  {
+    id: 'shrink',
+    text: 'CNBC, "Klarna CEO says AI helped company shrink workforce by 40%" (May 14, 2025).',
+    url: 'https://www.cnbc.com/2025/05/14/klarna-ceo-says-ai-helped-company-shrink-workforce-by-40percent.html',
+  },
+  {
+    id: 'quality',
+    text: 'Fortune, "Klarna turns back to humans as AI cost-cutting hurt quality" (May 9, 2025) — Siemiatkowski: cost had become "a too predominant evaluation factor," producing "lower quality," and "investing in the quality of the human support is the way of the future."',
+    url: 'https://fortune.com/2025/05/09/klarna-ai-humans-return-on-investment/',
+  },
+  {
+    id: 'rehire',
+    text: 'Entrepreneur, "Klarna CEO Reverses Course By Hiring More Humans, Not AI" (May 2025) — Klarna pilots rehiring human agents in a flexible, remote model while keeping AI handling the bulk of contacts.',
+    url: 'https://www.entrepreneur.com/business-news/klarna-ceo-reverses-course-by-hiring-more-humans-not-ai/491396',
+  },
+  {
+    id: 'saas',
+    text: 'TechCrunch, "Klarna CEO doubts that other companies will replace Salesforce with AI" (Mar 4, 2025) — Siemiatkowski walking back the earlier "we shut down Salesforce" framing.',
+    url: 'https://techcrunch.com/2025/03/04/klarna-ceo-doubts-that-other-companies-will-replace-salesforce-with-ai/',
+  },
+  {
+    id: 'f1',
+    text: 'Klarna Group plc, SEC Form F-1 (filed Mar 14, 2025) — reports average revenue per employee rising from ~$344,000 (2022) to ~$821,000 (2024) alongside its AI-efficiency narrative.',
+    url: 'https://www.sec.gov/Archives/edgar/data/2003292/000162828025012824/klarnagroupplcf-1.htm',
+  },
+];
+
+const jsonLd = {
+  '@type': 'Article',
+  '@id': `${SITE}/articles/field-notes/${slug}#article`,
+  headline: 'Klarna, AI customer service, and the resolutions that stayed',
+  description:
+    'Klarna was bold and unusually open about its AI customer-service rollout — and unusually honest when it course-corrected. An illustrative reading of the public record through the cost-per-accepted-resolution lens.',
+  inLanguage: 'en',
+  datePublished: published,
+  dateModified: published,
+  author: { '@id': `${SITE}/#person-brennhill` },
+  publisher: { '@id': `${SITE}/#person-brennhill` },
+  image: `${SITE}/og-image.png`,
+  mainEntityOfPage: `${SITE}/articles/field-notes/${slug}`,
+  isPartOf: { '@id': `${SITE}/#website` },
+  about: { '@id': `${SITE}/#definedterm` },
+  articleSection: 'Field Notes',
+  isAccessibleForFree: true,
+  keywords: [
+    'Klarna',
+    'AI customer service',
+    'deflection rate',
+    'cost per accepted change',
+    'cost per accepted resolution',
+    'AI governance',
+  ],
+  citation: sources.map((s) => ({ '@type': 'CreativeWork', name: s.text, url: s.url })),
+};
+---
+<BaseLayout
+  title="Klarna, AI customer service, and the resolutions that stayed"
+  description="Klarna was bold and unusually open about its AI customer-service rollout — and unusually honest when it course-corrected. An illustrative reading through the cost-per-accepted-resolution lens."
+  path={`/articles/field-notes/${slug}`}
+  jsonLd={jsonLd}
+  breadcrumbs={[
+    { name: 'Articles', path: '/articles' },
+    { name: 'Field notes', path: '/articles/field-notes' },
+  ]}
+>
+  <article class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span><a href="/articles">Articles</a><span class="sep">›</span><a href="/articles/field-notes">Field notes</a><span class="sep">›</span>Klarna
+    </nav>
+
+    <p class="eyebrow">Field note · Klarna</p>
+    <h1>Klarna, AI customer service, and the resolutions that stayed</h1>
+    <p class="article-meta">
+      By Brenn Hill<span class="dot">·</span>June 2026<span class="dot">·</span>~8 min read
+    </p>
+
+    <p class="lede">
+      Klarna did something genuinely brave: it bet big on AI customer service, said so loudly, published the numbers — and then, when the picture got more complicated, said that loudly too. There's a lot to admire here, and a lot to learn from. Most of the lesson lives in the gap between two questions: "how many contacts did the AI handle?" and "how many problems did it actually solve and keep solved?"
+    </p>
+
+    <div class="callout">
+      <span class="label">What this is</span>
+      An illustrative analysis built on Klarna's own public statements and reputable reporting, all cited below. No inside information; Klarna hasn't endorsed it. The worked figures later are <strong>hypothetical, chosen to show the method</strong> — not Klarna's real numbers, which it has never published at this grain. This note treats cost per accepted change in its generalized form, "cost per accepted <em>resolution</em>," because the work here is customer support rather than code.
+    </div>
+
+    <h2 class="no-rule">The story Klarna told, out loud</h2>
+    <p>
+      In February 2024, Klarna announced that its OpenAI-powered assistant had, in its first month, handled <strong>2.3 million conversations — about two-thirds of its customer-service chats</strong> — doing the equivalent work of <strong>700 full-time agents</strong>. (Worth being precise and fair: that "700 agents" is work-equivalent and hiring Klarna says it didn't need to do, not 700 people shown the door.) Average resolution time fell from <strong>~11 minutes to under 2</strong>, repeat inquiries dropped about 25%, the assistant ran in 23 markets and 35-plus languages around the clock, and Klarna projected a <strong>$40 million profit improvement</strong> for the year — with customer satisfaction, it said, "on par" with human agents.<sup><a href="#s-launch">[1]</a></sup>
+    </p>
+    <p>
+      Those are real, impressive numbers, and Klarna deserves credit for putting them on the record where the rest of us could learn from them. Over the same period the company's headcount fell substantially — its IPO filing later showed full-time employees dropping from around 5,500 at the end of 2022 to roughly 3,400 at the end of 2024 — and revenue per employee climbing from about <strong>$344,000 to $821,000</strong>.<sup><a href="#s-f1">[6]</a></sup> The efficiency was not imaginary. Something powerful was happening.
+    </p>
+
+    <h2>What those numbers measured</h2>
+    <p>
+      Look at the headline metrics together — conversations handled, deflection rate, minutes-to-resolution, agents'-worth of work, cost avoided. They all answer the same kind of question: <em>how much support load did the AI take on, and how cheaply?</em> That's genuinely useful, and for a customer-service org it's the natural first thing to watch.
+    </p>
+    <p>
+      What that family of metrics can't quite see, by design, is the part that decides whether the saving is real: <strong>did each handled contact actually resolve the customer's problem, and did it stay resolved?</strong> A conversation that the AI "handled" but the customer had to re-open two days later, or escalate, or stew over before quietly churning, still counts once in the deflection numerator — even though, from the customer's point of view, it wasn't a resolution at all. That's not a flaw in deflection rate; it's just outside what it was built to watch.
+    </p>
+
+    <h2>What was harder to see — and what Klarna did about it</h2>
+    <p>
+      To Klarna's real credit, it noticed, and it said so plainly. In May 2025, Siemiatkowski reflected that cost had become <strong>"a too predominant evaluation factor"</strong> in how the support org was organized, and that "what you end up having is lower quality." The company began rehiring human agents — in a flexible, remote model — and framed a guaranteed human option as a brand promise: <em>"investing in the quality of the human support is the way of the future for us."</em><sup><a href="#s-quality">[3]</a></sup><sup><a href="#s-rehire">[4]</a></sup>
+    </p>
+    <p>
+      It's worth being careful here, because this story is often told too harshly. Klarna did <em>not</em> say AI customer service had failed. The assistant still handled the large majority of contacts; the company stayed AI-first; the efficiency gains were real and remain real. (Siemiatkowski also walked back a separate, more sweeping 2024 claim about "shutting down Salesforce," clarifying in 2025 that Klarna had consolidated data internally rather than replacing its SaaS with a single model.<sup><a href="#s-saas">[5]</a></sup>) What changed wasn't a verdict on AI — it was the realization that optimizing the visible cost of a contact, without an equally clear read on whether the contact <em>landed</em>, had let quality drift further than anyone intended.
+    </p>
+
+    <div class="callout">
+      <span class="label">The honest version</span>
+      This isn't "company tries AI, AI fails, company retreats." It's the much more common and more useful story: a bold team measured the half of the picture that was easy to measure, moved fast on it, noticed the other half slipping, and adjusted — in public. The interesting question is whether a single number could have shown the drift sooner, while it was still small.
+    </div>
+
+    <h2>A friendlier dial: cost per accepted resolution</h2>
+    <p>
+      Generalize cost per accepted change to support work and you get <strong>cost per accepted resolution</strong>: the fully-loaded cost of producing customer resolutions that the customer actually accepted and that <em>stayed</em> accepted — divided by the count of those that did. A resolution "stays" if the customer doesn't re-contact about the same issue, escalate, or churn within a chosen window (say, 14 days). Re-contacts and escalations don't count in the denominator, and the cost of handling them — usually a human picking up the pieces — lands in the numerator as rework.
+    </p>
+    <p>
+      The difference from deflection rate is the whole point. Deflection counts <em>contacts the AI took off the queue</em>. Cost per accepted resolution counts <em>problems that actually got solved and stayed solved</em>, and prices the cleanup when they didn't. It's the same shift, in customer-support clothes, that the metric makes for code: stop celebrating volume produced, start measuring value kept.
+    </p>
+
+    <h2>A worked reading (illustrative)</h2>
+    <p>
+      Hypothetical numbers — <em>not</em> Klarna's — just to show how the dial behaves. Imagine 100,000 support conversations in a month, with AI handling 70% and humans the other 30%:
+    </p>
+
+    <table>
+      <thead>
+        <tr><th></th><th>Deflection view</th><th>Accepted-resolution view</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Conversations handled by AI</td><td>70,000</td><td>70,000</td></tr>
+        <tr><td>Conversations handled by humans</td><td>30,000</td><td>30,000</td></tr>
+        <tr><td>Direct handling cost (AI ~$0.25, human ~$4.00)</td><td>$137,500</td><td>$137,500</td></tr>
+        <tr><td>Re-contacts / escalations within 14 days (AI 25%, human 8%)</td><td>not counted</td><td>19,900</td></tr>
+        <tr><td>Rework cost (escalations cleaned up by humans)</td><td>—</td><td>$70,000</td></tr>
+        <tr><td>Resolutions that <em>stayed</em> resolved</td><td>—</td><td><strong>80,100</strong></td></tr>
+        <tr><th>Headline number</th><th>$1.38 / conversation</th><th>$2.59 / accepted resolution</th></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Read on deflection, this looks close to free: $1.38 a conversation against an all-human baseline near $4. Read on accepted resolution, the real figure is <strong>$2.59</strong> — still a clear win over all-human (which works out to roughly $4.35 per resolution that stays), but nearly double the headline, and the gap <em>is</em> the quality signal. That one number does two friendly things at once: it confirms the AI investment is genuinely paying off, <em>and</em> it points straight at where the value is leaking — the 25% re-contact rate — so the team knows exactly what to improve rather than discovering it months later through customer sentiment.
+    </p>
+
+    <h2>The takeaway</h2>
+    <p>
+      Klarna's arc isn't a cautionary tale; if anything it's a model of how to do this well — move boldly, measure something, share it openly, and correct course out loud when the fuller picture arrives. The only thing a cost-per-accepted-resolution lens would have added is <em>time</em>: a single, finance-legible dial that priced the re-contacts and escalations from month one, so the quality drift showed up as a gently rising number while it was still easy to steer, instead of as a story that had to be walked back later.
+    </p>
+    <p>
+      That's the whole pitch, really. Not "AI was a mistake" — it plainly wasn't — but "measure the resolutions that stay, not just the contacts that get handled, and you get to enjoy the savings <em>and</em> keep the quality." We're all still learning how to balance those two, and Klarna taught the rest of us a great deal by being willing to do it in the open.
+    </p>
+
+    <p style="margin-top: 2em;">
+      <a class="btn btn-primary" href="/calculator">Run your own numbers →</a>
+      <a class="btn" href="/use" style="margin-left: 0.6rem;">How to use the metric →</a>
+      <a class="btn" href="/articles/field-notes" style="margin-left: 0.6rem;">More field notes →</a>
+    </p>
+
+    <h2>Sources</h2>
+    <ol class="sources">
+      {sources.map((s) => (
+        <li id={`s-${s.id}`}>
+          {s.text} <a href={s.url}>{s.url}</a>
+        </li>
+      ))}
+    </ol>
+
+    <hr />
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      This is a field note — a friendly, illustrative reading of the public record, not a commissioned case study and not a scorecard. Klarna's willingness to publish both its wins and its rethink is exactly why there's enough here to learn from. Corrections and better public data are genuinely welcome via <a href="https://github.com/brennhill/cost-per-accepted-change">GitHub</a>.
+    </p>
+  </article>
+</BaseLayout>

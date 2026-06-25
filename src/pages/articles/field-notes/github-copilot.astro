@@ -1,0 +1,247 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const SITE = 'https://costperacceptedchange.org';
+const slug = 'github-copilot';
+const published = '2026-06-24';
+
+const sources = [
+  {
+    id: 'rct',
+    text: 'GitHub, "Research: quantifying GitHub Copilot’s impact on developer productivity and happiness" (2022), and Kalliamvakou et al., "The Impact of AI on Developer Productivity: Evidence from GitHub Copilot," arXiv:2302.06590 — the controlled experiment in which Copilot users completed an HTTP-server task 55.8% faster.',
+    url: 'https://arxiv.org/abs/2302.06590',
+  },
+  {
+    id: 'github-figures',
+    text: 'GitHub, "Quantifying GitHub Copilot’s impact" and subsequent company statements reporting an average code-completion acceptance rate near 30% and, later, that Copilot authors roughly 46% of code in files where it is enabled. These are vendor-reported figures, not independent studies.',
+    url: 'https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/',
+  },
+  {
+    id: 'capex',
+    text: 'CNBC, "Microsoft expects to spend $80 billion on AI-enabled data centers in fiscal 2025" (Jan 3, 2025).',
+    url: 'https://www.cnbc.com/2025/01/03/microsoft-expects-to-spend-80-billion-on-ai-data-centers-in-fy-2025.html',
+  },
+  {
+    id: 'metr',
+    text: 'METR, "Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity," arXiv:2507.09089 — a randomized trial in which experienced developers were 19% slower with AI tools while believing they were ~20% faster.',
+    url: 'https://arxiv.org/abs/2507.09089',
+  },
+  {
+    id: 'uplevel',
+    text: 'Uplevel, "AI for Developer Productivity" (Sept 2024) — a study of ~800 developers finding no significant change in cycle time or PR throughput and a 41% increase in bugs introduced in pull requests.',
+    url: 'https://uplevelteam.com/blog/ai-for-developer-productivity',
+  },
+  {
+    id: 'gitclear',
+    text: 'GitClear, "AI Copilot Code Quality" (2024 and 2025 editions) — analysis of 200M+ changed lines finding rising short-window code churn, a surge in duplicated/copy-pasted code, and a steep decline in refactored ("moved") lines.',
+    url: 'https://www.gitclear.com/ai_assistant_code_quality_2025_research',
+  },
+  {
+    id: 'dora',
+    text: 'Google / DORA, "2024 Accelerate State of DevOps Report" — estimating that a 25% increase in AI adoption was associated with a 7.2% decrease in delivery stability and a 1.5% decrease in throughput.',
+    url: 'https://dora.dev/research/2024/dora-report/',
+  },
+];
+
+const jsonLd = {
+  '@type': 'Article',
+  '@id': `${SITE}/articles/field-notes/${slug}#article`,
+  headline: 'The Copilot productivity paradox, and the number that resolves it',
+  description:
+    'GitHub measured a 55% speed-up; independent studies measured more bugs, rising churn, and experienced developers running slower while feeling faster. An illustrative reading of the public Copilot record through the cost-per-accepted-change lens.',
+  inLanguage: 'en',
+  datePublished: published,
+  dateModified: published,
+  author: { '@id': `${SITE}/#person-brennhill` },
+  publisher: { '@id': `${SITE}/#person-brennhill` },
+  image: `${SITE}/og-image.png`,
+  mainEntityOfPage: `${SITE}/articles/field-notes/${slug}`,
+  isPartOf: { '@id': `${SITE}/#website` },
+  about: { '@id': `${SITE}/#definedterm` },
+  articleSection: 'Field Notes',
+  isAccessibleForFree: true,
+  keywords: [
+    'GitHub Copilot',
+    'developer productivity',
+    'AI coding tools',
+    'cost per accepted change',
+    'code churn',
+    'software delivery metrics',
+  ],
+  citation: sources.map((s) => ({ '@type': 'CreativeWork', name: s.text, url: s.url })),
+};
+---
+<BaseLayout
+  title="The Copilot productivity paradox, and the number that resolves it"
+  description="GitHub measured a 55% speed-up; independent studies measured more bugs, rising churn, and experienced developers running slower while feeling faster. An illustrative reading of the public GitHub Copilot record through the cost-per-accepted-change lens."
+  path={`/articles/field-notes/${slug}`}
+  jsonLd={jsonLd}
+  breadcrumbs={[
+    { name: 'Articles', path: '/articles' },
+    { name: 'Field notes', path: '/articles/field-notes' },
+  ]}
+>
+  <article class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span><a href="/articles">Articles</a><span class="sep">›</span><a href="/articles/field-notes">Field notes</a><span class="sep">›</span>Copilot
+    </nav>
+
+    <p class="eyebrow">Field note · Microsoft · GitHub Copilot</p>
+    <h1>The Copilot productivity paradox, and the number that resolves it</h1>
+    <p class="article-meta">
+      By Brenn Hill<span class="dot">·</span>June 2026<span class="dot">·</span>~9 min read
+    </p>
+
+    <p class="lede">
+      GitHub measured a 55% speed-up. Independent researchers measured 41% more bugs, rising code churn, and experienced developers running 19% slower while feeling 20% faster. Here's the reassuring part: all of these results are real. They disagree because each one honestly measured a different thing — and the thing most of us actually want to know sits just out of frame in every one of them: what it costs to produce software the team gets to keep. That's a hard number to see, and nobody has been hiding it. This is a look at how one metric brings it into view.
+    </p>
+
+    <div class="callout">
+      <span class="label">What this is</span>
+      An illustrative analysis built entirely on public, third-party reporting — peer-reviewed studies, vendor disclosures, and earnings figures, all cited below. It contains no inside information about Microsoft or GitHub, and neither company has endorsed it. The worked dollar figures later in the piece are <strong>hypothetical, chosen to illustrate the method</strong>, not a claim about anyone's real costs.
+    </div>
+
+    <h2 class="no-rule">The velocity story we all heard</h2>
+    <p>
+      The case for AI-assisted coding was made early, and it was made well, in the language of speed. In a controlled experiment GitHub ran in 2022, developers asked to implement an HTTP server in JavaScript finished <strong>55.8% faster</strong> with Copilot than without — a solid result, with a 95% confidence interval running from 21% to 89%, and it understandably shaped how the whole industry came to talk about these tools.<sup><a href="#s-rct">[1]</a></sup> It is a genuine finding. For a self-contained, greenfield task, the tool really is dramatically faster, and that's worth being excited about.
+    </p>
+    <p>
+      From there the story compounded, as good news does. GitHub reported code-completion acceptance rates around 30%, and later that Copilot authored roughly <strong>46% of the code</strong> in files where it was enabled.<sup><a href="#s-github-figures">[2]</a></sup> Microsoft's leadership described Copilot as a larger business than all of GitHub had been at acquisition. And the conviction was capitalized: Microsoft told investors it expected to spend on the order of <strong>$80 billion</strong> on AI-enabled data centers in fiscal 2025 alone.<sup><a href="#s-capex">[3]</a></sup> These are big, encouraging numbers, and they were honestly come by.
+    </p>
+    <p>
+      It's worth gently noticing what they have in common — task completion time, acceptance rate, share of code authored, adoption counts. Every one measures <em>activity</em>: how fast code is produced, and how much of it the model wrote. What none of them can see, by design, is whether the code that got produced was <strong>kept</strong>. That's not a flaw in the metrics; it's just outside what they were built to watch.
+    </p>
+
+    <h2>What independent measurement found</h2>
+    <p>
+      As the tools moved from benchmark tasks into real, messy codebases, a second body of evidence built up — and it pulled in a different direction. None of this contradicts the excitement above; it just adds the part of the picture that's harder to photograph.
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>Study</th><th>What it measured</th><th>Finding</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>METR, 2025<sup><a href="#s-metr">[4]</a></sup></td>
+          <td>Experienced open-source developers, 246 real tasks on large (~1M-line) repositories, randomized</td>
+          <td><strong>19% slower</strong> with AI — while the same developers believed they were ~20% <em>faster</em></td>
+        </tr>
+        <tr>
+          <td>Uplevel, 2024<sup><a href="#s-uplevel">[5]</a></sup></td>
+          <td>~800 developers, cycle time and PR throughput, before/after Copilot</td>
+          <td>No significant throughput gain; <strong>41% more bugs</strong> in pull requests</td>
+        </tr>
+        <tr>
+          <td>GitClear, 2024–25<sup><a href="#s-gitclear">[6]</a></sup></td>
+          <td>200M+ changed lines, 2020–2024, code-evolution patterns</td>
+          <td>Short-window churn up (5.5%→7.9%); copy-pasted code up (8.3%→12.3%); refactored "moved" code down (24.1%→9.5%)</td>
+        </tr>
+        <tr>
+          <td>DORA, 2024<sup><a href="#s-dora">[7]</a></sup></td>
+          <td>Industry survey, AI adoption vs delivery performance</td>
+          <td>+25% AI adoption associated with <strong>−7.2% delivery stability</strong> and −1.5% throughput</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      These studies are not all the same weight, and it's only fair to say so. METR is a small sample (16 developers) but a rigorous randomized design on real work. Uplevel and GitClear are large but observational — they show association, not proof of cause. DORA is a correlational survey. None of them overturns the original GitHub experiment; the HTTP-server task really was finished faster. What they gently question is the <em>leap</em> from "faster on a fresh task" to "more value delivered across a whole engineering organization" — a leap that's easy and natural to make, and that the data asks us to make more carefully.
+    </p>
+
+    <div class="callout">
+      <span class="label">The most human finding</span>
+      The METR result is the one to sit with, and it's oddly comforting. Developers were <strong>19% slower</strong> and experienced themselves as <strong>20% faster</strong> — a ~40-point gap between how it felt and what the clock said. The lesson isn't that developers are unreliable; they're not. It's that none of us — engineer, manager, or executive — can <em>feel</em> this number. AI tools are genuinely pleasant to use, and that pleasantness is real, but it isn't the same as throughput. So we measure, not because we distrust people, but because this is exactly the kind of thing people can't eyeball.
+    </div>
+
+    <h2>The pattern: velocity was measured, kept value was not</h2>
+    <p>
+      Read the two columns together and the paradox dissolves. The first body of evidence measured how much code got <em>written</em>, and how fast. The second measured what happened to it next: more of it had to be revised within two weeks, more of it was duplicated rather than refactored, more bugs rode in on it, and delivery got less stable. Faster generation and lower retention are not contradictory. They are the two halves of a single, unmeasured trade.
+    </p>
+    <p>
+      The DORA report named the mechanism kindly and precisely: AI makes it easier to write more code, so batch sizes grow — and large batches are simply harder to deliver reliably. You can produce more, faster, and keep a little less of it, and a dashboard built on production volume will show you the first half warmly while having no way to see the second. Neither half is a lie. They're just two different questions.
+    </p>
+    <p>
+      This is the delivery gap in miniature. <strong>Cost per accepted change</strong> is the metric defined to close it: the fully-loaded cost of producing software that reached production and <a href="/faq">stayed there</a>, divided by the number of changes that did. It is designed to move — visibly, early — in exactly the conditions these studies describe, so a team can catch the trade while it's still small and easy to steer.
+    </p>
+
+    <h2>What cost per accepted change adds to the picture</h2>
+    <p>
+      Here's the encouraging part: lay each independent finding next to the metric and the contradiction dissolves into something you can actually work with. Each one becomes a specific line item rather than a mystery:
+    </p>
+    <ul>
+      <li>
+        <strong>The +41% bugs (Uplevel) land in two places.</strong> Bug-fix work that retracts a recent change pulls that change out of the <em>denominator</em> — it did not stay. And the cost of the fix lands in the <em>numerator</em> as rework. The same event hits CPAC twice; on a PR-count dashboard it is invisible.
+      </li>
+      <li>
+        <strong>The rising churn (GitClear) is the denominator leaking.</strong> Code revised within two weeks is, by the metric's default 30-day survival window, a candidate for <em>not</em> being an accepted change. A team whose churn climbed from 5.5% to 7.9% has a denominator quietly shrinking relative to its raw merge count.
+      </li>
+      <li>
+        <strong>The slowdown on real repos (METR) shows up as engineering and review cost.</strong> If senior developers spend more wall-clock time steering and verifying AI output on a mature codebase, that time is numerator cost — whether or not the velocity dashboard moved.
+      </li>
+      <li>
+        <strong>The stability drop (DORA) is the accepted-change rate falling.</strong> Less stable delivery means a larger share of merges get reverted or hotfixed inside the survival window. That is the denominator, by definition.
+      </li>
+    </ul>
+    <p>
+      And because CPAC is tracked <a href="/faq">component by component</a>, the $80B-scale bet on model spend would have been legible too: model cost is one of five numerator lines. A team could watch model cost rise while rework and review costs rose alongside it — and see immediately that cheaper, faster generation was being paid for downstream, rather than assume the speed-up was free.
+    </p>
+
+    <h2>A worked reading (illustrative)</h2>
+    <p>
+      To make the mechanism concrete, here is a hypothetical team — <em>not</em> Microsoft, not any real team, just numbers chosen to show how the lens behaves. A 10-engineer group adopts an AI assistant. Their velocity dashboard lights up: pull requests rise 30%, cycle time ticks down, "AI authored 45% of our code." On those metrics it reads as a clear win — and, honestly, on those metrics it is one. The team has every reason to feel good.
+    </p>
+    <p>
+      Now read the same quarter through cost per accepted change, applying a 30-day survival window and 500-line size normalization to the denominator, and counting all five cost lines in the numerator:
+    </p>
+
+    <table>
+      <thead>
+        <tr><th></th><th>Before AI</th><th>After AI</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Merged PRs (velocity dashboard)</td><td>100</td><td>130</td></tr>
+        <tr><td>Reverted / hotfixed within 30 days</td><td>8</td><td>26</td></tr>
+        <tr><td>Accepted change units (after survival + normalization)</td><td><strong>100</strong></td><td><strong>108</strong></td></tr>
+        <tr><td>Engineering + steering cost</td><td>$150,000</td><td>$150,000</td></tr>
+        <tr><td>Review cost</td><td>$30,000</td><td>$44,000</td></tr>
+        <tr><td>Rework cost</td><td>$14,000</td><td>$34,000</td></tr>
+        <tr><td>Model + infrastructure cost</td><td>$2,000</td><td>$16,000</td></tr>
+        <tr><th>Total cost</th><th>$196,000</th><th>$244,000</th></tr>
+        <tr><th>Cost per accepted change</th><th>$1,960</th><th>$2,259</th></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Pull requests rose 30%; accepted change units rose 8%; and the cost of producing each kept change went <strong>up about 15%</strong>. Nothing here says "don't use AI" — the tool may well be worth it, and this team is one good quarter of tuning away from making it clearly worth it. What the reading does is hand them something to act on: the real movement is in the rework, review, and model lines, so the next step is encouraging and concrete — tighten PR size, strengthen the gates, and re-measure. Without this view it would have been easy to scale the spend on the strength of a 30% gain that hadn't quite been banked yet — not because anyone was careless, but because the dashboards in front of them genuinely couldn't show the other side of the ledger.
+    </p>
+
+    <h2>The takeaway</h2>
+    <p>
+      The Copilot record isn't a cautionary tale, and it certainly isn't a story about a bad tool — by the evidence it's a fast, genuinely useful one. It's a story about something every one of us does: we measure the half of the transaction that's easy to see — generation speed, code-authored share — and the other half — retention, rework, stability — stays quieter and harder to instrument, even though it's every bit as real. That's not a failing of any team. It's just how visibility works when the tools are new and moving fast.
+    </p>
+    <p>
+      So the gentle suggestion is to add one question to the mix. Alongside "how much faster are we?" and "what percent of our code is AI-written?", ask: <em>what does a change we actually keep cost us now, versus a year ago — and which of the five cost components moved?</em> It's answerable, it's finance-legible, and it's the question the usual dashboards simply weren't built to ask. None of us has this fully figured out yet; the point of the number is to make the figuring-out a little easier, and a lot more honest.
+    </p>
+
+    <p style="margin-top: 2em;">
+      <a class="btn btn-primary" href="/calculator">Run your own numbers →</a>
+      <a class="btn" href="/start" style="margin-left: 0.6rem;">Quick start for leaders →</a>
+      <a class="btn" href="/articles/field-notes" style="margin-left: 0.6rem;">More field notes →</a>
+    </p>
+
+    <h2>Sources</h2>
+    <ol class="sources">
+      {sources.map((s) => (
+        <li id={`s-${s.id}`}>
+          {s.text} <a href={s.url}>{s.url}</a>
+        </li>
+      ))}
+    </ol>
+
+    <hr />
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      This is a field note — a friendly, illustrative reading of the public record, not a commissioned case study and not a scorecard for anyone. We're all still learning how to get the most out of these tools, and the teams who shipped them moved fast and shared a lot in the open, which is exactly why there's enough public data to write this at all. Corrections and better public data are genuinely welcome via <a href="https://github.com/brennhill/cost-per-accepted-change">GitHub</a>. The metric itself is defined on the <a href="/">home page</a>; see <a href="/cite">how to cite</a>.
+    </p>
+  </article>
+</BaseLayout>

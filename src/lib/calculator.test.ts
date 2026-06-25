@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   costPerAcceptedChange,
+  costPerAcceptedAction,
   formatCurrency,
   formatShare,
   normalizeChanges,
@@ -91,6 +92,102 @@ describe('costPerAcceptedChange', () => {
     const a = costPerAcceptedChange(baseline);
     const b = costPerAcceptedChange(baseline);
     expect(a).toEqual(b);
+  });
+});
+
+describe('costPerAcceptedAction', () => {
+  const baseline = {
+    inferenceCost: 3000,
+    toolCost: 1200,
+    infraCost: 800,
+    oversightCost: 9000,
+    remediationCost: 4000,
+    failedRunCost: 1000,
+    failureImpactCost: 12000,
+    acceptedActions: 5000,
+  };
+
+  it('computes the canonical worked example to $6.20', () => {
+    const result = costPerAcceptedAction(baseline);
+    expect(result.totalCost).toBe(31000);
+    expect(result.value).toBeCloseTo(6.2, 2);
+    expect(result.acceptedActions).toBe(5000);
+  });
+
+  it('breakdown shares sum to 1', () => {
+    const result = costPerAcceptedAction(baseline);
+    const sum =
+      result.breakdown.inferenceCost +
+      result.breakdown.toolCost +
+      result.breakdown.infraCost +
+      result.breakdown.oversightCost +
+      result.breakdown.remediationCost +
+      result.breakdown.failedRunCost +
+      result.breakdown.failureImpactCost;
+    expect(sum).toBeCloseTo(1, 10);
+  });
+
+  it('surfaces failure impact as the dominant cost line in the worked example', () => {
+    const result = costPerAcceptedAction(baseline);
+    expect(result.breakdown.failureImpactCost).toBeCloseTo(12000 / 31000, 10);
+    expect(result.breakdown.failureImpactCost).toBeGreaterThan(result.breakdown.oversightCost);
+  });
+
+  it('omitting failure impact understates the true cost (the point of the line)', () => {
+    const withImpact = costPerAcceptedAction(baseline);
+    const withoutImpact = costPerAcceptedAction({ ...baseline, failureImpactCost: 0 });
+    expect(withoutImpact.value).toBeCloseTo(3.8, 2);
+    expect(withImpact.value).toBeGreaterThan(withoutImpact.value);
+  });
+
+  it('returns all-zero breakdown when totalCost is zero', () => {
+    const result = costPerAcceptedAction({
+      inferenceCost: 0,
+      toolCost: 0,
+      infraCost: 0,
+      oversightCost: 0,
+      remediationCost: 0,
+      failedRunCost: 0,
+      failureImpactCost: 0,
+      acceptedActions: 10,
+    });
+    expect(result.totalCost).toBe(0);
+    expect(result.value).toBe(0);
+    expect(result.breakdown.failureImpactCost).toBe(0);
+  });
+
+  it('throws InvalidCPACInputError on negative cost components', () => {
+    expect(() => costPerAcceptedAction({ ...baseline, oversightCost: -1 })).toThrow(
+      InvalidCPACInputError,
+    );
+    expect(() => costPerAcceptedAction({ ...baseline, failureImpactCost: -1 })).toThrow(
+      InvalidCPACInputError,
+    );
+  });
+
+  it('throws on NaN and Infinity inputs', () => {
+    expect(() => costPerAcceptedAction({ ...baseline, toolCost: NaN })).toThrow(
+      InvalidCPACInputError,
+    );
+    expect(() => costPerAcceptedAction({ ...baseline, infraCost: Infinity })).toThrow(
+      InvalidCPACInputError,
+    );
+  });
+
+  it('throws on zero, negative, or non-integer acceptedActions', () => {
+    expect(() => costPerAcceptedAction({ ...baseline, acceptedActions: 0 })).toThrow(
+      InvalidCPACInputError,
+    );
+    expect(() => costPerAcceptedAction({ ...baseline, acceptedActions: -5 })).toThrow(
+      InvalidCPACInputError,
+    );
+    expect(() => costPerAcceptedAction({ ...baseline, acceptedActions: 4999.5 })).toThrow(
+      InvalidCPACInputError,
+    );
+  });
+
+  it('is pure: same inputs produce identical results', () => {
+    expect(costPerAcceptedAction(baseline)).toEqual(costPerAcceptedAction(baseline));
   });
 });
 

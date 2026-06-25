@@ -12,10 +12,16 @@ const titleMap = {
   cost: 'Verification Triangle — cost vertex highlighted',
 };
 ---
+<!--
+  viewBox carries 40 units of horizontal padding on each side (x: -40 to 280)
+  so the wide vertex labels — "Verification quality" especially — don't clip
+  past the edge. The triangle itself stays centered on x=120, and width/height
+  scale from the original 240-unit basis so its on-page size is unchanged.
+-->
 <svg
-  width={size}
-  height={Math.round(size * 0.92)}
-  viewBox="0 0 240 220"
+  width={Math.round(size * 4 / 3)}
+  height={Math.round(size * 11 / 12)}
+  viewBox="-40 0 320 220"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
   aria-label={titleMap[highlight]}

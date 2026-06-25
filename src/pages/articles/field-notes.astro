@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const SITE = 'https://costperacceptedchange.org';
+
+// One series entry per planned field note. `live: false` renders a
+// "forthcoming" card with no link yet.
+const notes = [
+  {
+    slug: 'github-copilot',
+    live: true,
+    company: 'Microsoft · GitHub Copilot',
+    title: 'The Copilot productivity paradox, and the number that resolves it',
+    date: '2026-06-24',
+    dateLabel: 'June 2026',
+    dek: 'GitHub measured a 55% speed-up. Independent studies measured 41% more bugs, rising code churn, and experienced developers running 19% slower while feeling 20% faster. Every one of those findings is a different face of the same missing number.',
+  },
+  {
+    slug: 'uber',
+    live: true,
+    company: 'Uber',
+    title: "Uber measures almost everything — here's the one number even they don't roll up to",
+    date: '2026-06-24',
+    dateLabel: 'June 2026',
+    dek: 'Uber is one of the most thoroughly instrumented engineering orgs in public — and refreshingly honest that the AI value "link is not there yet." The one dial even great instrumentation doesn\'t quite produce.',
+  },
+  {
+    slug: 'klarna',
+    live: true,
+    company: 'Klarna',
+    title: 'Klarna, AI customer service, and the resolutions that stayed',
+    date: '2026-06-24',
+    dateLabel: 'June 2026',
+    dek: 'Klarna leaned hard into AI customer service, then thoughtfully adjusted course when quality slipped. The generalized metric — cost per accepted resolution — is the part the deflection-rate dashboard couldn’t show.',
+  },
+  {
+    slug: 'enterprise-ai-mandates',
+    live: true,
+    company: 'Salesforce · Shopify · Duolingo · IBM',
+    title: "AI-first mandates, and the number that would tell you they're working",
+    date: '2026-06-24',
+    dateLabel: 'June 2026',
+    dek: 'A run of "AI-first" mandates announced on adoption and headcount metrics — and IBM\'s quieter, wiser exception. What a kept-value denominator adds to each.',
+  },
+];
+
+const live = notes.filter((n) => n.live);
+
+const jsonLd = {
+  '@type': 'CollectionPage',
+  '@id': `${SITE}/articles/field-notes#collection`,
+  name: 'Field notes',
+  description:
+    'Illustrative analyses of real, publicly-reported AI rollouts read through the cost-per-accepted-change lens.',
+  isPartOf: { '@id': `${SITE}/#website` },
+  about: { '@id': `${SITE}/#definedterm` },
+  hasPart: live.map((n) => ({
+    '@type': 'Article',
+    '@id': `${SITE}/articles/field-notes/${n.slug}#article`,
+    headline: n.title,
+    url: `${SITE}/articles/field-notes/${n.slug}`,
+  })),
+};
+---
+<BaseLayout
+  title="Field notes"
+  description="Illustrative analyses of real, publicly-reported AI rollouts — Microsoft/GitHub Copilot, Uber, Klarna, the enterprise AI-mandate wave — read through the cost-per-accepted-change lens."
+  path="/articles/field-notes"
+  jsonLd={jsonLd}
+  breadcrumbs={[{ name: 'Articles', path: '/articles' }]}
+>
+  <article class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span><a href="/articles">Articles</a><span class="sep">›</span>Field notes
+    </nav>
+
+    <p class="eyebrow">Field notes</p>
+    <h1>Field notes</h1>
+    <p class="lede">
+      Each field note reads the public record of a real AI rollout through one friendly lens: cost per accepted change. The goal isn't to second-guess the teams involved — they shipped at real scale under real pressure, and we've all learned from what they shared in the open. It's to show where the metrics everyone reaches for measure <em>velocity</em>, and where one more number can help measure <em>value kept</em>. We're all figuring this out together; this is one tool that makes the figuring easier.
+    </p>
+
+    <div class="callout">
+      <span class="label">What these are, and are not</span>
+      These are <strong>illustrative analyses built entirely on public, third-party reporting</strong> — earnings calls, engineering blogs, peer-reviewed studies, and press coverage. They contain no inside information, and no company has endorsed them. Where a field note works a cost-per-accepted-change example, the dollar figures are <strong>clearly-labeled hypotheticals</strong> chosen to illustrate the method — not a claim about any company's actual costs. Sources are cited inline and listed at the foot of each note.
+    </div>
+
+    <div class="template-grid">
+      {notes.map((n) => (
+        <div class={`template-card${n.live ? '' : ' forthcoming'}`}>
+          <p class="meta">{n.live ? `Field note · ${n.dateLabel}` : 'Forthcoming'} · {n.company}</p>
+          <h3>
+            {n.live
+              ? <a href={`/articles/field-notes/${n.slug}`}>{n.title}</a>
+              : n.title}
+          </h3>
+          <p>{n.dek}</p>
+          {n.live && <p><a href={`/articles/field-notes/${n.slug}`}>Read the field note →</a></p>}
+        </div>
+      ))}
+    </div>
+
+    <p style="margin-top: 2.4em; font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      Want a company analyzed, or have public data that sharpens one of these? Open an issue on <a href="https://github.com/brennhill/cost-per-accepted-change">GitHub</a>.
+    </p>
+  </article>
+</BaseLayout>

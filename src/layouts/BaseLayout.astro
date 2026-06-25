@@ -12,6 +12,18 @@ interface Props {
   path?: string;
   /** Open Graph type. Default 'article'; pass 'website' for the homepage. */
   ogType?: 'article' | 'website';
+  /**
+   * Page-specific JSON-LD node(s) (DefinedTerm, FAQPage, TechArticle, …).
+   * Merged into the sitewide @graph; reference the shared nodes by their
+   * stable @id (e.g. `${SITE}/#person-brennhill`).
+   */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /**
+   * Ancestor crumbs for deep pages, in order, excluding Home and the current
+   * page (e.g. [{ name: 'Articles', path: '/articles' }]). When omitted, the
+   * breadcrumb is simply Home › {title}.
+   */
+  breadcrumbs?: { name: string; path: string }[];
 }
 
 const {
@@ -19,15 +31,80 @@ const {
   description = "Cost per accepted change: the canonical definition, calculator, and reference for measuring the true cost of producing trusted software.",
   path = '/',
   ogType = 'article',
+  jsonLd,
+  breadcrumbs = [],
 } = Astro.props;
 
 const fullTitle = title === 'Cost per accepted change'
   ? title
   : `${title} — Cost per accepted change`;
 
-const canonical = `https://costperacceptedchange.org${path === '/' ? '' : path}`;
-const ogImage = 'https://costperacceptedchange.org/og-image.png';
+const SITE = 'https://costperacceptedchange.org';
+const canonical = `${SITE}${path === '/' ? '' : path}`;
+const ogImage = `${SITE}/og-image.png`;
 const ogImageAlt = 'Cost per accepted change — the fully-loaded cost of producing software that stayed in production, divided by the number of changes that did.';
+
+// --- Structured data (JSON-LD) ---------------------------------------------
+// A stable @graph is emitted on every page: the WebSite and its author/
+// publisher (Brenn Hill). Subpages also get a Home › {title} breadcrumb.
+// Page-specific nodes arrive via the `jsonLd` prop and reference the shared
+// nodes by @id, so the graph stays internally linked for search engines.
+const personId = `${SITE}/#person-brennhill`;
+const websiteId = `${SITE}/#website`;
+
+const baseGraph: Record<string, unknown>[] = [
+  {
+    '@type': 'WebSite',
+    '@id': websiteId,
+    url: SITE,
+    name: 'Cost Per Accepted Change',
+    description:
+      'Cost per accepted change: the canonical definition, calculator, and reference for measuring the true cost of producing trusted software.',
+    inLanguage: 'en',
+    publisher: { '@id': personId },
+    author: { '@id': personId },
+  },
+  {
+    '@type': 'Person',
+    '@id': personId,
+    name: 'Brenn Hill',
+    url: 'https://brennhill.substack.com',
+    sameAs: [
+      'https://www.linkedin.com/in/brennhill/',
+      'https://brennhill.substack.com',
+      'https://github.com/brennhill',
+    ],
+  },
+];
+
+const crumbTrail = [
+  { name: 'Home', item: SITE },
+  ...breadcrumbs.map((b) => ({ name: b.name, item: `${SITE}${b.path}` })),
+  { name: title, item: canonical },
+];
+
+const breadcrumb: Record<string, unknown>[] =
+  path === '/'
+    ? []
+    : [
+        {
+          '@type': 'BreadcrumbList',
+          '@id': `${canonical}#breadcrumb`,
+          itemListElement: crumbTrail.map((c, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: c.name,
+            item: c.item,
+          })),
+        },
+      ];
+
+const pageNodes = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [...baseGraph, ...breadcrumb, ...pageNodes],
+};
 
 const nav = [
   { href: '/', label: 'Definition' },
@@ -37,6 +114,7 @@ const nav = [
   { href: '/instrument', label: 'Instrument' },
   { href: '/templates', label: 'Templates' },
   { href: '/measurement', label: 'Compare' },
+  { href: '/articles', label: 'Articles' },
   { href: '/faq', label: 'FAQ' },
 ];
 ---
@@ -46,10 +124,13 @@ const nav = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta name="author" content="Brenn Hill" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href={canonical} />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta property="og:type" content={ogType} />
+    <meta property="og:locale" content="en_US" />
     <meta name="theme-color" content="#fbfaf6" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -65,6 +146,7 @@ const nav = [
     <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:image:alt" content={ogImageAlt} />
     <title>{fullTitle}</title>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

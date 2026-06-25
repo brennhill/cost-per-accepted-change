@@ -1,0 +1,195 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const SITE = 'https://costperacceptedchange.org';
+const slug = 'uber';
+const published = '2026-06-24';
+
+const sources = [
+  {
+    id: 'cd',
+    text: 'Uber Engineering, "Continuous Deployment at Uber" (Aug 26, 2024) — production deployments growing from ~7,000/week to ~50,000/week, full deploy automation from 7% to 65% of services, and a >50% reduction in incidents per 1,000 code changes over the adoption period.',
+    url: 'https://www.uber.com/blog/continuous-deployment/',
+  },
+  {
+    id: 'ureview',
+    text: 'Uber Engineering, "uReview: Scaling Code Review with Gen AI" (Aug 12, 2025) — uReview analyzes 90%+ of Uber’s ~65,000 weekly diffs; engineers mark ~75% of its comments useful and address 65%+ (vs ~51% for human comments). The "~1,500 hours/week ≈ 39 developer-years/year" saved is Uber’s own estimate.',
+    url: 'https://www.uber.com/us/en/blog/ureview/',
+  },
+  {
+    id: 'autocover',
+    text: 'AutoCover (AI unit-test generation), ICSE-SEIP 2026 peer-reviewed paper — AutoCover generates ~11% of all new tests added to Uber’s codebase; the paper also reports that GitHub Copilot and Cursor underperformed on Uber’s multi-step test cases.',
+    url: 'https://homes.cs.washington.edu/~rjust/publ/auto_cover_icse_2026.pdf',
+  },
+  {
+    id: 'fortune',
+    text: 'Fortune, "Uber COO on AI spending" (May 26, 2026) — CEO Dara Khosrowshahi: ~10% of Uber’s committed code is built by autonomous agents; COO Andrew Macdonald cautions that the productivity-to-business-value "link is not there yet."',
+    url: 'https://fortune.com/2026/05/26/uber-coo-ai-spending-tokens-claude-code/',
+  },
+  {
+    id: 'budget',
+    text: 'Washington Times, "Uber capping internal use of AI coding software after blowing budget" (Jun 3, 2026) — Uber capped each employee at $1,500 in token spend per AI coding agent after exhausting its 2026 AI-coding budget in roughly four months; primary tool is Claude Code, alongside Cursor and OpenAI Codex.',
+    url: 'https://www.washingtontimes.com/news/2026/jun/3/uber-capping-internal-use-ai-coding-software-blowing-budget/',
+  },
+  {
+    id: 'e2e',
+    text: 'Uber Engineering, "Shifting E2E Testing Left" (2024) — gating changes to 1,000+ core services with end-to-end tests cut "incidents per 1,000 diffs" by 71% in 2023. (A distinct program and window from the continuous-deployment figure; the two are not summed.)',
+    url: 'https://www.uber.com/us/en/blog/shifting-e2e-testing-left/',
+  },
+  {
+    id: 'ir',
+    text: 'Uber Q4/FY2023 results (Feb 2024) — FY2023 R&D expense $3,164M (FY2024 dipped to $3,109M); FY2023 was Uber’s first full year of GAAP operating profit ($1,110M income from operations on $37,281M revenue).',
+    url: 'https://investor.uber.com/news-events/news/press-release-details/2024/Uber-Announces-Results-for-Fourth-Quarter-and-Full-Year-2023/default.aspx',
+  },
+];
+
+const jsonLd = {
+  '@type': 'Article',
+  '@id': `${SITE}/articles/field-notes/${slug}#article`,
+  headline: 'Uber measures almost everything — here is the one number even they do not roll up to',
+  description:
+    'Uber is arguably the most measurement-mature engineering org in public — and refreshingly honest that the AI value "link is not there yet." An illustrative reading through the cost-per-accepted-change lens.',
+  inLanguage: 'en',
+  datePublished: published,
+  dateModified: published,
+  author: { '@id': `${SITE}/#person-brennhill` },
+  publisher: { '@id': `${SITE}/#person-brennhill` },
+  image: `${SITE}/og-image.png`,
+  mainEntityOfPage: `${SITE}/articles/field-notes/${slug}`,
+  isPartOf: { '@id': `${SITE}/#website` },
+  about: { '@id': `${SITE}/#definedterm` },
+  articleSection: 'Field Notes',
+  isAccessibleForFree: true,
+  keywords: [
+    'Uber engineering',
+    'developer productivity',
+    'AI coding tools',
+    'cost per accepted change',
+    'continuous deployment',
+    'software delivery metrics',
+  ],
+  citation: sources.map((s) => ({ '@type': 'CreativeWork', name: s.text, url: s.url })),
+};
+---
+<BaseLayout
+  title="Uber measures almost everything — here's the one number even they don't roll up to"
+  description="Uber is arguably the most measurement-mature engineering org in public — and refreshingly honest that the AI value 'link is not there yet.' An illustrative reading through the cost-per-accepted-change lens."
+  path={`/articles/field-notes/${slug}`}
+  jsonLd={jsonLd}
+  breadcrumbs={[
+    { name: 'Articles', path: '/articles' },
+    { name: 'Field notes', path: '/articles/field-notes' },
+  ]}
+>
+  <article class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span><a href="/articles">Articles</a><span class="sep">›</span><a href="/articles/field-notes">Field notes</a><span class="sep">›</span>Uber
+    </nav>
+
+    <p class="eyebrow">Field note · Uber</p>
+    <h1>Uber measures almost everything — here's the one number even they don't roll up to</h1>
+    <p class="article-meta">
+      By Brenn Hill<span class="dot">·</span>June 2026<span class="dot">·</span>~9 min read
+    </p>
+
+    <p class="lede">
+      Most field notes here are about teams that measured too little. Uber is the opposite, and that's what makes it interesting. Uber's engineering org is one of the most thoroughly instrumented on the public internet — deploys per week, incidents per thousand diffs, CI wait times, AI-tool coverage and acceptance, all published in careful detail. And Uber's own leaders are unusually candid that, even so, the line from all that AI productivity to actual business value "is not there yet." This is a note about the one dial even excellent instrumentation doesn't quite produce.
+    </p>
+
+    <div class="callout">
+      <span class="label">What this is</span>
+      An illustrative analysis built entirely on Uber's public engineering blog, peer-reviewed papers, earnings disclosures, and reputable reporting — all cited below. Uber has <strong>never published a per-change cost</strong>, and nothing here claims to be one. The worked figures later are <strong>hypothetical, chosen to show the method</strong>, not Uber's real numbers. No inside information; Uber hasn't endorsed this.
+    </div>
+
+    <h2 class="no-rule">How much Uber actually measures (a lot)</h2>
+    <p>
+      Start with genuine admiration, because it's earned. Uber has publicly documented production deployments growing from about <strong>7,000 a week to 50,000 a week</strong>, with full deploy automation rising from 7% to 65% of services.<sup><a href="#s-cd">[1]</a></sup> It reports an engineering-quality number most companies don't even attempt — <strong>"incidents per 1,000 diffs"</strong> — and has driven it down hard (a 71% reduction in 2023 from shifting end-to-end testing left, and, in a separate program, a 50%+ reduction as continuous deployment matured).<sup><a href="#s-e2e">[6]</a></sup><sup><a href="#s-cd">[1]</a></sup>
+    </p>
+    <p>
+      That "incidents per 1,000 diffs" metric deserves a hat-tip, because it's a close cousin of the idea at the heart of cost per accepted change: it's normalized per unit of change, and it tracks whether what shipped actually <em>held</em>. Uber is, in other words, already further toward measuring "did it stay?" than almost anyone. They're not the team that forgot to look.
+    </p>
+
+    <h2>The AI productivity numbers, and an honest footnote</h2>
+    <p>
+      Uber's AI engineering work is equally well-documented. Its GenAI reviewer, <strong>uReview</strong>, analyzes more than 90% of Uber's ~65,000 weekly diffs; engineers mark about 75% of its comments useful and act on 65%+ of them — higher than the ~51% rate for human review comments.<sup><a href="#s-ureview">[2]</a></sup> Its test-generation system, <strong>AutoCover</strong>, now writes roughly <strong>11% of all new tests</strong> added to the codebase, documented in a peer-reviewed ICSE paper.<sup><a href="#s-autocover">[3]</a></sup> And on a May 2026 earnings call, CEO Dara Khosrowshahi said about <strong>10% of Uber's committed code</strong> is now built by autonomous agents.<sup><a href="#s-fortune">[4]</a></sup>
+    </p>
+    <p>
+      Here's the footnote that makes this a CPAC story rather than a victory lap — and it's Uber's own footnote, which is why it's so valuable. In the same breath as the 10% figure, COO Andrew Macdonald cautioned that the link from this productivity to business value <strong>"is not there yet."</strong><sup><a href="#s-fortune">[4]</a></sup> And the cost side became impossible to ignore around the same time: Uber reportedly <strong>exhausted its 2026 AI-coding budget in roughly four months</strong> and capped each employee at $1,500 in token spend per agent.<sup><a href="#s-budget">[5]</a></sup> Model cost, in other words, went from a rounding error to a real, visible line — fast.
+    </p>
+
+    <div class="callout">
+      <span class="label">The honest version</span>
+      Several of the headline productivity figures — uReview's "≈ 39 developer-years saved per year," for instance — are Uber's own careful estimates, derived from a per-comment time assumption, not dollars actually banked. That's not a criticism; estimating is the right thing to do. It just means the most important quantity is still an estimate, and Uber's leadership is admirably clear about that.
+    </div>
+
+    <h2>What even Uber's dashboards don't roll up to</h2>
+    <p>
+      Lay the instruments out and a pattern appears. Deploys per week, automation percentage, agent-written code share, comments-addressed rate, estimated hours saved — these measure <em>activity and adoption</em>, beautifully. Incidents per 1,000 diffs measures <em>stability</em>, which is rarer and better. But none of them is a single, fully-loaded <strong>dollar cost per change that stayed in production</strong>. The hours-saved figures are estimates, not banked money; the incident rate is a count, not a cost; the cost wall showed up as a budget overrun, disconnected from the value it bought.
+    </p>
+    <p>
+      That's exactly the question Macdonald was pointing at. When the COO says the productivity-to-value link "is not there yet," he's describing the absence of a number that puts model spend, engineering time, review load, and rework on one side, and changes the team actually kept on the other. That number has a name.
+    </p>
+
+    <h2>Cost per accepted change, at Uber scale</h2>
+    <p>
+      Cost per accepted change wouldn't replace a single thing Uber already tracks — it would sit one layer above them and give the COO's open question an answer. The denominator is right in Uber's wheelhouse: accepted change units are diffs that <em>stayed</em> (no revert or repair inside the survival window), size-normalized — and Uber already computes things very close to both halves. The numerator gathers what's currently scattered across dashboards and budgets: engineering time, review cost (including the now-cheaper machine review uReview provides), rework, and the model spend that just blew past its budget.
+    </p>
+    <p>
+      Tracked that way, "10% of code is agent-written" and "≈ 39 dev-years saved" stop being impressive-but-unbankable estimates and become testable against the bottom line: <em>is the cost of producing a change we keep going down, and which component moved?</em> If the agents are genuinely paying off, cost per accepted change falls and the model-cost line earns its place. If the budget overrun is buying churn rather than kept work, the same number says so — early, in dollars, in exactly the terms the COO is asking for.
+    </p>
+
+    <h2>A worked reading (illustrative)</h2>
+    <p>
+      Hypothetical, <em>not</em> Uber's figures — and deliberately built on the metrics Uber publishes, to show what they leave out. Picture two teams at Uber-like scale. On every dashboard Uber actually reports, they are <strong>identical</strong>: same 1,000 diffs a week, same 2.0 incidents per 1,000 diffs, same ~10% agent-written code. Here's the same week through cost per accepted change:
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>Per week</th><th>Team A</th><th>Team B</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Diffs shipped</td><td>1,000</td><td>1,000</td></tr>
+        <tr><td>Incidents per 1,000 diffs</td><td>2.0</td><td>2.0</td></tr>
+        <tr><td>Accepted change units (stayed + normalized)</td><td>940</td><td>940</td></tr>
+        <tr><td>Engineering time</td><td>$300,000</td><td>$300,000</td></tr>
+        <tr><td>Review cost</td><td>$40,000</td><td>$70,000</td></tr>
+        <tr><td>Rework cost</td><td>$20,000</td><td>$55,000</td></tr>
+        <tr><td>Model + infrastructure</td><td>$10,000</td><td>$30,000</td></tr>
+        <tr><th>Total cost</th><th>$370,000</th><th>$455,000</th></tr>
+        <tr><th>Cost per accepted change</th><th>$394</th><th>$484</th></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Identical on every published metric; <strong>23% apart</strong> on the cost of a change that stuck. Team B is spending more senior-engineer review time, absorbing more rework, and burning more tokens to land the same volume at the same stability — and not one of Uber's (excellent) dashboards would show it, because they were never built to. That's not a knock on Uber's instrumentation; it's the precise, narrow gap a top-of-stack dollar number fills.
+    </p>
+
+    <h2>The takeaway</h2>
+    <p>
+      Uber is the encouraging case, honestly. A team this disciplined about measurement, this far along on "did it stay?", and this candid that the value link "is not there yet" is exactly the team for whom cost per accepted change is a small addition rather than a heavy lift — most of the inputs are already instrumented. The metric just gathers them into the one number their own COO is asking for: what does a change we keep cost us now, and is the AI investment moving it the right way?
+    </p>
+    <p>
+      None of this is a verdict on Uber's engineering, which is genuinely excellent, or on its AI bet, which may well pay off handsomely. It's an appreciation: the best-instrumented shops are the ones who'll get the most, fastest, from putting a dollar denominator under all that careful measurement — and they're usually the first to admit the dollar link is the piece still missing.
+    </p>
+
+    <p style="margin-top: 2em;">
+      <a class="btn btn-primary" href="/calculator">Run your own numbers →</a>
+      <a class="btn" href="/instrument" style="margin-left: 0.6rem;">Instrumentation guide →</a>
+      <a class="btn" href="/articles/field-notes" style="margin-left: 0.6rem;">More field notes →</a>
+    </p>
+
+    <h2>Sources</h2>
+    <ol class="sources">
+      {sources.map((s) => (
+        <li id={`s-${s.id}`}>
+          {s.text} <a href={s.url}>{s.url}</a>
+        </li>
+      ))}
+    </ol>
+
+    <hr />
+    <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--ink-muted);">
+      This is a field note — a friendly, illustrative reading of the public record, not a commissioned case study. Uber's habit of publishing its engineering numbers in detail is exactly why there's so much to learn from here. Corrections and better public data are genuinely welcome via <a href="https://github.com/brennhill/cost-per-accepted-change">GitHub</a>.
+    </p>
+  </article>
+</BaseLayout>

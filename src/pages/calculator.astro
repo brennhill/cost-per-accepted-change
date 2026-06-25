@@ -1,107 +1,191 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CPACGraphic from '../components/CPACGraphic.astro';
+import CPAAGraphic from '../components/CPAAGraphic.astro';
 ---
 <BaseLayout
   title="Calculator"
-  description="Calculate cost per accepted change. Enter your numbers, get a shareable result."
+  description="Calculate cost per accepted change (for development) or cost per accepted action (for running agents). Enter your numbers, get a shareable result."
   path="/calculator"
 >
   <article class="page">
     <p class="eyebrow">Calculator</p>
-    <h1>Compute cost per accepted change</h1>
+    <h1>Compute the cost of trusted work</h1>
     <p class="lede">
-      Enter the costs and counts for one measurement window — a sprint, a month, a quarter. The calculator runs entirely in your browser; nothing is sent to a server.
+      Two calculators, one discipline. <strong>For development</strong>, compute cost per accepted change — the cost of producing software that stayed in production. <strong>For agents</strong>, compute cost per accepted action — the cost of agent work that stayed accepted. Both run entirely in your browser; nothing is sent to a server.
     </p>
 
     <noscript>
       <div class="callout">
         <span class="label">JavaScript required</span>
-        This calculator runs entirely in your browser, but it does require JavaScript. With JavaScript disabled, compute cost per accepted change manually using the formula on the <a href="/">definition page</a> or the <a href="/faq">git-based recipe in the FAQ</a>.
+        This calculator runs in your browser and needs JavaScript. With it disabled, compute the metric by hand from the formula on the <a href="/">definition page</a> (development) or the <a href="/articles/cost-per-accepted-action">cost-per-accepted-action page</a> (agents).
       </div>
     </noscript>
 
-    <form class="calc-form" id="cpac-form" autocomplete="off">
-      <fieldset>
-        <legend class="sr-only">Measurement window inputs</legend>
-
-        <div class="calc-row">
-          <div>
-            <label for="modelCost">Model cost</label>
-            <span class="hint" id="modelCost-hint">LLM / API spend attributable to the changes produced. Tools like <a href="https://github.com/git-ai-project/git-ai">git-ai</a> can help attribute model spend to specific commits.</span>
-          </div>
-          <input id="modelCost" name="modelCost" type="number" inputmode="decimal" min="0" step="0.01" value="1200" aria-describedby="modelCost-hint" />
-        </div>
-
-        <div class="calc-row">
-          <div>
-            <label for="infraCost">Infrastructure cost</label>
-            <span class="hint" id="infraCost-hint">Compute, storage, observability, tooling overhead.</span>
-          </div>
-          <input id="infraCost" name="infraCost" type="number" inputmode="decimal" min="0" step="0.01" value="400" aria-describedby="infraCost-hint" />
-        </div>
-
-        <div class="calc-row">
-          <div>
-            <label for="engineeringTime">Engineering time</label>
-            <span class="hint" id="engineeringTime-hint">Spec / prompt / integrate / steer, converted to currency.</span>
-          </div>
-          <input id="engineeringTime" name="engineeringTime" type="number" inputmode="decimal" min="0" step="0.01" value="18000" aria-describedby="engineeringTime-hint" />
-        </div>
-
-        <div class="calc-row">
-          <div>
-            <label for="reviewCost">Review cost</label>
-            <span class="hint" id="reviewCost-hint">Time spent reviewing / gating AI work, converted to currency.</span>
-          </div>
-          <input id="reviewCost" name="reviewCost" type="number" inputmode="decimal" min="0" step="0.01" value="6000" aria-describedby="reviewCost-hint" />
-        </div>
-
-        <div class="calc-row">
-          <div>
-            <label for="reworkCost">Rework cost</label>
-            <span class="hint" id="reworkCost-hint">Cost of fixing or reverting changes that did not stay in production.</span>
-          </div>
-          <input id="reworkCost" name="reworkCost" type="number" inputmode="decimal" min="0" step="0.01" value="2400" aria-describedby="reworkCost-hint" />
-        </div>
-
-        <div class="calc-row">
-          <div>
-            <label for="acceptedChanges">Accepted changes</label>
-            <span class="hint" id="acceptedChanges-hint">Whole-number count of changes that reached production <strong>and stayed there</strong> during the window.</span>
-          </div>
-          <input id="acceptedChanges" name="acceptedChanges" type="number" inputmode="numeric" min="1" step="1" value="42" aria-describedby="acceptedChanges-hint" />
-        </div>
-      </fieldset>
-    </form>
-
-    <div class="calc-result" id="result" aria-live="polite" aria-atomic="false">
-      <span class="label">Cost per accepted change</span>
-      <span class="value" id="result-value">—</span>
-      <div class="breakdown" id="result-breakdown"></div>
+    <div class="tabs" role="tablist" aria-label="Calculator mode">
+      <button class="tab" id="tab-dev" role="tab" aria-selected="true" aria-controls="panel-dev" type="button">For development</button>
+      <button class="tab" id="tab-agents" role="tab" aria-selected="false" aria-controls="panel-agents" tabindex="-1" type="button">For agents</button>
     </div>
 
-    <div class="calc-actions">
-      <button type="button" class="btn btn-primary" id="copy-link">Copy shareable link</button>
-      <a class="btn" href="https://github.com/brennhill/cost-per-accepted-change/blob/main/src/lib/calculator.ts">View source (main branch)</a>
-    </div>
+    <!-- ============================ DEVELOPMENT ============================ -->
+    <section class="tabpanel" id="panel-dev" role="tabpanel" aria-labelledby="tab-dev" tabindex="0">
+      <p class="tab-intro">Cost per accepted change — for one measurement window (a sprint, a month, a quarter).</p>
+      <div class="cpac-graphic-wrap"><CPACGraphic width={520} /></div>
+
+      <form class="calc-form" id="cpac-form" autocomplete="off">
+        <fieldset>
+          <legend class="sr-only">Development inputs</legend>
+          <div class="calc-row">
+            <div>
+              <label for="modelCost">Model cost</label>
+              <span class="hint" id="modelCost-hint">LLM / API spend attributable to the changes produced.</span>
+            </div>
+            <input id="modelCost" name="modelCost" type="number" inputmode="decimal" min="0" step="0.01" value="1200" aria-describedby="modelCost-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="infraCost">Infrastructure cost</label>
+              <span class="hint" id="infraCost-hint">Compute, storage, observability, tooling overhead.</span>
+            </div>
+            <input id="infraCost" name="infraCost" type="number" inputmode="decimal" min="0" step="0.01" value="400" aria-describedby="infraCost-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="engineeringTime">Engineering time</label>
+              <span class="hint" id="engineeringTime-hint">Spec / prompt / integrate / steer, converted to currency.</span>
+            </div>
+            <input id="engineeringTime" name="engineeringTime" type="number" inputmode="decimal" min="0" step="0.01" value="18000" aria-describedby="engineeringTime-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="reviewCost">Review cost</label>
+              <span class="hint" id="reviewCost-hint">Time spent reviewing / gating AI work, converted to currency.</span>
+            </div>
+            <input id="reviewCost" name="reviewCost" type="number" inputmode="decimal" min="0" step="0.01" value="6000" aria-describedby="reviewCost-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="reworkCost">Rework cost</label>
+              <span class="hint" id="reworkCost-hint">Cost of fixing or reverting changes that did not stay in production.</span>
+            </div>
+            <input id="reworkCost" name="reworkCost" type="number" inputmode="decimal" min="0" step="0.01" value="2400" aria-describedby="reworkCost-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="acceptedChanges">Accepted changes</label>
+              <span class="hint" id="acceptedChanges-hint">Whole-number count of changes that reached production <strong>and stayed there</strong>.</span>
+            </div>
+            <input id="acceptedChanges" name="acceptedChanges" type="number" inputmode="numeric" min="1" step="1" value="42" aria-describedby="acceptedChanges-hint" />
+          </div>
+        </fieldset>
+      </form>
+
+      <div class="calc-result" id="dev-result" aria-live="polite" aria-atomic="false">
+        <span class="label">Cost per accepted change</span>
+        <span class="value" id="dev-value">—</span>
+        <div class="breakdown" id="dev-breakdown"></div>
+      </div>
+
+      <div class="calc-actions">
+        <button type="button" class="btn btn-primary" id="dev-copy">Copy shareable link</button>
+        <a class="btn" href="/">What this measures →</a>
+      </div>
+    </section>
+
+    <!-- ============================== AGENTS ============================== -->
+    <section class="tabpanel" id="panel-agents" role="tabpanel" aria-labelledby="tab-agents" tabindex="0" hidden>
+      <p class="tab-intro">Cost per accepted action — for a window of agent operation. <a href="/articles/cost-per-accepted-action">What this measures →</a></p>
+      <div class="cpac-graphic-wrap"><CPAAGraphic width={520} /></div>
+
+      <form class="calc-form" id="cpaa-form" autocomplete="off">
+        <fieldset>
+          <legend class="sr-only">Agent inputs</legend>
+          <div class="calc-row">
+            <div>
+              <label for="inferenceCost">Inference cost</label>
+              <span class="hint" id="inferenceCost-hint">LLM tokens — input / output / cache / reasoning — including retries and multi-step loops.</span>
+            </div>
+            <input id="inferenceCost" name="inferenceCost" type="number" inputmode="decimal" min="0" step="0.01" value="3000" aria-describedby="inferenceCost-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="toolCost">Tool &amp; API cost</label>
+              <span class="hint" id="toolCost-hint">External calls: search, code execution, RAG / vector, paid third-party APIs.</span>
+            </div>
+            <input id="toolCost" name="toolCost" type="number" inputmode="decimal" min="0" step="0.01" value="1200" aria-describedby="toolCost-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="agentInfra">Infrastructure cost</label>
+              <span class="hint" id="agentInfra-hint">Orchestration, sandboxes, memory / vector stores, observability.</span>
+            </div>
+            <input id="agentInfra" name="agentInfra" type="number" inputmode="decimal" min="0" step="0.01" value="800" aria-describedby="agentInfra-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="oversightCost">Oversight cost</label>
+              <span class="hint" id="oversightCost-hint">Human-in-the-loop labor — approvals, reviews, the show-and-prove load — converted to currency.</span>
+            </div>
+            <input id="oversightCost" name="oversightCost" type="number" inputmode="decimal" min="0" step="0.01" value="9000" aria-describedby="oversightCost-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="remediationCost">Remediation cost</label>
+              <span class="hint" id="remediationCost-hint">Cleanup for actions that did not stay: rollbacks, human redo, incident response.</span>
+            </div>
+            <input id="remediationCost" name="remediationCost" type="number" inputmode="decimal" min="0" step="0.01" value="4000" aria-describedby="remediationCost-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="failedRunCost">Failed-run cost</label>
+              <span class="hint" id="failedRunCost-hint">Runs that produced nothing usable but still billed tokens / compute.</span>
+            </div>
+            <input id="failedRunCost" name="failedRunCost" type="number" inputmode="decimal" min="0" step="0.01" value="1000" aria-describedby="failedRunCost-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="failureImpactCost">Failure impact</label>
+              <span class="hint" id="failureImpactCost-hint">Downstream consequence of failed actions: escalation to costlier channels, lost sales, refunds, SLA penalties, churn. Estimate as failure rate × average consequence.</span>
+            </div>
+            <input id="failureImpactCost" name="failureImpactCost" type="number" inputmode="decimal" min="0" step="0.01" value="12000" aria-describedby="failureImpactCost-hint" />
+          </div>
+          <div class="calc-row">
+            <div>
+              <label for="acceptedActions">Accepted actions</label>
+              <span class="hint" id="acceptedActions-hint">Whole-number count of actions <strong>accepted and stayed accepted</strong> (complexity-normalized).</span>
+            </div>
+            <input id="acceptedActions" name="acceptedActions" type="number" inputmode="numeric" min="1" step="1" value="5000" aria-describedby="acceptedActions-hint" />
+          </div>
+        </fieldset>
+      </form>
+
+      <div class="calc-result" id="agent-result" aria-live="polite" aria-atomic="false">
+        <span class="label">Cost per accepted action</span>
+        <span class="value" id="agent-value">—</span>
+        <div class="breakdown" id="agent-breakdown"></div>
+      </div>
+
+      <div class="calc-actions">
+        <button type="button" class="btn btn-primary" id="agent-copy">Copy shareable link</button>
+        <a class="btn" href="/articles/cost-per-accepted-action">What this measures →</a>
+      </div>
+    </section>
 
     <h2>Use the library</h2>
     <p>
-      The calculator is a pure TypeScript function. Import it in your own dashboards, FinOps pipelines, or CI jobs:
+      Both calculators are pure TypeScript functions — import them into your dashboards, FinOps pipelines, or CI jobs:
     </p>
-<pre><code>import &#123; costPerAcceptedChange &#125; from 'cost-per-accepted-change';
+<pre><code>import &#123; costPerAcceptedChange, costPerAcceptedAction &#125; from 'cost-per-accepted-change';
 
-const cpac = costPerAcceptedChange(&#123;
-  modelCost: 1200,
-  infraCost: 400,
-  engineeringTime: 18000,
-  reviewCost: 6000,
-  reworkCost: 2400,
-  acceptedChanges: 42,
-&#125;);
+// Development: software that stayed in production
+costPerAcceptedChange(&#123; modelCost: 1200, infraCost: 400, engineeringTime: 18000,
+  reviewCost: 6000, reworkCost: 2400, acceptedChanges: 42 &#125;).value;   // 666.67
 
-console.log(cpac.value);     // 666.67
-console.log(cpac.breakdown); // share-of-total per component
+// Agents: actions that stayed accepted (failureImpactCost = escalations,
+// refunds, lost sales — the downstream consequence of actions that failed)
+costPerAcceptedAction(&#123; inferenceCost: 3000, toolCost: 1200, infraCost: 800,
+  oversightCost: 9000, remediationCost: 4000, failedRunCost: 1000,
+  failureImpactCost: 12000, acceptedActions: 5000 &#125;).value;             // 6.2
 </code></pre>
     <p>
       Source: <a href="https://github.com/brennhill/cost-per-accepted-change">github.com/brennhill/cost-per-accepted-change</a>. MIT-licensed.
@@ -109,7 +193,7 @@ console.log(cpac.breakdown); // share-of-total per component
 
     <h2>Use the CLI</h2>
     <p>
-      For one-shot calculations and full repo audits, install the CLI. <code>cpac audit</code> walks a GitHub repo over a date window, detects reverts via commit messages and explicit <code>Reverts #N</code> references, applies the 500-LOC normalization, and emits the accepted-change-unit count. Pair it with the five cost components for the full CPAC:
+      For one-shot calculations and full repo audits, install the CLI. <code>cpac audit</code> walks a GitHub repo over a date window, detects reverts, applies the 500-LOC normalization, and emits the accepted-change-unit count:
     </p>
 <pre><code># Pure math
 npx cost-per-accepted-change-cli cpac calc \
@@ -124,7 +208,7 @@ npx cost-per-accepted-change-cli cpac audit \
 
     <h2>Use the MCP server</h2>
     <p>
-      The same audit + calculator core is exposed as an MCP stdio server (<code>cpac-mcp</code>) so AI agents in Claude Code, Cursor, and other MCP-aware clients can compute CPAC directly inside a conversation. Three tools: <code>calculate_cpac</code>, <code>normalize_changes</code>, <code>audit_repo</code>.
+      The same core is exposed as an MCP stdio server (<code>cpac-mcp</code>) so AI agents in Claude Code, Cursor, and other MCP-aware clients can compute the metric inside a conversation:
     </p>
 <pre><code>// Add to your MCP client configuration
 &#123;
@@ -137,62 +221,21 @@ npx cost-per-accepted-change-cli cpac audit \
 &#125;
 </code></pre>
     <p>
-      The skill manifest is published at <a href="/.well-known/agent-skills/cost-per-accepted-change.md"><code>/.well-known/agent-skills/cost-per-accepted-change.md</code></a> and indexed at <a href="/.well-known/agent-skills/index.json"><code>/.well-known/agent-skills/index.json</code></a> per the Agent Skills Discovery RFC. Source: <a href="https://github.com/brennhill/cost-per-accepted-change/tree/main/tools/cpac-cli"><code>tools/cpac-cli</code></a>.
+      The skill manifest is published at <a href="/.well-known/agent-skills/cost-per-accepted-change.md"><code>/.well-known/agent-skills/cost-per-accepted-change.md</code></a> and indexed at <a href="/.well-known/agent-skills/index.json"><code>/.well-known/agent-skills/index.json</code></a>. Source: <a href="https://github.com/brennhill/cost-per-accepted-change/tree/main/tools/cpac-cli"><code>tools/cpac-cli</code></a>.
     </p>
   </article>
 
   <script>
     import {
       costPerAcceptedChange,
+      costPerAcceptedAction,
       formatCurrency,
       formatShare,
       type CPACInputs,
+      type CPAAInputs,
     } from '../lib/calculator';
 
-    const form = document.getElementById('cpac-form') as HTMLFormElement;
-    const valueEl = document.getElementById('result-value') as HTMLElement;
-    const breakdownEl = document.getElementById('result-breakdown') as HTMLElement;
-    const copyBtn = document.getElementById('copy-link') as HTMLButtonElement;
-
-    const fieldNames = [
-      'modelCost',
-      'infraCost',
-      'engineeringTime',
-      'reviewCost',
-      'reworkCost',
-      'acceptedChanges',
-    ] as const;
-
-    function readInputs(): CPACInputs {
-      const data: Record<string, number> = {};
-      for (const name of fieldNames) {
-        const input = form.elements.namedItem(name) as HTMLInputElement;
-        const raw = input.value;
-        data[name] = raw === '' ? 0 : Number(raw);
-      }
-      return data as unknown as CPACInputs;
-    }
-
-    function compute() {
-      try {
-        const inputs = readInputs();
-        const result = costPerAcceptedChange(inputs);
-        valueEl.textContent = formatCurrency(result.value);
-        breakdownEl.textContent =
-          `Total cost: ${formatCurrency(result.totalCost)} ÷ ${result.acceptedChanges} accepted changes. ` +
-          `Model ${formatShare(result.breakdown.modelCost)} · ` +
-          `Infra ${formatShare(result.breakdown.infraCost)} · ` +
-          `Eng ${formatShare(result.breakdown.engineeringTime)} · ` +
-          `Review ${formatShare(result.breakdown.reviewCost)} · ` +
-          `Rework ${formatShare(result.breakdown.reworkCost)}`;
-      } catch (err) {
-        valueEl.textContent = '—';
-        breakdownEl.textContent = err instanceof Error ? err.message : 'Enter values to compute.';
-      }
-    }
-
-    // Debounce keystroke-driven recomputes so screen readers and the result
-    // region aren't pummeled with intermediate states on every keypress.
+    // ---- shared helpers -----------------------------------------------------
     function debounce<T extends (...args: never[]) => void>(fn: T, ms: number): T {
       let handle: number | undefined;
       return ((...args: never[]) => {
@@ -200,43 +243,148 @@ npx cost-per-accepted-change-cli cpac audit \
         handle = window.setTimeout(() => fn(...args), ms);
       }) as T;
     }
-    const debouncedCompute = debounce(compute, 300);
 
-    function syncFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      for (const name of fieldNames) {
+    function readField(form: HTMLFormElement, name: string): number {
+      const input = form.elements.namedItem(name) as HTMLInputElement | null;
+      const raw = input?.value ?? '';
+      return raw === '' ? 0 : Number(raw);
+    }
+
+    function buildShareUrl(mode: string, form: HTMLFormElement, fields: readonly string[]) {
+      const params = new URLSearchParams();
+      params.set('mode', mode);
+      for (const name of fields) params.set(name, String(readField(form, name)));
+      return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    }
+
+    function populateFromParams(form: HTMLFormElement, fields: readonly string[], params: URLSearchParams) {
+      for (const name of fields) {
         if (params.has(name)) {
-          const input = form.elements.namedItem(name) as HTMLInputElement;
-          input.value = params.get(name) ?? '';
+          const input = form.elements.namedItem(name) as HTMLInputElement | null;
+          if (input) input.value = params.get(name) ?? '';
         }
       }
     }
 
-    function buildShareUrl() {
-      const inputs = readInputs() as unknown as Record<string, number>;
-      const params = new URLSearchParams();
-      for (const name of fieldNames) {
-        params.set(name, String(inputs[name]));
-      }
-      return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    async function wireCopy(btn: HTMLButtonElement, urlFor: () => string) {
+      btn.addEventListener('click', async () => {
+        const url = urlFor();
+        try {
+          await navigator.clipboard.writeText(url);
+          const original = btn.textContent;
+          btn.textContent = 'Copied ✓';
+          setTimeout(() => { btn.textContent = original; }, 1600);
+        } catch {
+          window.prompt('Copy this URL:', url);
+        }
+      });
     }
 
-    syncFromUrl();
-    compute();
-    form.addEventListener('input', debouncedCompute);
+    // ---- development (CPAC) -------------------------------------------------
+    const devForm = document.getElementById('cpac-form') as HTMLFormElement;
+    const devValue = document.getElementById('dev-value') as HTMLElement;
+    const devBreak = document.getElementById('dev-breakdown') as HTMLElement;
+    const devFields = ['modelCost', 'infraCost', 'engineeringTime', 'reviewCost', 'reworkCost', 'acceptedChanges'] as const;
 
-    copyBtn.addEventListener('click', async () => {
-      const url = buildShareUrl();
+    function readDev(): CPACInputs {
+      const d: Record<string, number> = {};
+      for (const name of devFields) d[name] = readField(devForm, name);
+      return d as unknown as CPACInputs;
+    }
+    function computeDev() {
       try {
-        await navigator.clipboard.writeText(url);
-        const original = copyBtn.textContent;
-        copyBtn.textContent = 'Copied ✓';
-        setTimeout(() => {
-          copyBtn.textContent = original;
-        }, 1600);
-      } catch {
-        window.prompt('Copy this URL:', url);
+        const r = costPerAcceptedChange(readDev());
+        devValue.textContent = formatCurrency(r.value);
+        devBreak.textContent =
+          `Total cost: ${formatCurrency(r.totalCost)} ÷ ${r.acceptedChanges} accepted changes. ` +
+          `Model ${formatShare(r.breakdown.modelCost)} · Infra ${formatShare(r.breakdown.infraCost)} · ` +
+          `Eng ${formatShare(r.breakdown.engineeringTime)} · Review ${formatShare(r.breakdown.reviewCost)} · ` +
+          `Rework ${formatShare(r.breakdown.reworkCost)}`;
+      } catch (err) {
+        devValue.textContent = '—';
+        devBreak.textContent = err instanceof Error ? err.message : 'Enter values to compute.';
       }
-    });
+    }
+
+    // ---- agents (CPAA) ------------------------------------------------------
+    const agentForm = document.getElementById('cpaa-form') as HTMLFormElement;
+    const agentValue = document.getElementById('agent-value') as HTMLElement;
+    const agentBreak = document.getElementById('agent-breakdown') as HTMLElement;
+    // DOM field names (agentInfra avoids colliding with development's infraCost in the URL).
+    const agentFields = ['inferenceCost', 'toolCost', 'agentInfra', 'oversightCost', 'remediationCost', 'failedRunCost', 'failureImpactCost', 'acceptedActions'] as const;
+
+    function readAgent(): CPAAInputs {
+      return {
+        inferenceCost: readField(agentForm, 'inferenceCost'),
+        toolCost: readField(agentForm, 'toolCost'),
+        infraCost: readField(agentForm, 'agentInfra'),
+        oversightCost: readField(agentForm, 'oversightCost'),
+        remediationCost: readField(agentForm, 'remediationCost'),
+        failedRunCost: readField(agentForm, 'failedRunCost'),
+        failureImpactCost: readField(agentForm, 'failureImpactCost'),
+        acceptedActions: readField(agentForm, 'acceptedActions'),
+      };
+    }
+    function computeAgent() {
+      try {
+        const r = costPerAcceptedAction(readAgent());
+        agentValue.textContent = formatCurrency(r.value);
+        agentBreak.textContent =
+          `Total cost: ${formatCurrency(r.totalCost)} ÷ ${r.acceptedActions} accepted actions. ` +
+          `Inference ${formatShare(r.breakdown.inferenceCost)} · Tools ${formatShare(r.breakdown.toolCost)} · ` +
+          `Infra ${formatShare(r.breakdown.infraCost)} · Oversight ${formatShare(r.breakdown.oversightCost)} · ` +
+          `Remediation ${formatShare(r.breakdown.remediationCost)} · Failed ${formatShare(r.breakdown.failedRunCost)} · ` +
+          `Impact ${formatShare(r.breakdown.failureImpactCost)}`;
+      } catch (err) {
+        agentValue.textContent = '—';
+        agentBreak.textContent = err instanceof Error ? err.message : 'Enter values to compute.';
+      }
+    }
+
+    // ---- tabs ---------------------------------------------------------------
+    const tabDev = document.getElementById('tab-dev') as HTMLButtonElement;
+    const tabAgents = document.getElementById('tab-agents') as HTMLButtonElement;
+    const panelDev = document.getElementById('panel-dev') as HTMLElement;
+    const panelAgents = document.getElementById('panel-agents') as HTMLElement;
+    const tabs = [tabDev, tabAgents];
+
+    function activate(mode: 'dev' | 'agents', focus = false) {
+      const isAgents = mode === 'agents';
+      tabAgents.setAttribute('aria-selected', String(isAgents));
+      tabDev.setAttribute('aria-selected', String(!isAgents));
+      tabAgents.tabIndex = isAgents ? 0 : -1;
+      tabDev.tabIndex = isAgents ? -1 : 0;
+      panelAgents.hidden = !isAgents;
+      panelDev.hidden = isAgents;
+      if (focus) (isAgents ? tabAgents : tabDev).focus();
+      const url = new URL(window.location.href);
+      url.searchParams.set('mode', mode);
+      window.history.replaceState(null, '', url);
+    }
+
+    tabDev.addEventListener('click', () => activate('dev'));
+    tabAgents.addEventListener('click', () => activate('agents'));
+    for (const tab of tabs) {
+      tab.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          const next = tab === tabDev ? 'agents' : 'dev';
+          activate(next, true);
+        }
+      });
+    }
+
+    // ---- init ---------------------------------------------------------------
+    const params = new URLSearchParams(window.location.search);
+    populateFromParams(devForm, devFields, params);
+    populateFromParams(agentForm, agentFields, params);
+    computeDev();
+    computeAgent();
+    activate(params.get('mode') === 'agents' ? 'agents' : 'dev');
+
+    devForm.addEventListener('input', debounce(computeDev, 300));
+    agentForm.addEventListener('input', debounce(computeAgent, 300));
+    wireCopy(document.getElementById('dev-copy') as HTMLButtonElement, () => buildShareUrl('dev', devForm, devFields));
+    wireCopy(document.getElementById('agent-copy') as HTMLButtonElement, () => buildShareUrl('agents', agentForm, agentFields));
   </script>
 </BaseLayout>
