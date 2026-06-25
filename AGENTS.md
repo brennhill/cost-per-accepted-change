@@ -1,6 +1,6 @@
-# Cost Per Accepted Change — project & contributor guide
+# AI FinOps — project & contributor guide
 
-The canonical definition, calculator, and reference for **cost per accepted change** — a measurement for the true cost of producing trusted software in the AI-augmented era. Built with Astro; deployed at [costperacceptedchange.org](https://costperacceptedchange.org).
+**AI FinOps** measures and governs the dollar cost of producing and running trusted AI software, anchored by two metrics: **cost per accepted change** (for the software you build) and **cost per accepted action** (for the agents you run). Built with Astro; deployed at [aifinops.dev](https://aifinops.dev).
 
 This guide is the source of truth for **how the site sounds**. It applies to every page, every field note, and every commit message. (`CLAUDE.md` imports this file.)
 

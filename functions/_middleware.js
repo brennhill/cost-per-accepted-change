@@ -18,6 +18,15 @@
 
 const MD_HTML_PATHS = /^\/(?:|[a-z0-9][a-z0-9-]*(?:\/[a-z0-9][a-z0-9-]*)*)$/;
 
+// Pre-migration domains that 301-redirect to the canonical host. Other hosts
+// (aifinops.dev itself, *.pages.dev preview URLs) fall through untouched, so
+// previews keep working and the canonical domain serves normally.
+const CANONICAL_HOST = 'aifinops.dev';
+const REDIRECT_HOSTS = new Set([
+  'costperacceptedchange.org',
+  'www.costperacceptedchange.org',
+]);
+
 function parseQ(paramsRest) {
   for (const p of paramsRest) {
     // Tolerate OWS around `=`: `q = 0.9`, `q=0.9`, etc.
@@ -99,6 +108,16 @@ function mergeVary(existing, value) {
 export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
+
+  // Permanent redirect from the pre-migration domain to the canonical one,
+  // preserving path and query. Runs before content negotiation.
+  if (REDIRECT_HOSTS.has(url.hostname)) {
+    return Response.redirect(
+      `https://${CANONICAL_HOST}${url.pathname}${url.search}`,
+      301,
+    );
+  }
+
   let path = url.pathname;
 
   // Treat a single trailing slash as equivalent to its bare form for the

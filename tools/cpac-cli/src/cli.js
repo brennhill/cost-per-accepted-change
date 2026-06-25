@@ -53,7 +53,7 @@ Examples:
   cpac audit --repo brennhill/cost-per-accepted-change \\
              --since 2026-04-01 --until 2026-04-30 --json
 
-Docs: https://costperacceptedchange.org
+Docs: https://aifinops.dev
 `;
 
 const BOOLEAN_FLAGS = new Set(['json', 'help', 'version']);
