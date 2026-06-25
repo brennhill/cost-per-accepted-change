@@ -125,6 +125,15 @@ export interface CPAAInputs {
   remediationCost: number;
   /** Cost of runs that produced nothing usable but still billed tokens / compute. */
   failedRunCost: number;
+  /**
+   * Downstream financial *consequence* of actions that failed — distinct from the
+   * internal labor to clean them up (that is remediationCost). Captures escalation
+   * to costlier channels, lost or delayed revenue, refunds and credits, SLA
+   * penalties, churn, and compliance exposure. Often the largest line, and the
+   * one most agent dashboards omit; estimate it (failure rate × average
+   * consequence) rather than leave it at zero.
+   */
+  failureImpactCost: number;
   /** Count of agent actions accepted and kept during the window (complexity-normalized, e.g. by risk grade). */
   acceptedActions: number;
 }
@@ -147,6 +156,7 @@ export interface CPAAResult {
     oversightCost: number;
     remediationCost: number;
     failedRunCost: number;
+    failureImpactCost: number;
   };
 }
 
@@ -157,6 +167,7 @@ export function costPerAcceptedAction(inputs: CPAAInputs): CPAAResult {
   assertNonNegative('oversightCost', inputs.oversightCost);
   assertNonNegative('remediationCost', inputs.remediationCost);
   assertNonNegative('failedRunCost', inputs.failedRunCost);
+  assertNonNegative('failureImpactCost', inputs.failureImpactCost);
 
   if (!Number.isInteger(inputs.acceptedActions) || inputs.acceptedActions <= 0) {
     throw new InvalidCPACInputError(
@@ -170,7 +181,8 @@ export function costPerAcceptedAction(inputs: CPAAInputs): CPAAResult {
     inputs.infraCost +
     inputs.oversightCost +
     inputs.remediationCost +
-    inputs.failedRunCost;
+    inputs.failedRunCost +
+    inputs.failureImpactCost;
 
   const value = totalCost / inputs.acceptedActions;
 
@@ -182,6 +194,7 @@ export function costPerAcceptedAction(inputs: CPAAInputs): CPAAResult {
         oversightCost: 0,
         remediationCost: 0,
         failedRunCost: 0,
+        failureImpactCost: 0,
       }
     : {
         inferenceCost: inputs.inferenceCost / totalCost,
@@ -190,6 +203,7 @@ export function costPerAcceptedAction(inputs: CPAAInputs): CPAAResult {
         oversightCost: inputs.oversightCost / totalCost,
         remediationCost: inputs.remediationCost / totalCost,
         failedRunCost: inputs.failedRunCost / totalCost,
+        failureImpactCost: inputs.failureImpactCost / totalCost,
       };
 
   return {

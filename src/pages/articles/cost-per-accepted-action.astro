@@ -105,8 +105,9 @@ const jsonLd = [
         <tr><td>Tool &amp; API cost</td><td>External calls the agent makes: search, code execution, RAG / vector, paid third-party APIs.</td></tr>
         <tr><td>Infrastructure cost</td><td>Orchestration runtime, sandboxes, memory / vector stores, observability, queues.</td></tr>
         <tr><td><strong>Oversight cost</strong></td><td>The human-in-the-loop labor — approvals, reviews, the <em>show-and-prove</em> load. As autonomy scales, this becomes the dominant hidden line, exactly as review cost did for AI-assisted coding.</td></tr>
-        <tr><td><strong>Remediation cost</strong></td><td>Cleaning up actions that did not stay: rollbacks, human redo, incident response, customer remediation.</td></tr>
+        <tr><td><strong>Remediation cost</strong></td><td>The internal labor to clean up actions that did not stay: rollbacks, human redo, incident response.</td></tr>
         <tr><td>Failed-run cost</td><td>Runs that produced nothing usable but still billed tokens and compute.</td></tr>
+        <tr><td><strong>Failure impact</strong></td><td>The downstream financial <em>consequence</em> of actions that failed — escalation to costlier channels, lost or delayed revenue, refunds and credits, SLA penalties, churn, compliance exposure. Distinct from remediation: that's what you pay to fix it; this is the value destroyed.</td></tr>
       </tbody>
     </table>
 
@@ -134,7 +135,7 @@ const jsonLd = [
       </div>
       <div class="funnel-legend">
         <div style="flex: 72"><span class="arrow">↓</span> counts in the <strong>denominator</strong> — accepted action units</div>
-        <div style="flex: 28"><span class="arrow">↓</span> its cleanup is <strong>remediation cost</strong> in the numerator</div>
+        <div style="flex: 28"><span class="arrow">↓</span> its cleanup <em>and its downstream consequences</em> hit the numerator (<strong>remediation + failure impact</strong>)</div>
       </div>
     </div>
 
@@ -160,16 +161,23 @@ const jsonLd = [
         <tr><td>Oversight cost (human-in-the-loop)</td><td>$9,000</td></tr>
         <tr><td>Remediation cost (overridden / rolled-back actions)</td><td>$4,000</td></tr>
         <tr><td>Failed-run cost</td><td>$1,000</td></tr>
-        <tr><th>Total cost</th><th>$19,000</th></tr>
+        <tr><th>Direct operating cost</th><th>$19,000</th></tr>
+        <tr><td><strong>Failure impact</strong> (escalations, refunds, lost sales)</td><td>$12,000</td></tr>
+        <tr><th>Total fully-loaded cost</th><th>$31,000</th></tr>
         <tr><td>Actions attempted</td><td>12,500</td></tr>
         <tr><td>Accepted action units (accepted &amp; stayed)</td><td><strong>5,000</strong></td></tr>
-        <tr><th>Cost per accepted action</th><th>$3.80</th></tr>
+        <tr><th>Cost per accepted action</th><th>$6.20</th></tr>
       </tbody>
     </table>
 
     <p>
-      A per-run dashboard divides $19,000 by all 12,500 attempts and reports a cheerful <strong>$1.52 a run</strong>. Cost per accepted action divides by the 5,000 that actually stuck — <strong>$3.80</strong>, two-and-a-half times higher — and shows <em>why</em>: oversight and remediation together are <strong>68% of the bill</strong>, the two lines the run-counter can't see. Nothing here says "don't run the agent." It says the real cost lives in the human load and the cleanup, so that's where the next improvement is — raise the acceptance rate, and both the denominator and those two lines move in your favor at once.
+      The same window tells three very different stories. A per-run dashboard divides the $31,000 by all 12,500 attempts and reports a cheerful <strong>$2.48 a run</strong>. Count only what you directly pay and divide by the 5,000 actions that stuck, and you get <strong>$3.80</strong>. But the honest number includes the <em>consequences</em> of the actions that failed — the escalations, refunds, and lost sales — which lifts it to <strong>$6.20</strong>, where the single largest line is neither inference nor oversight but <strong>failure impact, at 39% of the bill</strong>. Nothing here says "don't run the agent." It says the real cost lives in the human load, the cleanup, and above all the downstream consequences — so that's where the next improvement is. Raise the acceptance rate and all three move in your favor at once.
     </p>
+
+    <div class="callout">
+      <span class="label">The line most agent dashboards omit</span>
+      Failure impact is the hardest component to quantify and the easiest to leave at zero — which is exactly why omitting it is dangerous. A single wrong autonomous action can trigger a refund, an SLA penalty, or a lost deal worth orders of magnitude more than the tokens that produced it. Estimate it as <em>failure rate × average consequence</em> rather than pretend it's nothing; a rough number beats a missing one. This line is also the dollar form of <a href="https://looprails.dev">LoopRails</a>' <strong>consequence-severity</strong> axis — high-consequence actions are the ones to <em>prevent</em>, not merely review — so cost per accepted action is what makes that severity legible to finance.
+    </div>
 
     <h2>A FinOps operating model</h2>
     <p>
@@ -188,7 +196,7 @@ const jsonLd = [
         <p class="meta">Phase 2</p>
         <h3>Optimize</h3>
         <p>
-          Drive cost per accepted action down: cache, right-size the model per risk grade, cap loop depth — and, the biggest lever, <strong>raise the acceptance rate</strong>. Fewer reverts and failure-escalations beats cheaper tokens, because it lifts the denominator and cuts remediation at the same time.
+          Drive cost per accepted action down: cache, right-size the model per risk grade, cap loop depth — and, the biggest lever, <strong>raise the acceptance rate</strong>. Fewer reverts and failure-escalations beats cheaper tokens, because it lifts the denominator while cutting remediation <em>and</em> failure impact at the same time.
         </p>
       </div>
       <div class="template-card">
@@ -240,10 +248,11 @@ const cpaa = costPerAcceptedAction(&#123;
   oversightCost: 9000,
   remediationCost: 4000,
   failedRunCost: 1000,
+  failureImpactCost: 12000,   // escalations, refunds, lost sales
   acceptedActions: 5000,
 &#125;);
 
-console.log(cpaa.value);     // 3.8
+console.log(cpaa.value);     // 6.2
 console.log(cpaa.breakdown); // share-of-total per component
 </code></pre>
 

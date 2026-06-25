@@ -103,13 +103,14 @@ describe('costPerAcceptedAction', () => {
     oversightCost: 9000,
     remediationCost: 4000,
     failedRunCost: 1000,
+    failureImpactCost: 12000,
     acceptedActions: 5000,
   };
 
-  it('computes the canonical worked example to $3.80', () => {
+  it('computes the canonical worked example to $6.20', () => {
     const result = costPerAcceptedAction(baseline);
-    expect(result.totalCost).toBe(19000);
-    expect(result.value).toBeCloseTo(3.8, 2);
+    expect(result.totalCost).toBe(31000);
+    expect(result.value).toBeCloseTo(6.2, 2);
     expect(result.acceptedActions).toBe(5000);
   });
 
@@ -121,14 +122,22 @@ describe('costPerAcceptedAction', () => {
       result.breakdown.infraCost +
       result.breakdown.oversightCost +
       result.breakdown.remediationCost +
-      result.breakdown.failedRunCost;
+      result.breakdown.failedRunCost +
+      result.breakdown.failureImpactCost;
     expect(sum).toBeCloseTo(1, 10);
   });
 
-  it('surfaces oversight as the dominant cost line in the worked example', () => {
+  it('surfaces failure impact as the dominant cost line in the worked example', () => {
     const result = costPerAcceptedAction(baseline);
-    expect(result.breakdown.oversightCost).toBeCloseTo(9000 / 19000, 10);
-    expect(result.breakdown.oversightCost).toBeGreaterThan(result.breakdown.inferenceCost);
+    expect(result.breakdown.failureImpactCost).toBeCloseTo(12000 / 31000, 10);
+    expect(result.breakdown.failureImpactCost).toBeGreaterThan(result.breakdown.oversightCost);
+  });
+
+  it('omitting failure impact understates the true cost (the point of the line)', () => {
+    const withImpact = costPerAcceptedAction(baseline);
+    const withoutImpact = costPerAcceptedAction({ ...baseline, failureImpactCost: 0 });
+    expect(withoutImpact.value).toBeCloseTo(3.8, 2);
+    expect(withImpact.value).toBeGreaterThan(withoutImpact.value);
   });
 
   it('returns all-zero breakdown when totalCost is zero', () => {
@@ -139,15 +148,19 @@ describe('costPerAcceptedAction', () => {
       oversightCost: 0,
       remediationCost: 0,
       failedRunCost: 0,
+      failureImpactCost: 0,
       acceptedActions: 10,
     });
     expect(result.totalCost).toBe(0);
     expect(result.value).toBe(0);
-    expect(result.breakdown.oversightCost).toBe(0);
+    expect(result.breakdown.failureImpactCost).toBe(0);
   });
 
   it('throws InvalidCPACInputError on negative cost components', () => {
     expect(() => costPerAcceptedAction({ ...baseline, oversightCost: -1 })).toThrow(
+      InvalidCPACInputError,
+    );
+    expect(() => costPerAcceptedAction({ ...baseline, failureImpactCost: -1 })).toThrow(
       InvalidCPACInputError,
     );
   });
