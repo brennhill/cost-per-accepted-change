@@ -1,0 +1,4 @@
+# Permanent redirect: the agent metric was renamed cost per accepted action →
+# cost per accepted outcome (CAPO, per Nikhil Mungel). Host-level redirects
+# (old domain → aifinops.dev) are handled in functions/_middleware.js.
+/articles/cost-per-accepted-action  /articles/cost-per-accepted-outcome  301

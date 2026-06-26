@@ -1,24 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CPACGraphic from '../components/CPACGraphic.astro';
-import CPAAGraphic from '../components/CPAAGraphic.astro';
+import CAPOGraphic from '../components/CAPOGraphic.astro';
 ---
 <BaseLayout
   title="Calculator"
-  description="Calculate cost per accepted change (for development) or cost per accepted action (for running agents). Enter your numbers, get a shareable result."
+  description="Calculate cost per accepted change (for development) or cost per accepted outcome (for running agents). Enter your numbers, get a shareable result."
   path="/calculator"
 >
   <article class="page">
     <p class="eyebrow">Calculator</p>
     <h1>Compute the cost of trusted work</h1>
     <p class="lede">
-      Two calculators, one discipline. <strong>For development</strong>, compute cost per accepted change — the cost of producing software that stayed in production. <strong>For agents</strong>, compute cost per accepted action — the cost of agent work that stayed accepted. Both run entirely in your browser; nothing is sent to a server.
+      Two calculators, one discipline. <strong>For development</strong>, compute cost per accepted change — the cost of producing software that stayed in production. <strong>For agents</strong>, compute cost per accepted outcome — the cost of agent work that stayed accepted. Both run entirely in your browser; nothing is sent to a server.
     </p>
 
     <noscript>
       <div class="callout">
         <span class="label">JavaScript required</span>
-        This calculator runs in your browser and needs JavaScript. With it disabled, compute the metric by hand from the formula on the <a href="/">definition page</a> (development) or the <a href="/articles/cost-per-accepted-action">cost-per-accepted-action page</a> (agents).
+        This calculator runs in your browser and needs JavaScript. With it disabled, compute the metric by hand from the formula on the <a href="/">definition page</a> (development) or the <a href="/articles/cost-per-accepted-outcome">cost-per-accepted-outcome page</a> (agents).
       </div>
     </noscript>
 
@@ -94,10 +94,10 @@ import CPAAGraphic from '../components/CPAAGraphic.astro';
 
     <!-- ============================== AGENTS ============================== -->
     <section class="tabpanel" id="panel-agents" role="tabpanel" aria-labelledby="tab-agents" tabindex="0" hidden>
-      <p class="tab-intro">Cost per accepted action — for a window of agent operation. <a href="/articles/cost-per-accepted-action">What this measures →</a></p>
-      <div class="cpac-graphic-wrap"><CPAAGraphic width={520} /></div>
+      <p class="tab-intro">Cost per accepted outcome — for a window of agent operation. <a href="/articles/cost-per-accepted-outcome">What this measures →</a></p>
+      <div class="cpac-graphic-wrap"><CAPOGraphic width={520} /></div>
 
-      <form class="calc-form" id="cpaa-form" autocomplete="off">
+      <form class="calc-form" id="capo-form" autocomplete="off">
         <fieldset>
           <legend class="sr-only">Agent inputs</legend>
           <div class="calc-row">
@@ -131,7 +131,7 @@ import CPAAGraphic from '../components/CPAAGraphic.astro';
           <div class="calc-row">
             <div>
               <label for="remediationCost">Remediation cost</label>
-              <span class="hint" id="remediationCost-hint">Cleanup for actions that did not stay: rollbacks, human redo, incident response.</span>
+              <span class="hint" id="remediationCost-hint">Cleanup for outcomes that did not stay: rollbacks, human redo, incident response.</span>
             </div>
             <input id="remediationCost" name="remediationCost" type="number" inputmode="decimal" min="0" step="0.01" value="4000" aria-describedby="remediationCost-hint" />
           </div>
@@ -145,29 +145,29 @@ import CPAAGraphic from '../components/CPAAGraphic.astro';
           <div class="calc-row">
             <div>
               <label for="failureImpactCost">Failure impact</label>
-              <span class="hint" id="failureImpactCost-hint">Downstream consequence of failed actions: escalation to costlier channels, lost sales, refunds, SLA penalties, churn. Estimate as failure rate × average consequence.</span>
+              <span class="hint" id="failureImpactCost-hint">Downstream consequence of failed outcomes: escalation to costlier channels, lost sales, refunds, SLA penalties, churn. Estimate as failure rate × average consequence.</span>
             </div>
             <input id="failureImpactCost" name="failureImpactCost" type="number" inputmode="decimal" min="0" step="0.01" value="12000" aria-describedby="failureImpactCost-hint" />
           </div>
           <div class="calc-row">
             <div>
-              <label for="acceptedActions">Accepted actions</label>
-              <span class="hint" id="acceptedActions-hint">Whole-number count of actions <strong>accepted and stayed accepted</strong> (complexity-normalized).</span>
+              <label for="acceptedOutcomes">Accepted outcomes</label>
+              <span class="hint" id="acceptedOutcomes-hint">Whole-number count of outcomes <strong>accepted and stayed accepted</strong> (complexity-normalized).</span>
             </div>
-            <input id="acceptedActions" name="acceptedActions" type="number" inputmode="numeric" min="1" step="1" value="5000" aria-describedby="acceptedActions-hint" />
+            <input id="acceptedOutcomes" name="acceptedOutcomes" type="number" inputmode="numeric" min="1" step="1" value="5000" aria-describedby="acceptedOutcomes-hint" />
           </div>
         </fieldset>
       </form>
 
       <div class="calc-result" id="agent-result" aria-live="polite" aria-atomic="false">
-        <span class="label">Cost per accepted action</span>
+        <span class="label">Cost per accepted outcome</span>
         <span class="value" id="agent-value">—</span>
         <div class="breakdown" id="agent-breakdown"></div>
       </div>
 
       <div class="calc-actions">
         <button type="button" class="btn btn-primary" id="agent-copy">Copy shareable link</button>
-        <a class="btn" href="/articles/cost-per-accepted-action">What this measures →</a>
+        <a class="btn" href="/articles/cost-per-accepted-outcome">What this measures →</a>
       </div>
     </section>
 
@@ -175,17 +175,17 @@ import CPAAGraphic from '../components/CPAAGraphic.astro';
     <p>
       Both calculators are pure TypeScript functions — import them into your dashboards, FinOps pipelines, or CI jobs:
     </p>
-<pre><code>import &#123; costPerAcceptedChange, costPerAcceptedAction &#125; from 'cost-per-accepted-change';
+<pre><code>import &#123; costPerAcceptedChange, costPerAcceptedOutcome &#125; from 'cost-per-accepted-change';
 
 // Development: software that stayed in production
 costPerAcceptedChange(&#123; modelCost: 1200, infraCost: 400, engineeringTime: 18000,
   reviewCost: 6000, reworkCost: 2400, acceptedChanges: 42 &#125;).value;   // 666.67
 
-// Agents: actions that stayed accepted (failureImpactCost = escalations,
-// refunds, lost sales — the downstream consequence of actions that failed)
-costPerAcceptedAction(&#123; inferenceCost: 3000, toolCost: 1200, infraCost: 800,
+// Agents: outcomes that stayed accepted (failureImpactCost = escalations,
+// refunds, lost sales — the downstream consequence of outcomes that failed)
+costPerAcceptedOutcome(&#123; inferenceCost: 3000, toolCost: 1200, infraCost: 800,
   oversightCost: 9000, remediationCost: 4000, failedRunCost: 1000,
-  failureImpactCost: 12000, acceptedActions: 5000 &#125;).value;             // 6.2
+  failureImpactCost: 12000, acceptedOutcomes: 5000 &#125;).value;             // 6.2
 </code></pre>
     <p>
       Source: <a href="https://github.com/brennhill/cost-per-accepted-change">github.com/brennhill/cost-per-accepted-change</a>. MIT-licensed.
@@ -228,11 +228,11 @@ npx cost-per-accepted-change-cli cpac audit \
   <script>
     import {
       costPerAcceptedChange,
-      costPerAcceptedAction,
+      costPerAcceptedOutcome,
       formatCurrency,
       formatShare,
       type CPACInputs,
-      type CPAAInputs,
+      type CAPOInputs,
     } from '../lib/calculator';
 
     // ---- shared helpers -----------------------------------------------------
@@ -306,14 +306,14 @@ npx cost-per-accepted-change-cli cpac audit \
       }
     }
 
-    // ---- agents (CPAA) ------------------------------------------------------
-    const agentForm = document.getElementById('cpaa-form') as HTMLFormElement;
+    // ---- agents (CAPO) ------------------------------------------------------
+    const agentForm = document.getElementById('capo-form') as HTMLFormElement;
     const agentValue = document.getElementById('agent-value') as HTMLElement;
     const agentBreak = document.getElementById('agent-breakdown') as HTMLElement;
     // DOM field names (agentInfra avoids colliding with development's infraCost in the URL).
-    const agentFields = ['inferenceCost', 'toolCost', 'agentInfra', 'oversightCost', 'remediationCost', 'failedRunCost', 'failureImpactCost', 'acceptedActions'] as const;
+    const agentFields = ['inferenceCost', 'toolCost', 'agentInfra', 'oversightCost', 'remediationCost', 'failedRunCost', 'failureImpactCost', 'acceptedOutcomes'] as const;
 
-    function readAgent(): CPAAInputs {
+    function readAgent(): CAPOInputs {
       return {
         inferenceCost: readField(agentForm, 'inferenceCost'),
         toolCost: readField(agentForm, 'toolCost'),
@@ -322,15 +322,15 @@ npx cost-per-accepted-change-cli cpac audit \
         remediationCost: readField(agentForm, 'remediationCost'),
         failedRunCost: readField(agentForm, 'failedRunCost'),
         failureImpactCost: readField(agentForm, 'failureImpactCost'),
-        acceptedActions: readField(agentForm, 'acceptedActions'),
+        acceptedOutcomes: readField(agentForm, 'acceptedOutcomes'),
       };
     }
     function computeAgent() {
       try {
-        const r = costPerAcceptedAction(readAgent());
+        const r = costPerAcceptedOutcome(readAgent());
         agentValue.textContent = formatCurrency(r.value);
         agentBreak.textContent =
-          `Total cost: ${formatCurrency(r.totalCost)} ÷ ${r.acceptedActions} accepted actions. ` +
+          `Total cost: ${formatCurrency(r.totalCost)} ÷ ${r.acceptedOutcomes} accepted outcomes. ` +
           `Inference ${formatShare(r.breakdown.inferenceCost)} · Tools ${formatShare(r.breakdown.toolCost)} · ` +
           `Infra ${formatShare(r.breakdown.infraCost)} · Oversight ${formatShare(r.breakdown.oversightCost)} · ` +
           `Remediation ${formatShare(r.breakdown.remediationCost)} · Failed ${formatShare(r.breakdown.failedRunCost)} · ` +

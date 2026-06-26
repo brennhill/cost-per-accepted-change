@@ -1,6 +1,6 @@
 # AI FinOps — project & contributor guide
 
-**AI FinOps** measures and governs the dollar cost of producing and running trusted AI software, anchored by two metrics: **cost per accepted change** (for the software you build) and **cost per accepted action** (for the agents you run). Built with Astro; deployed at [aifinops.dev](https://aifinops.dev).
+**AI FinOps** measures and governs the dollar cost of producing and running trusted AI software, anchored by two metrics: **cost per accepted change** (for the software you build) and **cost per accepted outcome** (for the agents you run). Built with Astro; deployed at [aifinops.dev](https://aifinops.dev).
 
 This guide is the source of truth for **how the site sounds**. It applies to every page, every field note, and every commit message. (`CLAUDE.md` imports this file.)
 
