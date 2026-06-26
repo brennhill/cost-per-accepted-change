@@ -13,10 +13,10 @@ const height = Math.round(width * 0.42);
   viewBox="0 0 600 252"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label="Cost per accepted action — the fully-loaded cost of running an AI agent, divided by the count of actions it performed that were accepted and stayed accepted"
+  aria-label="Cost per accepted outcome — the fully-loaded cost of running an AI agent, divided by the count of outcomes that were accepted and stayed accepted"
   class={`cpac-graphic ${className ?? ''}`}
 >
-  <title>Cost per accepted action formula, rendered as a diagram</title>
+  <title>Cost per accepted outcome formula, rendered as a diagram</title>
 
   <!-- Outer hairline border -->
   <rect x="6" y="6" width="588" height="240" fill="none" stroke="currentColor" stroke-width="0.8" rx="2" />
@@ -33,11 +33,11 @@ const height = Math.round(width * 0.42);
     letter-spacing="3.2"
     fill="currentColor"
     opacity="0.7"
-  >COST PER ACCEPTED ACTION</text>
+  >COST PER ACCEPTED OUTCOME</text>
 
   <!-- Small flanking ornament rules under the eyebrow -->
-  <line x1="214" y1="54" x2="272" y2="54" stroke="currentColor" stroke-width="0.5" opacity="0.45" />
-  <line x1="328" y1="54" x2="386" y2="54" stroke="currentColor" stroke-width="0.5" opacity="0.45" />
+  <line x1="204" y1="54" x2="262" y2="54" stroke="currentColor" stroke-width="0.5" opacity="0.45" />
+  <line x1="338" y1="54" x2="396" y2="54" stroke="currentColor" stroke-width="0.5" opacity="0.45" />
   <circle cx="300" cy="54" r="1.4" fill="currentColor" opacity="0.55" />
 
   <!-- Numerator -->
@@ -59,7 +59,7 @@ const height = Math.round(width * 0.42);
     font-size="15"
     font-style="italic"
     fill="currentColor"
-  >accepted action units</text>
+  >accepted outcome units</text>
 
   <!-- Subscript clarification under denominator -->
   <text
@@ -70,7 +70,7 @@ const height = Math.round(width * 0.42);
     opacity="0.55"
   >( accepted and stayed accepted )</text>
 
-  <!-- $/AA seal -->
+  <!-- $/AO seal -->
   <g transform="translate(282, 185)" fill="currentColor">
     <text x="18" y="14" text-anchor="middle"
       font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif"
@@ -78,7 +78,7 @@ const height = Math.round(width * 0.42);
     <line x1="4" y1="19" x2="32" y2="19" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
     <text x="18" y="33" text-anchor="middle"
       font-family="Source Serif 4, Iowan Old Style, Charter, Georgia, serif"
-      font-size="11" font-weight="600">AA</text>
+      font-size="11" font-weight="600">AO</text>
   </g>
 
   <!-- Footer tagline -->

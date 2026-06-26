@@ -28,7 +28,7 @@ interface Props {
 
 const {
   title,
-  description = "AI FinOps: measuring and governing the dollar cost of producing and running trusted AI software — anchored by cost per accepted change and cost per accepted action.",
+  description = "AI FinOps: measuring and governing the dollar cost of producing and running trusted AI software — anchored by cost per accepted change and cost per accepted outcome.",
   path = '/',
   ogType = 'article',
   jsonLd,
@@ -60,9 +60,9 @@ const baseGraph: Record<string, unknown>[] = [
     '@id': websiteId,
     url: SITE,
     name: 'AI FinOps',
-    alternateName: 'AI FinOps — cost per accepted change & cost per accepted action',
+    alternateName: 'AI FinOps — cost per accepted change & cost per accepted outcome',
     description:
-      'AI FinOps: measuring and governing the dollar cost of producing and running trusted AI software, anchored by cost per accepted change and cost per accepted action.',
+      'AI FinOps: measuring and governing the dollar cost of producing and running trusted AI software, anchored by cost per accepted change and cost per accepted outcome.',
     inLanguage: 'en',
     publisher: { '@id': personId },
     author: { '@id': personId },

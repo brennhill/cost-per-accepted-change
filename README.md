@@ -3,7 +3,7 @@
 **AI FinOps** — measuring and governing the dollar cost of producing and running trusted AI software. Two metrics anchor it:
 
 - **Cost per accepted change (CPAC)** — the cost of producing software that reached production and stayed there (for development).
-- **Cost per accepted action (CPAA)** — the cost of agent work that was accepted and stayed accepted (for running agents).
+- **Cost per accepted outcome (CAPO)** — the cost of agent work that was accepted and stayed accepted (for running agents).
 
 Deployed at **[aifinops.dev](https://aifinops.dev)**.
 
@@ -15,15 +15,15 @@ Deployed at **[aifinops.dev](https://aifinops.dev)**.
 ─────────────────────────────────────────────────────────────
                        accepted change units
 
-                        cost per accepted action
+                        cost per accepted outcome
 (inference + tools + infra + oversight + remediation + failed runs + failure impact)
 ────────────────────────────────────────────────────────────────────────────────────
-                       accepted action units
+                       accepted outcome units
 ```
 
-An *accepted change* (or *action*) is one that reached production / was performed **and stayed there**.
+An *accepted change* (or *outcome*) is one that reached production / was produced **and stayed there**. For agents, the *outcome* is the value unit; the *action* is the loggable primitive beneath it.
 
-Both are defined in *The Delivery Gap* (Brenn Hill, 2026); cost per accepted change is the cost vertex of the Verification Triangle, and cost per accepted action is its runtime sibling.
+**Cost per accepted change** is defined in *The Delivery Gap* (Brenn Hill, 2026) as the cost vertex of the Verification Triangle. **Cost per accepted outcome (CAPO)** was coined by [Nikhil Mungel](https://www.infoworld.com/article/4138748/finops-for-agents-loop-limits-tool-call-caps-and-the-new-unit-economics-of-agentic-saas.html) (InfoWorld, 2026); this project adopts it as the runtime sibling and adds the cost-component decomposition, the survival window, and the LoopRails oversight bridge.
 
 ## This repository
 

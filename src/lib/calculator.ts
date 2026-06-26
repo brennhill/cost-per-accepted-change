@@ -101,18 +101,20 @@ export function costPerAcceptedChange(inputs: CPACInputs): CPACResult {
 }
 
 /**
- * Cost per accepted action (CPAA) — the runtime sibling of cost per accepted
+ * Cost per accepted outcome (CAPO) — the runtime sibling of cost per accepted
  * change, for *running* AI agents rather than *producing* software.
  *
- * An accepted action is a consequential agent action/outcome that was accepted
- * and stayed accepted through a survival window — not reverted, overridden by a
- * human, re-run to get a result that stuck, re-opened by the user, or the cause
- * of an incident requiring remediation. Actions that did not stay are excluded
- * from the denominator; the cost of cleaning them up is counted in the
- * numerator as remediation cost. (Approval by a human-in-the-loop reviewer is
- * not an override — the test is whether the action *stayed* without correction.)
+ * An accepted outcome is a consequential agent result — the accepted product of
+ * one or more actions (the loggable primitive a framework like LoopRails grades)
+ * — that was accepted and stayed accepted through a survival window: not
+ * reverted, overridden by a human, re-run to get a result that stuck, re-opened
+ * by the user, or the cause of an incident requiring remediation. Outcomes that
+ * did not stay are excluded from the denominator; the cost of cleaning them up
+ * is counted in the numerator as remediation cost. (Approval by a human-in-the-
+ * loop reviewer is not an override — the test is whether it *stayed* without
+ * correction.)
  */
-export interface CPAAInputs {
+export interface CAPOInputs {
   /** LLM / inference spend — input/output/cache/reasoning tokens, including retries and multi-step loops. */
   inferenceCost: number;
   /** External tool & API calls the agent makes: search, code execution, RAG/vector, paid third-party APIs. */
@@ -121,12 +123,12 @@ export interface CPAAInputs {
   infraCost: number;
   /** Human-in-the-loop oversight labor — approvals, reviews, the Show→Prove load — converted to currency. */
   oversightCost: number;
-  /** Cost of remediating actions that did not stay accepted: rollbacks, human redo, incident response. */
+  /** Cost of remediating outcomes that did not stay accepted: rollbacks, human redo, incident response. */
   remediationCost: number;
   /** Cost of runs that produced nothing usable but still billed tokens / compute. */
   failedRunCost: number;
   /**
-   * Downstream financial *consequence* of actions that failed — distinct from the
+   * Downstream financial *consequence* of outcomes that failed — distinct from the
    * internal labor to clean them up (that is remediationCost). Captures escalation
    * to costlier channels, lost or delayed revenue, refunds and credits, SLA
    * penalties, churn, and compliance exposure. Often the largest line, and the
@@ -134,17 +136,17 @@ export interface CPAAInputs {
    * consequence) rather than leave it at zero.
    */
   failureImpactCost: number;
-  /** Count of agent actions accepted and kept during the window (complexity-normalized, e.g. by risk grade). */
-  acceptedActions: number;
+  /** Count of agent outcomes accepted and kept during the window (complexity-normalized, e.g. by risk grade). */
+  acceptedOutcomes: number;
 }
 
-export interface CPAAResult {
-  /** The cost per accepted action. */
+export interface CAPOResult {
+  /** The cost per accepted outcome. */
   value: number;
   /** Sum of the numerator. */
   totalCost: number;
   /** Echo of the denominator. */
-  acceptedActions: number;
+  acceptedOutcomes: number;
   /**
    * Per-component contribution as a **fraction** of total cost (each in [0, 1]).
    * All components are 0 when `totalCost` is 0.
@@ -160,7 +162,7 @@ export interface CPAAResult {
   };
 }
 
-export function costPerAcceptedAction(inputs: CPAAInputs): CPAAResult {
+export function costPerAcceptedOutcome(inputs: CAPOInputs): CAPOResult {
   assertNonNegative('inferenceCost', inputs.inferenceCost);
   assertNonNegative('toolCost', inputs.toolCost);
   assertNonNegative('infraCost', inputs.infraCost);
@@ -169,9 +171,9 @@ export function costPerAcceptedAction(inputs: CPAAInputs): CPAAResult {
   assertNonNegative('failedRunCost', inputs.failedRunCost);
   assertNonNegative('failureImpactCost', inputs.failureImpactCost);
 
-  if (!Number.isInteger(inputs.acceptedActions) || inputs.acceptedActions <= 0) {
+  if (!Number.isInteger(inputs.acceptedOutcomes) || inputs.acceptedOutcomes <= 0) {
     throw new InvalidCPACInputError(
-      `acceptedActions must be a positive integer; received ${inputs.acceptedActions}`,
+      `acceptedOutcomes must be a positive integer; received ${inputs.acceptedOutcomes}`,
     );
   }
 
@@ -184,7 +186,7 @@ export function costPerAcceptedAction(inputs: CPAAInputs): CPAAResult {
     inputs.failedRunCost +
     inputs.failureImpactCost;
 
-  const value = totalCost / inputs.acceptedActions;
+  const value = totalCost / inputs.acceptedOutcomes;
 
   const breakdown = totalCost === 0
     ? {
@@ -209,7 +211,7 @@ export function costPerAcceptedAction(inputs: CPAAInputs): CPAAResult {
   return {
     value,
     totalCost,
-    acceptedActions: inputs.acceptedActions,
+    acceptedOutcomes: inputs.acceptedOutcomes,
     breakdown,
   };
 }

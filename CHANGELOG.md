@@ -10,7 +10,7 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conve
 - Repositioned as **AI FinOps** and migrated the canonical domain to **aifinops.dev** (from costperacceptedchange.org, now 301-redirected via the Pages middleware).
 
 ### Added
-- **Cost per accepted action (CPAA)** — the runtime sibling of cost per accepted change, for running AI agents: `costPerAcceptedAction()` in the library, a dedicated page, and a "For agents" calculator tab. Numerator includes a **failure-impact** line — the downstream financial consequence of actions that failed (escalation, lost sales, refunds, SLA penalties).
+- **Cost per accepted outcome (CAPO)** — the runtime sibling of cost per accepted change, for running AI agents: `costPerAcceptedOutcome()` in the library, a dedicated page, and a "For agents" calculator tab. Numerator includes a **failure-impact** line — the downstream financial consequence of outcomes that failed (escalation, lost sales, refunds, SLA penalties). The term CAPO was coined by Nikhil Mungel (InfoWorld, March 2026); this project credits him and situates CAPO in the AI FinOps family. (Renamed from the earlier "cost per accepted action"; the old `/articles/cost-per-accepted-action` path 301-redirects.)
 - Field notes (illustrative analyses: GitHub Copilot, Klarna, Uber, the enterprise AI-mandate wave) and sitewide JSON-LD structured data (WebSite, Person, BreadcrumbList, DefinedTerm, FAQPage, Article).
 - Cross-links to the companion frameworks: LoopRails (agent oversight) and BRACE (agent security); Eval-Driven Development named pending launch.
 
