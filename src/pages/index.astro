@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Subscribe from '../components/Subscribe.astro';
 import CPACGraphic from '../components/CPACGraphic.astro';
 import VerificationTriangle from '../components/VerificationTriangle.astro';
 import RelatedFrameworks from '../components/RelatedFrameworks.astro';
@@ -71,6 +72,8 @@ const jsonLd = [
         <p>The runtime sibling: the cost of agent work that was <strong>accepted and stayed accepted</strong> — including the downstream consequences of the outcomes that failed.</p>
       </div>
     </div>
+
+    <Subscribe />
 
     <h2 class="no-rule" id="cost-per-accepted-change">Cost per accepted change</h2>
     <p class="lede">

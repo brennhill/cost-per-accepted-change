@@ -5,6 +5,7 @@ import '@fontsource/source-serif-4/600.css';
 import '@fontsource/source-serif-4/600-italic.css';
 import '../styles/global.css';
 import Mark from '../components/Mark.astro';
+import Subscribe from '../components/Subscribe.astro';
 
 interface Props {
   title: string;
@@ -175,6 +176,7 @@ const nav = [
     <main id="main" tabindex="-1">
       <slot />
     </main>
+    {Astro.url.pathname !== '/' && <Subscribe />}
     <!--
       Analytics — both cookieless, no consent banner needed.
       Cloudflare Web Analytics is auto-injected via the Pages dashboard.
